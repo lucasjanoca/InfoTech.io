@@ -1,0 +1,21 @@
+/* InfoTech.io — ajuste visual localizado dos cards de serviços.
+   Mantém o layout, tamanhos, cores e comportamento existentes; altera apenas o alinhamento interno. */
+
+.service-mini-card{
+  align-items:center!important;
+  text-align:center!important;
+}
+
+.service-mini-card .pulse-emblem{
+  margin:0 auto 25px!important;
+}
+
+.service-mini-card strong,
+.service-mini-card small{
+  width:100%;
+  text-align:center!important;
+}
+
+.service-mini-card small{
+  margin-inline:auto;
+}
