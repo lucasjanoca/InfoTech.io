@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.3.0';
+const VERSION = 'infotech-pwa-v9.3.1';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -48,11 +48,24 @@ const isSensitive = url =>
   url.pathname.startsWith('/storage/v1/');
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(STATIC_CACHE);
+
+    for (const url of APP_SHELL) {
+      try {
+        const response = await fetch(new Request(url, {
+          method: 'GET',
+          cache: 'reload',
+          credentials: 'same-origin'
+        }));
+        if (isCacheableResponse(response)) {
+          await cache.put(url, response.clone());
+        }
+      } catch {}
+    }
+
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
@@ -60,13 +73,28 @@ self.addEventListener('activate', event => {
     if (self.registration.navigationPreload) {
       try { await self.registration.navigationPreload.enable(); } catch {}
     }
+
     const keys = await caches.keys();
     await Promise.all(
       keys
         .filter(key => key.startsWith('infotech-pwa-') && ![STATIC_CACHE, PAGE_CACHE].includes(key))
         .map(key => caches.delete(key))
     );
+
     await self.clients.claim();
+
+    const safeRefresh = /\/(?:|index|servicos|solicitacoes|projetos|contato|sobre|privacidade|seguranca)\.html$/i;
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+
+    await Promise.all(windows.map(async client => {
+      try {
+        const url = new URL(client.url);
+        const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
+        if (url.origin === self.location.origin && safeRefresh.test(pathname)) {
+          await client.navigate(client.url);
+        }
+      } catch {}
+    }));
   })());
 });
 
@@ -84,7 +112,7 @@ self.addEventListener('fetch', event => {
       const refresh = (async () => {
         try {
           const preload = await event.preloadResponse;
-          const fresh = preload || await fetch(request);
+          const fresh = preload || await fetch(new Request(request, { cache: 'no-cache' }));
           if (isCacheableResponse(fresh)) {
             const cache = await caches.open(PAGE_CACHE);
             await cache.put(request, fresh.clone());
