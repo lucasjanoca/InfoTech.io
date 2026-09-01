@@ -34,7 +34,8 @@
           "sizes": "192x192",
           "type": "image/webp"
         }
-      ]
+      ],
+      "description": "Abrir os serviços da InfoTech.io"
     },
     {
       "name": "Projetos",
@@ -46,7 +47,8 @@
           "sizes": "192x192",
           "type": "image/webp"
         }
-      ]
+      ],
+      "description": "Ver projetos publicados pela InfoTech.io"
     },
     {
       "name": "Área do Cliente",
@@ -58,7 +60,8 @@
           "sizes": "192x192",
           "type": "image/webp"
         }
-      ]
+      ],
+      "description": "Abrir sua conta e acompanhar solicitações"
     },
     {
       "name": "Nova solicitação",
@@ -70,7 +73,8 @@
           "sizes": "192x192",
           "type": "image/webp"
         }
-      ]
+      ],
+      "description": "Criar uma nova solicitação"
     }
   ],
   "display_override": [
@@ -85,6 +89,10 @@
   ],
   "prefer_related_applications": false,
   "launch_handler": {
-    "client_mode": "navigate-existing"
-  }
+    "client_mode": [
+      "navigate-existing",
+      "auto"
+    ]
+  },
+  "dir": "ltr"
 }

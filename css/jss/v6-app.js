@@ -103,8 +103,9 @@
     await renderAccount(currentUser);
     syncAuthAwareSections(currentUser);
     syncFooterClientLinks(currentUser);
-    if(protectedPage&&!currentUser){const currentTarget=safeDestination(`${page}${location.search}`)||safeDestination(page)||'painel-cliente.html';location.replace(`login.html?destino=${encodeURIComponent(currentTarget)}`)}
     window.dispatchEvent(new CustomEvent('infotech:auth-ready',{detail:{user:currentUser}}));
+    if(page==='login.html'&&currentUser){location.replace(destination);return}
+    if(protectedPage&&!currentUser){const currentTarget=safeDestination(`${page}${location.search}`)||safeDestination(page)||'painel-cliente.html';location.replace(`login.html?destino=${encodeURIComponent(currentTarget)}`)}
   }
   function validateStrongPassword(v){
     return v.length>=10 && /[a-z]/.test(v) && /[A-Z]/.test(v) && /\d/.test(v);

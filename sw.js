@@ -4,10 +4,19 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.3.2';
+const VERSION = 'infotech-pwa-v9.4.0';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
+
+const NOTIFICATION_PATHS = new Set([
+  '/',
+  '/index.html',
+  '/painel-cliente.html',
+  '/perfil.html',
+  '/nova-solicitacao.html',
+  '/detalhes-solicitacao.html'
+]);
 
 const APP_SHELL = [
   OFFLINE_URL,
@@ -171,7 +180,9 @@ self.addEventListener('push', event => {
   let url = '/painel-cliente.html';
   try {
     const target = new URL(payload.url || url, self.location.origin);
-    if (target.origin === self.location.origin) url = target.pathname + target.search + target.hash;
+    if (target.origin === self.location.origin && NOTIFICATION_PATHS.has(target.pathname)) {
+      url = target.pathname + target.search + target.hash;
+    }
   } catch {}
 
   event.waitUntil(self.registration.showNotification(title, {
