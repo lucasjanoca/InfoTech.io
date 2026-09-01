@@ -293,18 +293,16 @@
   }));
 })();
 
-/* INFOTECH_PWA_V9 — instalação visível, atualização e ciclo de vida do aplicativo */
+/* INFOTECH_PWA_V9_1 — aviso persistente de instalação + prompt nativo quando disponível */
 (() => {
   'use strict';
-  if (!('serviceWorker' in navigator)) return;
-  if (location.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(location.hostname)) return;
 
   const page = location.pathname.split('/').pop() || 'index.html';
   if (/^admin-|^painel-admin|^cliente-admin|^clientes-admin|^offline\.html$/i.test(page) || location.pathname.startsWith('/io/')) return;
 
   let installEvent = null;
   let installLink = null;
-  let banner = null;
+  let banner = document.querySelector('[data-pwa-banner]') || null;
 
   const isStandalone = () =>
     window.matchMedia?.('(display-mode: standalone)').matches ||
@@ -312,52 +310,42 @@
 
   const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 
+  const installHelp = () => {
+    if (isIos()) return 'No iPhone/iPad: toque em Compartilhar e depois em “Adicionar à Tela de Início”.';
+    return 'No Chrome: toque no menu ⋮ e escolha “Instalar app” ou “Adicionar à tela inicial”.';
+  };
+
   const removeInstallLink = () => {
     installLink?.remove();
     installLink = null;
   };
 
-  const installHelp = () => {
-    if (isIos()) return 'No iPhone/iPad: toque em Compartilhar e depois em “Adicionar à Tela de Início”.';
-    return 'No navegador: abra o menu e escolha “Instalar app” ou “Adicionar à tela inicial”.';
+  const removeBanner = () => {
+    banner?.remove();
+    banner = null;
   };
 
   const updateBanner = () => {
     if (!banner) return;
     const action = banner.querySelector('[data-pwa-action]');
     const help = banner.querySelector('[data-pwa-help]');
-    if (!action || !help) return;
-    action.textContent = installEvent ? 'Instalar agora' : 'Como instalar';
-    help.textContent = installEvent
-      ? 'Instale a InfoTech.io no celular ou computador para abrir como aplicativo.'
-      : 'A instalação depende do navegador. Toque abaixo para ver como fazer.';
+    if (action) action.textContent = installEvent ? 'Instalar agora' : 'Como instalar';
+    if (help) {
+      help.textContent = installEvent
+        ? 'Instale a InfoTech.io no celular para abrir como um aplicativo.'
+        : 'Instale a InfoTech.io no seu celular ou computador.';
+    }
   };
 
-  const ensureBanner = () => {
-    if (isStandalone() || banner || !document.body) return;
-
-    banner = document.createElement('aside');
-    banner.className = 'pwa-install-banner';
-    banner.setAttribute('aria-label', 'Instalar aplicativo InfoTech.io');
-    banner.innerHTML = `
-      <img src="assets/brand/logo-192.webp" width="52" height="52" alt="">
-      <div class="pwa-install-copy">
-        <strong>Aplicativo InfoTech.io</strong>
-        <span data-pwa-help></span>
-      </div>
-      <button class="btn btn-primary pwa-install-action" type="button" data-pwa-action>Como instalar</button>
-      <button class="pwa-install-close" type="button" aria-label="Fechar aviso de instalação">×</button>
-      <p class="pwa-install-instructions" data-pwa-instructions hidden></p>
-    `;
+  const bindBanner = () => {
+    if (!banner || banner.dataset.pwaBound === '1') return;
+    banner.dataset.pwaBound = '1';
 
     const close = banner.querySelector('.pwa-install-close');
     const action = banner.querySelector('[data-pwa-action]');
     const instructions = banner.querySelector('[data-pwa-instructions]');
 
-    close?.addEventListener('click', () => {
-      banner?.remove();
-      banner = null;
-    });
+    close?.addEventListener('click', removeBanner);
 
     action?.addEventListener('click', async () => {
       if (installEvent) {
@@ -365,21 +353,48 @@
         installEvent = null;
         await event.prompt();
         const choice = await event.userChoice.catch(() => null);
+
         if (choice?.outcome === 'accepted') {
-          banner?.remove();
-          banner = null;
+          removeBanner();
           removeInstallLink();
           return;
         }
         updateBanner();
       }
+
       if (instructions) {
         instructions.textContent = installHelp();
         instructions.hidden = false;
       }
     });
+  };
 
-    document.body.appendChild(banner);
+  const ensureBanner = () => {
+    if (isStandalone()) {
+      removeBanner();
+      removeInstallLink();
+      return;
+    }
+
+    if (!banner) {
+      banner = document.createElement('aside');
+      banner.className = 'pwa-install-banner';
+      banner.setAttribute('data-pwa-banner', '');
+      banner.setAttribute('aria-label', 'Instalar aplicativo InfoTech.io');
+      banner.innerHTML = `
+        <img src="assets/brand/logo-192.webp" width="52" height="52" alt="">
+        <div class="pwa-install-copy">
+          <strong>Baixar aplicativo InfoTech.io</strong>
+          <span data-pwa-help>Instale a InfoTech.io no seu celular ou computador.</span>
+        </div>
+        <button class="btn btn-primary pwa-install-action" type="button" data-pwa-action>Como instalar</button>
+        <button class="pwa-install-close" type="button" aria-label="Fechar aviso de instalação">×</button>
+        <p class="pwa-install-instructions" data-pwa-instructions hidden></p>
+      `;
+      document.body.appendChild(banner);
+    }
+
+    bindBanner();
     updateBanner();
   };
 
@@ -392,12 +407,10 @@
     installLink.href = '#instalar-app';
     installLink.textContent = 'Instalar app';
     installLink.setAttribute('data-pwa-install', '');
-    installLink.addEventListener('click', async event => {
+    installLink.addEventListener('click', event => {
       event.preventDefault();
       ensureBanner();
-      const action = banner?.querySelector('[data-pwa-action]');
-      action?.focus();
-      action?.click();
+      banner?.querySelector('[data-pwa-action]')?.click();
     });
     host.append(' · ', installLink);
   };
@@ -413,8 +426,7 @@
 
   window.addEventListener('appinstalled', () => {
     installEvent = null;
-    banner?.remove();
-    banner = null;
+    removeBanner();
     removeInstallLink();
     window.dispatchEvent(new CustomEvent('infotech:pwa-installed'));
   });
@@ -423,6 +435,9 @@
     ensureBanner();
     ensureInstallLink();
 
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(location.hostname)) return;
+
     try {
       const registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/',
@@ -430,7 +445,6 @@
       });
 
       registration.update().catch(() => {});
-
       registration.addEventListener('updatefound', () => {
         const worker = registration.installing;
         if (!worker) return;
