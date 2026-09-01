@@ -416,7 +416,8 @@
   };
 
   window.addEventListener('beforeinstallprompt', event => {
-    event.preventDefault();
+    // Não cancelar o comportamento padrão: assim o Chrome pode exibir
+    // a promoção/mini-infobar nativa de instalação quando considerar elegível.
     installEvent = event;
     ensureBanner();
     ensureInstallLink();
