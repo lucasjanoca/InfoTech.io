@@ -466,3 +466,60 @@
     bootPwa();
   }
 })();
+
+
+/* INFOTECH_APP_INSTANT_NAV_V9_3 — preaquece navegação pública e melhora sensação de app */
+(() => {
+  'use strict';
+
+  const PUBLIC_PAGES = [
+    '/',
+    '/index.html',
+    '/servicos.html',
+    '/solicitacoes.html',
+    '/projetos.html',
+    '/contato.html',
+    '/sobre.html'
+  ];
+
+  const isSensitivePath = pathname =>
+    /\/(?:admin(?:-|\/)|painel-(?:admin|cliente)|cliente-admin|clientes-admin|login|cadastro|perfil|nova-solicitacao|detalhes-solicitacao|recuperar-senha|email-confirmado)(?:\.html)?(?:$|[/?#])/i.test(pathname);
+
+  const warm = href => {
+    try {
+      const url = new URL(href, location.href);
+      if (url.origin !== location.origin || isSensitivePath(url.pathname)) return;
+      fetch(url.href, {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'default',
+        priority: 'low'
+      }).catch(() => {});
+    } catch {}
+  };
+
+  const warmCore = () => {
+    PUBLIC_PAGES.forEach((href, index) => {
+      setTimeout(() => warm(href), 120 + index * 80);
+    });
+  };
+
+  const warmLink = event => {
+    const a = event.target.closest?.('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    warm(a.href);
+  };
+
+  document.addEventListener('pointerover', warmLink, { passive: true });
+  document.addEventListener('touchstart', warmLink, { passive: true });
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(warmCore, { timeout: 1800 });
+  } else {
+    setTimeout(warmCore, 700);
+  }
+
+  if (window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+    document.documentElement.classList.add('infotech-standalone-app');
+  }
+})();
