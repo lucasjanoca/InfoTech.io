@@ -416,8 +416,9 @@
   };
 
   window.addEventListener('beforeinstallprompt', event => {
-    // Não cancelar o comportamento padrão: assim o Chrome pode exibir
-    // a promoção/mini-infobar nativa de instalação quando considerar elegível.
+    // Igual ao app da Padoka: seguramos o prompt nativo para abrir somente
+    // depois de uma ação explícita do usuário no cartão "Instalar app".
+    event.preventDefault();
     installEvent = event;
     ensureBanner();
     ensureInstallLink();
@@ -522,4 +523,96 @@
   if (window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     document.documentElement.classList.add('infotech-standalone-app');
   }
+})();
+
+
+/* INFOTECH_APP_SHELL_V9_4 — experiência móvel inspirada no app da Padoka */
+(() => {
+  'use strict';
+
+  const root=document.documentElement;
+  const page=location.pathname.split('/').pop()||'index.html';
+  const excluded=/^(?:admin-|painel-admin|cliente-admin|clientes-admin|offline\.html)/i.test(page)||location.pathname.startsWith('/io/');
+  if(excluded)return;
+
+  const standalone=window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  root.classList.add('infotech-app-shell-enabled');
+  root.classList.toggle('infotech-standalone-app',standalone);
+
+  if(standalone&&navigator.storage&&typeof navigator.storage.persist==='function'){
+    navigator.storage.persist().catch(()=>{});
+  }
+
+  function hasPersistedSessionHint(){
+    try{
+      const raw=localStorage.getItem('infotech-auth-v8');
+      if(!raw)return false;
+      const parsed=JSON.parse(raw);
+      return Boolean(parsed?.access_token||parsed?.user||parsed?.currentSession?.access_token);
+    }catch{
+      return false;
+    }
+  }
+
+  const hasSessionHint=hasPersistedSessionHint();
+  if(hasSessionHint){
+    root.classList.add('infotech-session-hint');
+    const slot=document.querySelector('.account-slot');
+    if(slot&&slot.querySelector('.account-login-fallback,.account-login-link')){
+      slot.innerHTML='<div class="account-session-boot" role="status" aria-live="polite"><span class="account-session-dot" aria-hidden="true"></span><span>Carregando sua conta…</span></div>';
+    }
+  }
+
+  const NAV_ITEMS=[
+    {key:'home',href:'index.html',icon:'⌂',label:'Início'},
+    {key:'services',href:'servicos.html',icon:'◇',label:'Serviços'},
+    {key:'request',href:'nova-solicitacao.html',icon:'＋',label:'Solicitar'},
+    {key:'projects',href:'projetos.html',icon:'▦',label:'Projetos'},
+    {key:'account',href:hasSessionHint?'painel-cliente.html':'login.html',icon:'♙',label:'Conta'}
+  ];
+
+  const activeKey=(()=>{
+    if(page==='index.html'||!page)return'home';
+    if(page==='servicos.html')return'services';
+    if(['nova-solicitacao.html','solicitacoes.html','solicitacao-enviada.html','detalhes-solicitacao.html'].includes(page))return'request';
+    if(page==='projetos.html')return'projects';
+    if(['login.html','cadastro.html','perfil.html','painel-cliente.html','recuperar-senha.html','email-confirmado.html'].includes(page))return'account';
+    return'';
+  })();
+
+  function buildBottomNav(){
+    if(document.querySelector('.infotech-app-bottom'))return;
+    const nav=document.createElement('nav');
+    nav.className='infotech-app-bottom';
+    nav.setAttribute('aria-label','Navegação rápida do aplicativo');
+    nav.innerHTML=NAV_ITEMS.map(item=>`
+      <a href="${item.href}" data-app-nav="${item.key}" class="${item.key===activeKey?'active':''}" ${item.key===activeKey?'aria-current="page"':''}>
+        <b aria-hidden="true">${item.icon}</b><span>${item.label}</span>
+      </a>`).join('');
+    document.body.appendChild(nav);
+  }
+
+  function setAccountDestination(user){
+    const account=document.querySelector('[data-app-nav="account"]');
+    if(account)account.href=user?'painel-cliente.html':'login.html';
+    root.classList.remove('infotech-session-hint');
+  }
+
+  window.addEventListener('infotech:auth-ready',event=>setAccountDestination(event.detail?.user||null));
+
+  window.addEventListener('pageshow',()=>{
+    const client=window.infotechSupabase;
+    if(!client?.auth?.getSession)return;
+    client.auth.getSession().then(({data})=>setAccountDestination(data?.session?.user||null)).catch(()=>{});
+  });
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',buildBottomNav,{once:true});
+  else buildBottomNav();
+
+  try{
+    const query=window.matchMedia('(display-mode: standalone)');
+    query.addEventListener?.('change',event=>{
+      root.classList.toggle('infotech-standalone-app',event.matches);
+    });
+  }catch{}
 })();
