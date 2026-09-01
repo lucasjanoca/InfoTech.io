@@ -1,2 +1,3 @@
-InfoTech.io V8.0 — Release Candidate para teste final
-Data: 2026-08-12
+InfoTech.io V9.0 — Security + PWA Platform Upgrade
+Data: 2026-09-01
+Status: branch de validação antes do merge em produção
