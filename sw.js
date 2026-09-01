@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.3.1';
+const VERSION = 'infotech-pwa-v9.3.2';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -27,6 +27,7 @@ const APP_SHELL = [
   '/assets/brand/projetos.webp',
   '/assets/projects/padoka-logo.svg',
   '/assets/projects/stoski-films-logo.svg',
+  '/assets/projects/mundo-kids.svg',
   '/css/v6.css',
   '/css/site-premium-v10.css',
   '/css/jss/v6-ui.js'
