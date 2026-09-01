@@ -2078,3 +2078,103 @@ img{height:auto}
     grid-column:1/-1;
   }
 }
+
+
+/* InfoTech V9.4 — app shell móvel inspirado no padrão da Padoka */
+html.infotech-app-shell-enabled,
+html.infotech-app-shell-enabled body{min-height:100%}
+html.infotech-standalone-app,
+html.infotech-standalone-app body{min-height:100dvh}
+html.infotech-standalone-app{overscroll-behavior:none}
+html.infotech-standalone-app body{
+  overscroll-behavior-y:none;
+  -webkit-overflow-scrolling:touch;
+}
+html.infotech-standalone-app .site-header{
+  padding-top:env(safe-area-inset-top);
+}
+.infotech-app-shell-enabled a,
+.infotech-app-shell-enabled button,
+.infotech-app-shell-enabled [role="button"]{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+.account-session-boot{
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:0 13px;
+  border:1px solid rgba(109,235,255,.18);
+  border-radius:14px;
+  color:#d8f7ff;
+  background:rgba(7,20,38,.72);
+  font-size:.82rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+.account-session-dot{
+  width:10px;height:10px;border-radius:50%;
+  border:2px solid rgba(110,231,255,.25);
+  border-top-color:var(--cyan);
+  animation:infotech-app-spin .7s linear infinite;
+}
+@keyframes infotech-app-spin{to{transform:rotate(360deg)}}
+
+.infotech-app-bottom{display:none}
+@media(max-width:760px){
+  html.infotech-app-shell-enabled body{
+    padding-bottom:calc(82px + env(safe-area-inset-bottom));
+  }
+  .infotech-app-bottom{
+    position:fixed;
+    left:9px;right:9px;
+    bottom:max(7px,env(safe-area-inset-bottom));
+    z-index:1050;
+    height:64px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    border:1px solid rgba(109,235,255,.16);
+    border-radius:20px;
+    background:rgba(3,10,22,.96);
+    box-shadow:0 16px 42px rgba(0,0,0,.42);
+    backdrop-filter:blur(18px);
+    overflow:hidden;
+  }
+  .infotech-app-bottom a{
+    min-width:0;
+    display:grid;
+    place-items:center;
+    align-content:center;
+    gap:2px;
+    color:#89a7b8;
+    font-size:.68rem;
+    font-weight:800;
+    line-height:1;
+    text-decoration:none;
+    transition:background .16s ease,color .16s ease,transform .08s ease;
+  }
+  .infotech-app-bottom a b{
+    font-size:1.22rem;
+    line-height:1;
+    font-weight:700;
+  }
+  .infotech-app-bottom a.active{
+    color:#f2fcff;
+    background:linear-gradient(180deg,rgba(36,231,255,.11),rgba(46,117,255,.08));
+  }
+  .infotech-app-bottom a:active{transform:scale(.96)}
+  .pwa-install-banner{
+    bottom:calc(82px + env(safe-area-inset-bottom));
+  }
+}
+@media(hover:none) and (pointer:coarse){
+  .infotech-app-shell-enabled .btn:active,
+  .infotech-app-shell-enabled button:active,
+  .infotech-app-shell-enabled .card:active{
+    transition-duration:.04s;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .account-session-dot{animation-duration:1.4s}
+}
