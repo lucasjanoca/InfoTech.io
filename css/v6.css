@@ -2178,3 +2178,34 @@ html.infotech-standalone-app .site-header{
 @media(prefers-reduced-motion:reduce){
   .account-session-dot{animation-duration:1.4s}
 }
+
+.infotech-login-resume body.auth-login-page .auth-shell{visibility:hidden}
+.infotech-auth-resume{
+  position:fixed;
+  inset:50% auto auto 50%;
+  transform:translate(-50%,-50%);
+  z-index:1150;
+  width:min(360px,calc(100% - 34px));
+  display:grid;
+  justify-items:center;
+  gap:8px;
+  padding:24px 20px;
+  border:1px solid rgba(109,235,255,.18);
+  border-radius:22px;
+  background:rgba(3,10,22,.97);
+  box-shadow:0 24px 80px rgba(0,0,0,.5);
+  color:#eefcff;
+  text-align:center;
+  backdrop-filter:blur(18px);
+}
+.infotech-auth-resume strong{font-size:1rem}
+.infotech-auth-resume small{color:#8ea9b9;line-height:1.45}
+.infotech-auth-resume-spinner{
+  width:34px;height:34px;border-radius:50%;
+  border:3px solid rgba(109,235,255,.16);
+  border-top-color:var(--cyan);
+  animation:infotech-app-spin .7s linear infinite;
+}
+@media(prefers-reduced-motion:reduce){
+  .infotech-auth-resume-spinner{animation-duration:1.4s}
+}
