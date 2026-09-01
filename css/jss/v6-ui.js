@@ -532,7 +532,7 @@
 
   const root=document.documentElement;
   const page=location.pathname.split('/').pop()||'index.html';
-  const excluded=/^(?:admin-|painel-admin|cliente-admin|clientes-admin|offline\.html)/i.test(page)||location.pathname.startsWith('/io/');
+  const excluded=/^(?:admin-|painel-admin|cliente-admin|clientes-admin|solicitacoes-antigas|offline\.html)/i.test(page)||location.pathname.startsWith('/io/');
   if(excluded)return;
 
   const standalone=window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
@@ -557,6 +557,7 @@
   const hasSessionHint=hasPersistedSessionHint();
   if(hasSessionHint){
     root.classList.add('infotech-session-hint');
+    if(page==='login.html')root.classList.add('infotech-login-resume');
     const slot=document.querySelector('.account-slot');
     if(slot&&slot.querySelector('.account-login-fallback,.account-login-link')){
       slot.innerHTML='<div class="account-session-boot" role="status" aria-live="polite"><span class="account-session-dot" aria-hidden="true"></span><span>Carregando sua conta…</span></div>';
@@ -592,10 +593,27 @@
     document.body.appendChild(nav);
   }
 
+  function removeLoginResume(){
+    root.classList.remove('infotech-login-resume');
+    document.querySelector('.infotech-auth-resume')?.remove();
+  }
+
+  function buildLoginResume(){
+    if(!hasSessionHint||page!=='login.html'||document.querySelector('.infotech-auth-resume'))return;
+    const card=document.createElement('aside');
+    card.className='infotech-auth-resume';
+    card.setAttribute('role','status');
+    card.setAttribute('aria-live','polite');
+    card.innerHTML='<span class="infotech-auth-resume-spinner" aria-hidden="true"></span><strong>Abrindo sua conta…</strong><small>Confirmando sua sessão salva com segurança.</small>';
+    document.body.appendChild(card);
+    window.setTimeout(removeLoginResume,4500);
+  }
+
   function setAccountDestination(user){
     const account=document.querySelector('[data-app-nav="account"]');
     if(account)account.href=user?'painel-cliente.html':'login.html';
     root.classList.remove('infotech-session-hint');
+    if(!user)removeLoginResume();
   }
 
   window.addEventListener('infotech:auth-ready',event=>setAccountDestination(event.detail?.user||null));
@@ -606,8 +624,9 @@
     client.auth.getSession().then(({data})=>setAccountDestination(data?.session?.user||null)).catch(()=>{});
   });
 
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',buildBottomNav,{once:true});
-  else buildBottomNav();
+  const bootAppShell=()=>{buildBottomNav();buildLoginResume()};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootAppShell,{once:true});
+  else bootAppShell();
 
   try{
     const query=window.matchMedia('(display-mode: standalone)');
