@@ -6,6 +6,10 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   X-Frame-Options: DENY
+  X-Permitted-Cross-Domain-Policies: none
+  X-DNS-Prefetch-Control: off
+  Origin-Agent-Cluster: ?1
+  Cross-Origin-Resource-Policy: same-site
 
 /io/*
   ! Content-Security-Policy
@@ -30,3 +34,11 @@
 /clientes-admin.html
   Cache-Control: no-store
   X-Robots-Tag: noindex, nofollow, noarchive
+
+/offline.html
+  Cache-Control: public, max-age=300
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /

@@ -121,3 +121,28 @@ jobs:
             echo "Referência HTTP insegura encontrada."
             exit 1
           fi
+
+      - name: Verify PWA and JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f manifest.webmanifest
+          test -f sw.js
+          test -f offline.html
+          node --check sw.js
+          node --check css/jss/v6-ui.js
+          node --check css/jss/v6-app.js
+          node --check css/jss/v6-admin.js
+          node --check css/jss/admin-auth-supabase.js
+          python3 - <<'PY'
+          import json
+          with open('manifest.webmanifest', encoding='utf-8') as f:
+              manifest = json.load(f)
+          assert manifest.get('display') == 'standalone'
+          assert manifest.get('start_url') == '/'
+          assert manifest.get('scope') == '/'
+          assert len(manifest.get('icons', [])) >= 2
+          PY
+          grep -q "SENSITIVE_PATH" sw.js
+          grep -q "supabase.co" sw.js
+          grep -q "request.method !== 'GET'" sw.js

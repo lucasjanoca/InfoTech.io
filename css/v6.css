@@ -1983,3 +1983,98 @@ img{height:auto}
 .project-progress progress::-webkit-progress-value{background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));border-radius:999px}
 .project-progress progress::-moz-progress-bar{background:linear-gradient(90deg,var(--blue),var(--cyan),var(--green));border-radius:999px}
 .client-row-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+
+/* =========================================================
+   InfoTech V9.0 — aviso de instalação PWA
+   ========================================================= */
+.pwa-install-banner{
+  position:fixed;
+  left:50%;
+  bottom:max(16px,env(safe-area-inset-bottom));
+  z-index:1100;
+  width:min(760px,calc(100% - 28px));
+  transform:translateX(-50%);
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  border:1px solid rgba(82,234,255,.24);
+  border-radius:20px;
+  background:rgba(3,10,22,.96);
+  box-shadow:0 20px 70px rgba(0,0,0,.46);
+  backdrop-filter:blur(18px);
+}
+.pwa-install-banner>img{
+  width:52px;
+  height:52px;
+  border-radius:14px;
+}
+.pwa-install-copy{
+  min-width:0;
+  display:grid;
+  gap:4px;
+}
+.pwa-install-copy strong{
+  color:#f1fbff;
+  font-size:.98rem;
+}
+.pwa-install-copy span{
+  color:var(--muted);
+  font-size:.84rem;
+  line-height:1.4;
+}
+.pwa-install-action{
+  min-height:44px;
+  white-space:nowrap;
+}
+.pwa-install-close{
+  width:40px;
+  height:40px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:#b9ccd8;
+  font-size:1.55rem;
+  line-height:1;
+  cursor:pointer;
+}
+.pwa-install-close:hover,
+.pwa-install-close:focus-visible{
+  background:rgba(255,255,255,.07);
+  color:#fff;
+}
+.pwa-install-instructions{
+  grid-column:2/-1;
+  margin:0;
+  padding:10px 12px;
+  border-radius:12px;
+  background:rgba(82,234,255,.07);
+  color:#d6f8ff;
+  font-size:.84rem;
+  line-height:1.45;
+}
+@media(max-width:680px){
+  .pwa-install-banner{
+    grid-template-columns:auto minmax(0,1fr) auto;
+    gap:10px;
+    padding:12px;
+    border-radius:18px;
+  }
+  .pwa-install-banner>img{
+    width:46px;
+    height:46px;
+  }
+  .pwa-install-action{
+    grid-column:1/-1;
+    width:100%;
+  }
+  .pwa-install-close{
+    grid-column:3;
+    grid-row:1;
+  }
+  .pwa-install-instructions{
+    grid-column:1/-1;
+  }
+}

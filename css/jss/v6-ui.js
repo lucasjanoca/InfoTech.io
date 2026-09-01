@@ -292,3 +292,162 @@
     if(typeof track?._loopNext==='function')track._loopNext();
   }));
 })();
+
+/* INFOTECH_PWA_V9 — instalação visível, atualização e ciclo de vida do aplicativo */
+(() => {
+  'use strict';
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(location.hostname)) return;
+
+  const page = location.pathname.split('/').pop() || 'index.html';
+  if (/^admin-|^painel-admin|^cliente-admin|^clientes-admin|^offline\.html$/i.test(page) || location.pathname.startsWith('/io/')) return;
+
+  let installEvent = null;
+  let installLink = null;
+  let banner = null;
+
+  const isStandalone = () =>
+    window.matchMedia?.('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  const removeInstallLink = () => {
+    installLink?.remove();
+    installLink = null;
+  };
+
+  const installHelp = () => {
+    if (isIos()) return 'No iPhone/iPad: toque em Compartilhar e depois em “Adicionar à Tela de Início”.';
+    return 'No navegador: abra o menu e escolha “Instalar app” ou “Adicionar à tela inicial”.';
+  };
+
+  const updateBanner = () => {
+    if (!banner) return;
+    const action = banner.querySelector('[data-pwa-action]');
+    const help = banner.querySelector('[data-pwa-help]');
+    if (!action || !help) return;
+    action.textContent = installEvent ? 'Instalar agora' : 'Como instalar';
+    help.textContent = installEvent
+      ? 'Instale a InfoTech.io no celular ou computador para abrir como aplicativo.'
+      : 'A instalação depende do navegador. Toque abaixo para ver como fazer.';
+  };
+
+  const ensureBanner = () => {
+    if (isStandalone() || banner || !document.body) return;
+
+    banner = document.createElement('aside');
+    banner.className = 'pwa-install-banner';
+    banner.setAttribute('aria-label', 'Instalar aplicativo InfoTech.io');
+    banner.innerHTML = `
+      <img src="assets/brand/logo-192.webp" width="52" height="52" alt="">
+      <div class="pwa-install-copy">
+        <strong>Aplicativo InfoTech.io</strong>
+        <span data-pwa-help></span>
+      </div>
+      <button class="btn btn-primary pwa-install-action" type="button" data-pwa-action>Como instalar</button>
+      <button class="pwa-install-close" type="button" aria-label="Fechar aviso de instalação">×</button>
+      <p class="pwa-install-instructions" data-pwa-instructions hidden></p>
+    `;
+
+    const close = banner.querySelector('.pwa-install-close');
+    const action = banner.querySelector('[data-pwa-action]');
+    const instructions = banner.querySelector('[data-pwa-instructions]');
+
+    close?.addEventListener('click', () => {
+      banner?.remove();
+      banner = null;
+    });
+
+    action?.addEventListener('click', async () => {
+      if (installEvent) {
+        const event = installEvent;
+        installEvent = null;
+        await event.prompt();
+        const choice = await event.userChoice.catch(() => null);
+        if (choice?.outcome === 'accepted') {
+          banner?.remove();
+          banner = null;
+          removeInstallLink();
+          return;
+        }
+        updateBanner();
+      }
+      if (instructions) {
+        instructions.textContent = installHelp();
+        instructions.hidden = false;
+      }
+    });
+
+    document.body.appendChild(banner);
+    updateBanner();
+  };
+
+  const ensureInstallLink = () => {
+    if (isStandalone() || installLink) return;
+    const host = document.querySelector('.footer-legal-links');
+    if (!host) return;
+
+    installLink = document.createElement('a');
+    installLink.href = '#instalar-app';
+    installLink.textContent = 'Instalar app';
+    installLink.setAttribute('data-pwa-install', '');
+    installLink.addEventListener('click', async event => {
+      event.preventDefault();
+      ensureBanner();
+      const action = banner?.querySelector('[data-pwa-action]');
+      action?.focus();
+      action?.click();
+    });
+    host.append(' · ', installLink);
+  };
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    installEvent = event;
+    ensureBanner();
+    ensureInstallLink();
+    updateBanner();
+    window.dispatchEvent(new CustomEvent('infotech:pwa-install-ready'));
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installEvent = null;
+    banner?.remove();
+    banner = null;
+    removeInstallLink();
+    window.dispatchEvent(new CustomEvent('infotech:pwa-installed'));
+  });
+
+  const bootPwa = async () => {
+    ensureBanner();
+    ensureInstallLink();
+
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/',
+        updateViaCache: 'none'
+      });
+
+      registration.update().catch(() => {});
+
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+            window.dispatchEvent(new CustomEvent('infotech:pwa-update-ready', { detail: { registration } }));
+          }
+        });
+      });
+    } catch (error) {
+      console.warn('PWA InfoTech indisponível:', error);
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootPwa, { once: true });
+  } else {
+    bootPwa();
+  }
+})();

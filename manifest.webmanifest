@@ -1,7 +1,7 @@
 {
   "name": "InfoTech.io",
   "short_name": "InfoTech",
-  "description": "Sites, sistemas e soluções digitais profissionais.",
+  "description": "Plataforma InfoTech.io para sites, sistemas, solicitações, acompanhamento e suporte.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -59,6 +59,32 @@
           "type": "image/webp"
         }
       ]
+    },
+    {
+      "name": "Nova solicitação",
+      "short_name": "Solicitar",
+      "url": "/nova-solicitacao.html",
+      "icons": [
+        {
+          "src": "assets/brand/logo-192.webp",
+          "sizes": "192x192",
+          "type": "image/webp"
+        }
+      ]
     }
-  ]
+  ],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
