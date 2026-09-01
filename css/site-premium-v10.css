@@ -332,3 +332,62 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   .case-visual-v10 img{max-width:66px!important;max-height:82px!important}
   .case-content-v10{padding:14px 12px!important}
 }
+
+
+/* =========================================================
+   V10.2 — Admin mobile 2x2 + history workspace
+   ========================================================= */
+.admin-history-intro{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:18px;
+}
+.admin-history-intro h1{margin:8px 0 6px;font-size:clamp(2rem,4vw,3.4rem);letter-spacing:-.04em}
+.admin-history-intro p{margin:0;color:#9fb4c7}
+.admin-history-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-bottom:18px}
+.admin-history-stats article{
+  padding:20px;border:1px solid var(--v10-border);border-radius:20px;
+  background:linear-gradient(180deg,rgba(9,29,51,.72),rgba(4,14,27,.8));
+  box-shadow:0 14px 40px rgba(0,0,0,.16);
+}
+.admin-history-stats strong{display:block;font-size:2rem;color:#eefdff}
+.admin-history-stats span{color:#9fb4c7;font-size:.8rem}
+
+@media (max-width:760px){
+  .admin-actions-row{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    width:100%!important;
+    gap:9px!important;
+  }
+  .admin-actions-row .btn{width:100%!important;min-width:0!important;padding-inline:10px!important}
+  .admin-stats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  .admin-stats article{
+    min-width:0!important;
+    padding:18px 16px!important;
+    min-height:132px!important;
+  }
+  .admin-stats strong{font-size:2rem!important;line-height:1!important}
+  .admin-stats span{font-size:.78rem!important;line-height:1.25!important}
+  .admin-history-intro{flex-direction:column}
+  .admin-history-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+  .admin-history-stats article{padding:16px 12px}
+  .admin-history-stats strong{font-size:1.7rem}
+  .admin-history-stats span{font-size:.72rem}
+}
+@media (max-width:480px){
+  .admin-stats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .admin-stats article{
+    min-height:122px!important;
+    padding:16px 14px!important;
+    border-radius:18px!important;
+  }
+  .admin-history-stats{grid-template-columns:1fr}
+}

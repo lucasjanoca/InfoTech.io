@@ -29,7 +29,7 @@
   }
   const safeAdminDestination=raw=>{
     const value=String(raw||'');
-    return /^(painel-admin|admin-solicitacao|clientes-admin|cliente-admin)\.html(?:\?.*)?$/.test(value)?value:'painel-admin.html';
+    return /^(painel-admin|solicitacoes-antigas|admin-solicitacao|clientes-admin|cliente-admin)\.html(?:\?.*)?$/.test(value)?value:'painel-admin.html';
   };
   async function guard(){
     user=(await db.auth.getSession()).data.session?.user||null;
@@ -66,24 +66,49 @@
     });
   }
   const row=r=>({id:r.protocol,uuid:r.id,userId:r.user_id,ownerName:r.owner_name,ownerEmail:r.owner_email,title:r.title,service:r.service,description:r.description,deadline:r.deadline,budget:r.budget,contact:r.contact,reference:r.reference_url,status:r.status,adminResponse:r.admin_response,messages:Array.isArray(r.messages)?r.messages:[],project:r.project||{},createdAt:r.created_at,updatedAt:r.updated_at});
+  const ARCHIVE_STATUSES=['Concluída','Cancelada'];
+  const isArchivedStatus=s=>ARCHIVE_STATUSES.includes(s);
   const cls=s=>s==='Concluída'?'status-done':s==='Cancelada'?'status-cancelled':['Aprovada','Em andamento'].includes(s)?'status-progress':['Lida','Em análise','Orçamento enviado','Aguardando aprovação','Alteração solicitada'].includes(s)?'status-analysis':'status-sent';
   async function initDashboard(){
     const list=$('#admin-requests-list');if(!list)return;
+    const historyMode=list.dataset.adminHistory==='1'||page==='solicitacoes-antigas.html';
     const {data,error}=await db.from('requests').select('*').order('created_at',{ascending:false});
     if(error){list.innerHTML='<div class="empty-state">Falha ao carregar solicitações.</div>';return}
     const items=(data||[]).map(row);
-    $('[data-admin-total]').textContent=items.length;$('[data-admin-new]').textContent=items.filter(i=>['Enviada','Lida','Em análise'].includes(i.status)).length;$('[data-admin-progress]').textContent=items.filter(i=>['Aprovada','Em andamento'].includes(i.status)).length;$('[data-admin-done]').textContent=items.filter(i=>i.status==='Concluída').length;
+    const activeItems=items.filter(i=>!isArchivedStatus(i.status));
+    const archivedItems=items.filter(i=>isArchivedStatus(i.status));
+    const scopedItems=historyMode?archivedItems:activeItems;
+
+    if(!historyMode){
+      const total=$('[data-admin-total]'), fresh=$('[data-admin-new]'), progress=$('[data-admin-progress]'), archive=$('[data-admin-archive]');
+      if(total)total.textContent=activeItems.length;
+      if(fresh)fresh.textContent=activeItems.filter(i=>['Enviada','Lida','Em análise'].includes(i.status)).length;
+      if(progress)progress.textContent=activeItems.filter(i=>['Aprovada','Em andamento'].includes(i.status)).length;
+      if(archive)archive.textContent=archivedItems.length;
+    }else{
+      const total=$('[data-history-total]'), done=$('[data-history-done]'), cancelled=$('[data-history-cancelled]');
+      if(total)total.textContent=archivedItems.length;
+      if(done)done.textContent=archivedItems.filter(i=>i.status==='Concluída').length;
+      if(cancelled)cancelled.textContent=archivedItems.filter(i=>i.status==='Cancelada').length;
+    }
+
     const search=$('#admin-search'), filter=$('#admin-filter');
     const render=()=>{
       const q=(search?.value||'').toLowerCase(), f=filter?.value||'all';
-      const view=items.filter(i=>[i.id,i.ownerName,i.ownerEmail,i.title,i.service].join(' ').toLowerCase().includes(q)&&(f==='all'||i.status===f));
-      list.innerHTML=view.length?view.map(i=>`<article class="admin-card"><div><div><span class="request-id">#${esc(i.id)}</span> <span class="status ${cls(i.status)}">${esc(i.status)}</span></div><h3>${esc(i.title)}</h3><p>${esc(i.service)} · ${esc(i.description.slice(0,150))}${i.description.length>150?'…':''}</p><div class="admin-owner">${esc(i.ownerName)} · ${esc(i.ownerEmail)} · ${fmt(i.createdAt)}</div></div><a class="btn btn-outline" href="admin-solicitacao.html?id=${encodeURIComponent(i.id)}">Gerenciar</a></article>`).join(''):'<div class="empty-state">Nenhuma solicitação encontrada.</div>';
+      const view=scopedItems.filter(i=>[i.id,i.ownerName,i.ownerEmail,i.title,i.service].join(' ').toLowerCase().includes(q)&&(f==='all'||i.status===f));
+      const origin=historyMode?'&origem=antigas':'';
+      const empty=historyMode?'Nenhuma solicitação antiga encontrada.':'Nenhuma solicitação ativa encontrada.';
+      list.innerHTML=view.length?view.map(i=>`<article class="admin-card"><div><div><span class="request-id">#${esc(i.id)}</span> <span class="status ${cls(i.status)}">${esc(i.status)}</span></div><h3>${esc(i.title)}</h3><p>${esc(i.service)} · ${esc(i.description.slice(0,150))}${i.description.length>150?'…':''}</p><div class="admin-owner">${esc(i.ownerName)} · ${esc(i.ownerEmail)} · ${fmt(i.createdAt)}</div></div><a class="btn btn-outline" href="admin-solicitacao.html?id=${encodeURIComponent(i.id)}${origin}">Gerenciar</a></article>`).join(''):`<div class="empty-state">${empty}</div>`;
     };
     search?.addEventListener('input',render);filter?.addEventListener('change',render);render();
   }
   async function initDetail(){
     const root=$('#admin-detail');if(!root)return;
-    const protocol=new URLSearchParams(location.search).get('id');
+    const params=new URLSearchParams(location.search);
+    const protocol=params.get('id');
+    const fromHistory=params.get('origem')==='antigas';
+    const back=$('[data-admin-back]');
+    if(back&&fromHistory){back.href='solicitacoes-antigas.html';back.textContent='← Voltar às solicitações antigas'}
     const {data,error}=await db.from('requests').select('*').eq('protocol',protocol).maybeSingle();
     if(error||!data){root.innerHTML='<div class="empty-state">Solicitação não encontrada.</div>';return}
     let item=row(data);
@@ -91,7 +116,7 @@
     set('[data-id]','#'+item.id);set('[data-title]',item.title);set('[data-owner]',`${item.ownerName} · ${item.ownerEmail}`);set('[data-description]',item.description);set('[data-service]',item.service);set('[data-created]',fmt(item.createdAt));
     const form=$('#admin-response-form');
     if(form){form.elements.status.value=item.status;form.elements.viability.value=item.adminResponse?.viability||'';form.elements.value.value=item.adminResponse?.value||'';form.elements.deadline.value=item.adminResponse?.estimatedDeadline||'';form.elements.response.value=item.adminResponse?.response||'';form.elements.notes.value=item.adminResponse?.notes||'';
-      form.addEventListener('submit',async e=>{e.preventDefault();const out=$('#admin-response-message');const adminResponse={viability:form.elements.viability.value,value:form.elements.value.value.trim(),estimatedDeadline:form.elements.deadline.value.trim(),response:form.elements.response.value.trim(),notes:form.elements.notes.value.trim(),sentAt:new Date().toISOString()};const {error}=await db.from('requests').update({status:form.elements.status.value,admin_response:adminResponse}).eq('id',item.uuid);if(error){msg(out,error.message,'error');return}msg(out,'Resposta e status salvos.','success')});
+      form.addEventListener('submit',async e=>{e.preventDefault();const out=$('#admin-response-message');const adminResponse={viability:form.elements.viability.value,value:form.elements.value.value.trim(),estimatedDeadline:form.elements.deadline.value.trim(),response:form.elements.response.value.trim(),notes:form.elements.notes.value.trim(),sentAt:new Date().toISOString()};const nextStatus=form.elements.status.value;const {error}=await db.from('requests').update({status:nextStatus,admin_response:adminResponse}).eq('id',item.uuid);if(error){msg(out,error.message,'error');return}item.status=nextStatus;if(isArchivedStatus(nextStatus)){msg(out,'Resposta salva. A solicitação agora está em Solicitações antigas.','success');if(back){back.href='solicitacoes-antigas.html';back.textContent='← Voltar às solicitações antigas'}}else{msg(out,'Resposta e status salvos.','success');if(back){back.href='painel-admin.html';back.textContent='← Voltar ao painel'}}});
     }
     const chat=$('#admin-chat-thread');
     const drawChat=()=>{chat.innerHTML=item.messages.length?item.messages.map(m=>`<article class="chat-message ${m.sender==='admin'?'chat-message-admin':'chat-message-client'}"><div class="chat-message-meta"><strong>${esc(m.sender==='admin'?'InfoTech':m.senderName||'Cliente')}</strong><span>${fmt(m.sentAt)}</span></div><p>${esc(m.text)}</p></article>`).join(''):'<div class="empty-state">Sem mensagens.</div>';chat.scrollTop=chat.scrollHeight};drawChat();
