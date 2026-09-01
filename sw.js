@@ -32,7 +32,7 @@ const APP_SHELL = [
   '/css/jss/v6-ui.js'
 ];
 
-const SENSITIVE_PATH = /\/(?:admin(?:-|\/)|painel-(?:admin|cliente)|cliente-admin|clientes-admin|login|cadastro|perfil|nova-solicitacao|detalhes-solicitacao|recuperar-senha|email-confirmado)(?:\.html)?(?:$|[/?#])/i;
+const SENSITIVE_PATH = /\/(?:admin(?:-|\/)|painel-(?:admin|cliente)|cliente-admin|clientes-admin|solicitacoes-antigas|login|cadastro|perfil|nova-solicitacao|detalhes-solicitacao|recuperar-senha|email-confirmado)(?:\.html)?(?:$|[/?#])/i;
 
 const isCacheableResponse = response => {
   if (!response || !response.ok || response.type === 'opaque') return false;
