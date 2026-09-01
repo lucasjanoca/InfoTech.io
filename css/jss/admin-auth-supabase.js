@@ -59,23 +59,26 @@
     try { sessionStorage.removeItem('infotechDemoAdmin'); } catch {}
   };
 
-  const getRole = async userId => {
+  const getAccess = async userId => {
     const { data, error } = await client
       .from('profiles')
-      .select('role')
+      .select('role,is_blocked')
       .eq('id', userId)
       .maybeSingle();
 
     if (error) throw error;
-    return data?.role || 'client';
+    return {
+      role: data?.role || 'client',
+      blocked: Boolean(data?.is_blocked)
+    };
   };
 
   const verifyAdmin = async () => {
     const { data: { session }, error } = await client.auth.getSession();
     if (error || !session?.user) return false;
 
-    const role = await getRole(session.user.id);
-    return role === 'admin';
+    const access = await getAccess(session.user.id);
+    return access.role === 'admin' && !access.blocked;
   };
 
   const redirectToAdminLogin = () => {
@@ -130,11 +133,13 @@
           return;
         }
 
-        const role = await getRole(data.user.id);
-        if (role !== 'admin') {
+        const access = await getAccess(data.user.id);
+        if (access.role !== 'admin' || access.blocked) {
           await client.auth.signOut();
           clearLegacyAdmin();
-          setMessage('Esta conta não possui permissão administrativa.');
+          setMessage(access.blocked
+            ? 'Esta conta administrativa está bloqueada.'
+            : 'Esta conta não possui permissão administrativa.');
           return;
         }
 
