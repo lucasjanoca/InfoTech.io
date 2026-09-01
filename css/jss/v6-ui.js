@@ -292,3 +292,79 @@
     if(typeof track?._loopNext==='function')track._loopNext();
   }));
 })();
+
+
+/* INFOTECH_PWA_V9 — instalação, atualização e ciclo de vida do aplicativo */
+(() => {
+  'use strict';
+  if (!('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' && !['localhost', '127.0.0.1'].includes(location.hostname)) return;
+
+  let installEvent = null;
+  let installLink = null;
+
+  const isStandalone = () =>
+    window.matchMedia?.('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  const removeInstallLink = () => {
+    installLink?.remove();
+    installLink = null;
+  };
+
+  const ensureInstallLink = () => {
+    if (!installEvent || isStandalone() || installLink) return;
+    const host = document.querySelector('.footer-legal-links');
+    if (!host) return;
+
+    installLink = document.createElement('a');
+    installLink.href = '#instalar-app';
+    installLink.textContent = 'Instalar app';
+    installLink.setAttribute('data-pwa-install', '');
+    installLink.addEventListener('click', async event => {
+      event.preventDefault();
+      if (!installEvent) return;
+      await installEvent.prompt();
+      await installEvent.userChoice.catch(() => null);
+      installEvent = null;
+      removeInstallLink();
+    });
+    host.append(' · ', installLink);
+  };
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    installEvent = event;
+    ensureInstallLink();
+    window.dispatchEvent(new CustomEvent('infotech:pwa-install-ready'));
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installEvent = null;
+    removeInstallLink();
+    window.dispatchEvent(new CustomEvent('infotech:pwa-installed'));
+  });
+
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/',
+        updateViaCache: 'none'
+      });
+      registration.update().catch(() => {});
+
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+            window.dispatchEvent(new CustomEvent('infotech:pwa-update-ready', { detail: { registration } }));
+          }
+        });
+      });
+    } catch (error) {
+      console.warn('PWA InfoTech indisponível:', error);
+    }
+    ensureInstallLink();
+  }, { once: true });
+})();
