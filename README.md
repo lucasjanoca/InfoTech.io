@@ -22,7 +22,7 @@ A **InfoTech.io** é um projeto em evolução voltado à criação de sites, sis
 
 ## 🛠️ Tecnologias
 
-`HTML5` · `CSS3` · `JavaScript` · `Supabase` · `GitHub Pages`
+`HTML5` · `CSS3` · `JavaScript` · `PWA / Service Worker` · `Supabase` · `GitHub Pages`
 
 ## 🔐 Segurança
 
