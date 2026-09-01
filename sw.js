@@ -4,17 +4,32 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.1.1';
+const VERSION = 'infotech-pwa-v9.3.0';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
 
 const APP_SHELL = [
   OFFLINE_URL,
+  '/',
+  '/index.html',
+  '/servicos.html',
+  '/solicitacoes.html',
+  '/projetos.html',
+  '/contato.html',
+  '/sobre.html',
+  '/privacidade.html',
+  '/seguranca.html',
   '/manifest.webmanifest',
   '/assets/brand/logo-192.webp',
   '/assets/brand/logo-512.webp',
-  '/css/v6.css?v=9.1.1'
+  '/assets/brand/logo.webp',
+  '/assets/brand/projetos.webp',
+  '/assets/projects/padoka-logo.svg',
+  '/assets/projects/stoski-films-logo.svg',
+  '/css/v6.css',
+  '/css/site-premium-v10.css',
+  '/css/jss/v6-ui.js'
 ];
 
 const SENSITIVE_PATH = /\/(?:admin(?:-|\/)|painel-(?:admin|cliente)|cliente-admin|clientes-admin|login|cadastro|perfil|nova-solicitacao|detalhes-solicitacao|recuperar-senha|email-confirmado)(?:\.html)?(?:$|[/?#])/i;
@@ -41,15 +56,18 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key.startsWith('infotech-pwa-') && ![STATIC_CACHE, PAGE_CACHE].includes(key))
-          .map(key => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    if (self.registration.navigationPreload) {
+      try { await self.registration.navigationPreload.enable(); } catch {}
+    }
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter(key => key.startsWith('infotech-pwa-') && ![STATIC_CACHE, PAGE_CACHE].includes(key))
+        .map(key => caches.delete(key))
+    );
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', event => {
@@ -61,16 +79,28 @@ self.addEventListener('fetch', event => {
 
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
-      try {
-        const fresh = await fetch(request);
-        if (isCacheableResponse(fresh)) {
-          const cache = await caches.open(PAGE_CACHE);
-          await cache.put(request, fresh.clone());
+      const cached = await caches.match(request, { ignoreSearch: true });
+
+      const refresh = (async () => {
+        try {
+          const preload = await event.preloadResponse;
+          const fresh = preload || await fetch(request);
+          if (isCacheableResponse(fresh)) {
+            const cache = await caches.open(PAGE_CACHE);
+            await cache.put(request, fresh.clone());
+          }
+          return fresh;
+        } catch {
+          return null;
         }
-        return fresh;
-      } catch {
-        return (await caches.match(request)) || (await caches.match(OFFLINE_URL));
-      }
+      })();
+
+      event.waitUntil(refresh.then(() => undefined));
+
+      if (cached) return cached;
+
+      const fresh = await refresh;
+      return fresh || (await caches.match(OFFLINE_URL));
     })());
     return;
   }
@@ -79,7 +109,7 @@ self.addEventListener('fetch', event => {
   if (!['style', 'script', 'image', 'font', 'manifest'].includes(destination)) return;
 
   event.respondWith((async () => {
-    const cached = await caches.match(request);
+    const cached = await caches.match(request, { ignoreSearch: true });
     const refresh = fetch(request)
       .then(async response => {
         if (isCacheableResponse(response)) {
