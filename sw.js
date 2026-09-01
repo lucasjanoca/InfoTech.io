@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.0.0';
+const VERSION = 'infotech-pwa-v9.1.0';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -14,7 +14,7 @@ const APP_SHELL = [
   '/manifest.webmanifest',
   '/assets/brand/logo-192.webp',
   '/assets/brand/logo-512.webp',
-  '/css/v6.css?v=8.0'
+  '/css/v6.css?v=9.1.0'
 ];
 
 const SENSITIVE_PATH = /\/(?:admin(?:-|\/)|painel-(?:admin|cliente)|cliente-admin|clientes-admin|login|cadastro|perfil|nova-solicitacao|detalhes-solicitacao|recuperar-senha|email-confirmado)(?:\.html)?(?:$|[/?#])/i;
