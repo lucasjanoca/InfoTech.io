@@ -569,6 +569,7 @@
     {key:'services',href:'servicos.html',icon:'◇',label:'Serviços'},
     {key:'request',href:'nova-solicitacao.html',icon:'＋',label:'Solicitar'},
     {key:'projects',href:'projetos.html',icon:'▦',label:'Projetos'},
+    {key:'about',href:'sobre.html',icon:'ⓘ',label:'Sobre'},
     {key:'account',href:hasSessionHint?'painel-cliente.html':'login.html',icon:'♙',label:'Conta'}
   ];
 
@@ -577,6 +578,7 @@
     if(page==='servicos.html')return'services';
     if(['nova-solicitacao.html','solicitacoes.html','solicitacao-enviada.html','detalhes-solicitacao.html'].includes(page))return'request';
     if(page==='projetos.html')return'projects';
+    if(page==='sobre.html')return'about';
     if(['login.html','cadastro.html','perfil.html','painel-cliente.html','recuperar-senha.html','email-confirmado.html'].includes(page))return'account';
     return'';
   })();
