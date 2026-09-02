@@ -293,9 +293,12 @@
   }));
 })();
 
-/* INFOTECH_PWA_V9_1 — aviso persistente de instalação + prompt nativo quando disponível */
+/* INFOTECH_PWA_V9_5 — PWA no navegador; o app Android usa shell nativo próprio */
 (() => {
   'use strict';
+
+  const nativeApp = /(?:^|\s)InfoTechAndroid\/\d+(?:\.\d+)*/i.test(navigator.userAgent);
+  if (nativeApp) return;
 
   const page = location.pathname.split('/').pop() || 'index.html';
   if (/^admin-|^painel-admin|^cliente-admin|^clientes-admin|^offline\.html$/i.test(page) || location.pathname.startsWith('/io/')) return;
@@ -526,7 +529,7 @@
 })();
 
 
-/* INFOTECH_APP_SHELL_V9_4 — experiência móvel inspirada no app da Padoka */
+/* INFOTECH_APP_SHELL_V9_5 — navegação móvel única + integração com app Android */
 (() => {
   'use strict';
 
@@ -535,9 +538,11 @@
   const excluded=/^(?:admin-|painel-admin|cliente-admin|clientes-admin|solicitacoes-antigas|offline\.html)/i.test(page)||location.pathname.startsWith('/io/');
   if(excluded)return;
 
-  const standalone=window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  const nativeApp=/(?:^|\s)InfoTechAndroid\/\d+(?:\.\d+)*/i.test(navigator.userAgent);
+  const standalone=nativeApp||window.matchMedia?.('(display-mode: standalone)').matches||window.navigator.standalone===true;
   root.classList.add('infotech-app-shell-enabled');
   root.classList.toggle('infotech-standalone-app',standalone);
+  root.classList.toggle('infotech-native-app',nativeApp);
 
   if(standalone&&navigator.storage&&typeof navigator.storage.persist==='function'){
     navigator.storage.persist().catch(()=>{});
@@ -564,13 +569,21 @@
     }
   }
 
+  const ICONS={
+    home:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V21h13V9.5"/><path d="M9.5 21v-6h5v6"/></svg>',
+    services:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 9-9 9-9-9 9-9Z"/><path d="m12 7 5 5-5 5-5-5 5-5Z"/></svg>',
+    request:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>',
+    projects:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>',
+    about:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7"/><path d="M12 7h.01"/></svg>',
+    account:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c.7-4.2 3.1-6.5 7.5-6.5s6.8 2.3 7.5 6.5"/></svg>'
+  };
   const NAV_ITEMS=[
-    {key:'home',href:'index.html',icon:'⌂',label:'Início'},
-    {key:'services',href:'servicos.html',icon:'◇',label:'Serviços'},
-    {key:'request',href:'nova-solicitacao.html',icon:'＋',label:'Solicitar'},
-    {key:'projects',href:'projetos.html',icon:'▦',label:'Projetos'},
-    {key:'about',href:'sobre.html',icon:'ⓘ',label:'Sobre'},
-    {key:'account',href:hasSessionHint?'painel-cliente.html':'login.html',icon:'♙',label:'Conta'}
+    {key:'home',href:'index.html',icon:ICONS.home,label:'Início'},
+    {key:'services',href:'servicos.html',icon:ICONS.services,label:'Serviços'},
+    {key:'request',href:'nova-solicitacao.html',icon:ICONS.request,label:'Solicitar'},
+    {key:'projects',href:'projetos.html',icon:ICONS.projects,label:'Projetos'},
+    {key:'about',href:'sobre.html',icon:ICONS.about,label:'Sobre'},
+    {key:'account',href:hasSessionHint?'painel-cliente.html':'login.html',icon:ICONS.account,label:'Conta'}
   ];
 
   const activeKey=(()=>{
@@ -626,7 +639,11 @@
     client.auth.getSession().then(({data})=>setAccountDestination(data?.session?.user||null)).catch(()=>{});
   });
 
-  const bootAppShell=()=>{buildBottomNav();buildLoginResume()};
+  const bootAppShell=()=>{
+    document.querySelector('.menu-mobile')?.remove();
+    buildBottomNav();
+    buildLoginResume();
+  };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootAppShell,{once:true});
   else bootAppShell();
 

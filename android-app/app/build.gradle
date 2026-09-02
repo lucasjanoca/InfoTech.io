@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace = 'br.com.infotechio.app'
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = 'br.com.infotechio.app'
+        minSdk = 26
+        targetSdk = 36
+        versionCode = 1
+        versionName = '1.0.0'
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled = false
+        }
+        release {
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+    }
+}

@@ -13,3 +13,10 @@
 *.log
 .DS_Store
 Thumbs.db
+
+# Android native app
+android-app/.gradle/
+android-app/local.properties
+android-app/**/build/
+*.jks
+*.keystore

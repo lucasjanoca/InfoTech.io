@@ -1,3 +1,3 @@
-InfoTech.io V9.0 — Security + PWA Platform Upgrade
-Data: 2026-09-01
-Status: branch de validação antes do merge em produção
+InfoTech.io V9.5 — Mobile App Shell + Android Native Wrapper
+Data: 2026-09-02
+Status: produção; menu mobile inferior único e projeto Android incluído

@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.4.1';
+const VERSION = 'infotech-pwa-v9.5.0';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -118,33 +118,40 @@ self.addEventListener('fetch', event => {
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       const cached = await caches.match(request, { ignoreSearch: true });
-
-      const refresh = (async () => {
-        try {
-          const preload = await event.preloadResponse;
-          const fresh = preload || await fetch(new Request(request, { cache: 'no-cache' }));
-          if (isCacheableResponse(fresh)) {
-            const cache = await caches.open(PAGE_CACHE);
-            await cache.put(request, fresh.clone());
-          }
-          return fresh;
-        } catch {
-          return null;
+      try {
+        const preload = await event.preloadResponse;
+        const fresh = preload || await fetch(new Request(request, { cache: 'no-cache' }));
+        if (isCacheableResponse(fresh)) {
+          const cache = await caches.open(PAGE_CACHE);
+          await cache.put(request, fresh.clone());
         }
-      })();
-
-      event.waitUntil(refresh.then(() => undefined));
-
-      if (cached) return cached;
-
-      const fresh = await refresh;
-      return fresh || (await caches.match(OFFLINE_URL));
+        return fresh;
+      } catch {
+        return cached || (await caches.match(OFFLINE_URL));
+      }
     })());
     return;
   }
 
   const destination = request.destination;
   if (!['style', 'script', 'image', 'font', 'manifest'].includes(destination)) return;
+
+  if (['style', 'script', 'manifest'].includes(destination)) {
+    event.respondWith((async () => {
+      const cached = await caches.match(request, { ignoreSearch: true });
+      try {
+        const fresh = await fetch(new Request(request, { cache: 'no-cache' }));
+        if (isCacheableResponse(fresh)) {
+          const cache = await caches.open(STATIC_CACHE);
+          await cache.put(request, fresh.clone());
+        }
+        return fresh;
+      } catch {
+        return cached || Response.error();
+      }
+    })());
+    return;
+  }
 
   event.respondWith((async () => {
     const cached = await caches.match(request, { ignoreSearch: true });
@@ -158,6 +165,7 @@ self.addEventListener('fetch', event => {
       })
       .catch(() => null);
 
+    event.waitUntil(refresh.then(() => undefined));
     return cached || (await refresh) || Response.error();
   })());
 });

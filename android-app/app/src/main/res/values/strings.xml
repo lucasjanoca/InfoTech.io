@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">InfoTech</string>
+    <string name="offline_title">Sem conexão</string>
+    <string name="offline_message">Não foi possível carregar a InfoTech agora. Confira sua internet e tente novamente.</string>
+    <string name="retry">Tentar novamente</string>
+    <string name="file_picker_unavailable">Não encontrei um seletor de arquivos neste aparelho.</string>
+    <string name="no_app_for_link">Não encontrei um aplicativo para abrir este link.</string>
+    <string name="download_started">Download iniciado.</string>
+    <string name="download_failed">Não foi possível iniciar o download.</string>
+    <string name="download_https_only">Por segurança, somente downloads HTTPS são permitidos.</string>
+    <string name="download_description">Arquivo baixado pela InfoTech.</string>
+</resources>

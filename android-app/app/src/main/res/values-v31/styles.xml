@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.InfoTech.Splash" parent="Theme.InfoTech">
+        <item name="android:windowSplashScreenBackground">@color/infotech_bg</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/infotech_logo</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/infotech_bg</item>
+    </style>
+</resources>

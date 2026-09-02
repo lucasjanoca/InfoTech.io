@@ -78,8 +78,7 @@
     }
   ],
   "display_override": [
-    "standalone",
-    "minimal-ui"
+    "standalone"
   ],
   "orientation": "any",
   "categories": [
