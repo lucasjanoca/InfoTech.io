@@ -22,7 +22,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          bad_files="$(git ls-files | grep -E '(^|/)\.env($|\.)|\.(pem|p12|pfx|key|jks|keystore)
+          bad_files="$(git ls-files | grep -E '(^|/)\.env([.]|$)|[.](pem|p12|pfx|key|jks|keystore)' || true)"
           if [ -n "$bad_files" ]; then
             echo "Arquivos privados rastreados pelo Git:"
             echo "$bad_files"
