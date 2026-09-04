@@ -2,6 +2,12 @@
 
 Histórico consolidado das principais versões do projeto. Este arquivo substitui os antigos arquivos de alterações e READMEs de preview espalhados na raiz do repositório.
 
+## V9.5
+
+### Segurança / CI
+- Actions externas do workflow Android fixadas por SHA imutável, reduzindo risco de supply-chain sem alterar o comportamento do build.
+- Mantidos `permissions: contents: read`, Java 17, Android 16, Gradle 9.5 e geração do checksum SHA-256 do APK.
+
 ## V8.0
 
 ### Segurança
