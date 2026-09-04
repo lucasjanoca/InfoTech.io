@@ -26,6 +26,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - A varredura de segredos agora decodifica tokens JWT rastreados em arquivos públicos e rejeita automaticamente qualquer token Supabase cujo payload contenha `role=service_role`, mesmo quando o texto `service_role` não aparece ao lado da chave.
 - O sanity check valida referências do manifest PWA além das referências HTML, mantendo instalação e atalhos protegidos contra links quebrados.
 - A validação de integridade PWA também cobre `admin-manifest.webmanifest`, incluindo `start_url`, ícones e atalhos quando existirem, evitando regressões no app administrativo.
+- O sanity check passa a permitir scripts externos apenas via HTTPS no host aprovado `cdn.jsdelivr.net` e exige versão semântica exata do SDK `@supabase/supabase-js`, bloqueando `@latest`, tags flutuantes, URLs sem versão e hosts de script não aprovados.
 
 ## V9.5
 
