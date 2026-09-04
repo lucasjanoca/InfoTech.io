@@ -7,6 +7,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ### Segurança / CI
 - Actions externas do workflow Android fixadas por SHA imutável, reduzindo risco de supply-chain sem alterar o comportamento do build.
 - Mantidos `permissions: contents: read`, Java 17, Android 16, Gradle 9.5 e geração do checksum SHA-256 do APK.
+- Auditoria automática dos workflows passa a exigir `permissions` explícitas, bloquear `pull_request_target` e exigir SHA completo de 40 caracteres para Actions externas.
 
 ## V8.0
 
