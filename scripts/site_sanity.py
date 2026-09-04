@@ -144,6 +144,18 @@ for page in sorted(ROOT.glob('*.html')):
             )
 
 
+def manifest_local_path(value: str):
+    parsed = urlsplit((value or '').strip())
+    if parsed.scheme or parsed.netloc:
+        return None
+    path = unquote(parsed.path or '')
+    if not path:
+        return '/'
+    if not path.startswith('/'):
+        path = '/' + path
+    return path
+
+
 def validate_manifest(manifest_path: Path) -> None:
     try:
         manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
@@ -157,10 +169,33 @@ def validate_manifest(manifest_path: Path) -> None:
             fail(f'{manifest_path.name}: {field} ausente ou inválido')
 
     start_url = manifest.get('start_url')
+    scope = manifest.get('scope')
+    start_path = manifest_local_path(start_url) if isinstance(start_url, str) else None
+    scope_path = manifest_local_path(scope) if isinstance(scope, str) else None
+
     if isinstance(start_url, str):
+        if start_path is None:
+            fail(f'{manifest_path.name}: start_url deve permanecer na origem do app -> {start_url}')
         target = local_path(start_url, manifest_path)
         if target is not None and not target.exists():
             fail(f'{manifest_path.name}: start_url inexistente -> {start_url}')
+
+    if isinstance(scope, str):
+        if scope_path is None:
+            fail(f'{manifest_path.name}: scope deve permanecer na origem do app -> {scope}')
+        elif not scope_path.endswith('/'):
+            scope_path += '/'
+
+    if start_path is not None and scope_path is not None:
+        normalized_scope = scope_path if scope_path.endswith('/') else scope_path + '/'
+        start_for_scope = start_path if start_path.endswith('/') else start_path
+        if normalized_scope != '/' and not (
+            start_for_scope == normalized_scope.rstrip('/') or start_for_scope.startswith(normalized_scope)
+        ):
+            fail(
+                f'{manifest_path.name}: start_url fora do scope declarado -> '
+                f'{start_url} (scope {scope})'
+            )
 
     icons = manifest.get('icons', [])
     if not isinstance(icons, list) or not icons:
@@ -190,9 +225,18 @@ def validate_manifest(manifest_path: Path) -> None:
             if not isinstance(url, str) or not url.strip():
                 fail(f'{manifest_path.name}: atalho #{index} sem url')
             else:
+                shortcut_path = manifest_local_path(url)
+                if shortcut_path is None:
+                    fail(f'{manifest_path.name}: atalho #{index} deve permanecer na origem do app -> {url}')
                 target = local_path(url, manifest_path)
                 if target is not None and not target.exists():
                     fail(f'{manifest_path.name}: atalho inexistente -> {url}')
+                if shortcut_path is not None and scope_path is not None:
+                    normalized_scope = scope_path if scope_path.endswith('/') else scope_path + '/'
+                    if normalized_scope != '/' and not (
+                        shortcut_path == normalized_scope.rstrip('/') or shortcut_path.startswith(normalized_scope)
+                    ):
+                        fail(f'{manifest_path.name}: atalho #{index} fora do scope -> {url}')
             shortcut_icons = shortcut.get('icons', [])
             if shortcut_icons is not None and not isinstance(shortcut_icons, list):
                 fail(f'{manifest_path.name}: ícones do atalho #{index} devem ser uma lista')
