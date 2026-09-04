@@ -194,5 +194,7 @@ jobs:
           assert len(manifest.get('icons', [])) >= 2
           PY
           grep -q "SENSITIVE_PATH" sw.js
+          grep -q "PUBLIC_NAVIGATION_PATHS" sw.js
+          grep -q "if (!isPublicNavigation(url)) return" sw.js
           grep -q "supabase.co" sw.js
           grep -q "request.method !== 'GET'" sw.js
