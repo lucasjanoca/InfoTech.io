@@ -41,6 +41,7 @@ class PageParser(HTMLParser):
         self.csp = ''
         self.has_noindex = False
         self.resources = []
+        self.scripts = []
 
     def handle_starttag(self, tag, attrs):
         data = {k.lower(): (v or '') for k, v in attrs}
@@ -65,6 +66,8 @@ class PageParser(HTMLParser):
 
         if resource_attr and data.get(resource_attr):
             self.resources.append(data[resource_attr])
+            if tag.lower() == 'script':
+                self.scripts.append(data[resource_attr])
 
 
 private_pages = {
@@ -72,6 +75,12 @@ private_pages = {
     'painel-admin.html', 'cliente-admin.html', 'clientes-admin.html',
     'painel-cliente.html', 'detalhes-solicitacao.html', 'perfil.html',
     'nova-solicitacao.html', 'recuperar-senha.html', 'login.html', 'cadastro.html',
+}
+
+demo_storage_markers = {
+    'infotechDemoRequests',
+    'infotechDemoUser',
+    'infotechLastProtocol',
 }
 
 for page in sorted(ROOT.glob('*.html')):
@@ -95,6 +104,22 @@ for page in sorted(ROOT.glob('*.html')):
         target = local_path(ref, page)
         if target is not None and not target.exists():
             fail(f'{page.name}: recurso local inexistente -> {ref}')
+
+    for ref in parser.scripts:
+        target = local_path(ref, page)
+        if target is None or not target.exists() or target.suffix.lower() != '.js':
+            continue
+        try:
+            script_text = target.read_text(encoding='utf-8')
+        except UnicodeDecodeError:
+            continue
+        found_markers = sorted(marker for marker in demo_storage_markers if marker in script_text)
+        if found_markers:
+            relative_target = target.resolve().relative_to(ROOT.resolve())
+            fail(
+                f'{page.name}: script de produção {relative_target} contém armazenamento demo: '
+                f'{", ".join(found_markers)}'
+            )
 
 manifest_path = ROOT / 'manifest.webmanifest'
 try:
