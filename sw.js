@@ -1,10 +1,11 @@
 /* InfoTech.io — service worker principal
- * Cacheia somente shell/arquivos públicos. Rotas autenticadas, administrativas,
- * Supabase e requisições não-GET nunca entram no cache.
+ * Cacheia somente shell/arquivos públicos explicitamente permitidos. Rotas
+ * autenticadas, administrativas, desconhecidas, Supabase e requisições não-GET
+ * nunca entram no cache.
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.6.0';
+const VERSION = 'infotech-pwa-v9.6.1';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -16,6 +17,19 @@ const NOTIFICATION_PATHS = new Set([
   '/perfil.html',
   '/nova-solicitacao.html',
   '/detalhes-solicitacao.html'
+]);
+
+const PUBLIC_NAVIGATION_PATHS = new Set([
+  '/',
+  '/index.html',
+  '/servicos.html',
+  '/solicitacoes.html',
+  '/projetos.html',
+  '/contato.html',
+  '/sobre.html',
+  '/privacidade.html',
+  '/seguranca.html',
+  '/offline.html'
 ]);
 
 const APP_SHELL = [
@@ -59,6 +73,9 @@ const isSensitive = url =>
   url.pathname.startsWith('/auth/v1/') ||
   url.pathname.startsWith('/storage/v1/');
 
+const isPublicNavigation = url =>
+  url.origin === self.location.origin && PUBLIC_NAVIGATION_PATHS.has(url.pathname);
+
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(STATIC_CACHE);
@@ -95,14 +112,11 @@ self.addEventListener('activate', event => {
 
     await self.clients.claim();
 
-    const safeRefresh = /\/(?:|index|servicos|solicitacoes|projetos|contato|sobre|privacidade|seguranca)\.html$/i;
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-
     await Promise.all(windows.map(async client => {
       try {
         const url = new URL(client.url);
-        const pathname = url.pathname === '/' ? '/index.html' : url.pathname;
-        if (url.origin === self.location.origin && safeRefresh.test(pathname)) {
+        if (isPublicNavigation(url)) {
           await client.navigate(client.url);
         }
       } catch {}
@@ -118,6 +132,8 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin || isSensitive(url)) return;
 
   if (request.mode === 'navigate') {
+    if (!isPublicNavigation(url)) return;
+
     event.respondWith((async () => {
       const cached = await caches.match(request, { ignoreSearch: true });
       try {
