@@ -25,6 +25,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - O CI também exige a allowlist de navegação pública do Service Worker e o bloqueio de cache para navegações fora dela.
 - A varredura de segredos agora decodifica tokens JWT rastreados em arquivos públicos e rejeita automaticamente qualquer token Supabase cujo payload contenha `role=service_role`, mesmo quando o texto `service_role` não aparece ao lado da chave.
 - O sanity check valida referências do manifest PWA além das referências HTML, mantendo instalação e atalhos protegidos contra links quebrados.
+- A validação de integridade PWA também cobre `admin-manifest.webmanifest`, incluindo `start_url`, ícones e atalhos quando existirem, evitando regressões no app administrativo.
 
 ## V9.5
 
