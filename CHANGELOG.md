@@ -21,6 +21,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ### Segurança / CI
 - O Site security check passa a rejeitar páginas HTML de produção que voltem a referenciar scripts `demo` ou `legacy`, evitando regressão acidental para fluxos locais antigos.
 - O CI também exige a allowlist de navegação pública do Service Worker e o bloqueio de cache para navegações fora dela.
+- A varredura de segredos agora decodifica tokens JWT rastreados em arquivos públicos e rejeita automaticamente qualquer token Supabase cujo payload contenha `role=service_role`, mesmo quando o texto `service_role` não aparece ao lado da chave.
 
 ## V9.5
 
