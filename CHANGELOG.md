@@ -6,6 +6,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 
 ### Mobile / UX
 - Refinamentos V15–V17 aplicados globalmente para melhorar espaçamento, títulos e acabamento das páginas no celular.
+- Refinamentos V18–V19 incorporados com ajustes de badges/labels, apresentação da logo local do Rass Studio, preferência de contato e animação do cadeado de login.
 - Página de Serviços com badge e título centralizados e contidos na largura da tela.
 - Carrossel da página Sobre simplificado para navegação por swipe/arraste ou indicadores, sem botão Próximo redundante.
 - Animação visual do cadeado refinada e respeitando `prefers-reduced-motion`.
@@ -15,6 +16,9 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Cache do Service Worker atualizado para `infotech-pwa-v9.6.0`.
 - App shell atualizado com recursos usados pelos refinamentos mobile e pelo carrossel da página Sobre.
 - Rotas sensíveis continuam fora do cache público do Service Worker.
+
+### Segurança / CI
+- O Site security check passa a rejeitar páginas HTML de produção que voltem a referenciar scripts `demo` ou `legacy`, evitando regressão acidental para fluxos locais antigos.
 
 ## V9.5
 
