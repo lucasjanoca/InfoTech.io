@@ -1,0 +1,45 @@
+/* InfoTech.io — refinamentos globais de identidade e títulos */
+.header-person-clean{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  display:grid!important;
+  place-items:center!important;
+  color:#63eaff!important;
+  border-radius:50%!important;
+  background:rgba(36,231,255,.08)!important;
+  border:1px solid rgba(69,222,255,.24)!important;
+  box-shadow:0 0 18px rgba(36,231,255,.13)!important;
+  scale:1!important;
+}
+.header-person-clean svg{width:27px!important;height:27px!important;display:block!important}
+.account-avatar{width:36px!important;height:36px!important;overflow:visible!important;background:transparent!important}
+.account-login-link{gap:10px!important}
+
+.hero-title-compact{
+  max-width:16ch!important;
+  font-size:clamp(2.75rem,5.2vw,5.25rem)!important;
+  line-height:.96!important;
+}
+
+.portfolio-title-one-line{
+  max-width:none!important;
+  white-space:nowrap!important;
+  font-size:clamp(1.85rem,4.3vw,4.35rem)!important;
+  letter-spacing:-.045em!important;
+}
+.portfolio-title-one-line .brand-dot-io{color:var(--cyan)!important}
+
+.service-title-compact{
+  max-width:14ch!important;
+  font-size:clamp(2.35rem,4.5vw,4.45rem)!important;
+  line-height:1!important;
+}
+
+@media (max-width:700px){
+  .header-person-clean{width:38px!important;height:38px!important;min-width:38px!important}
+  .header-person-clean svg{width:30px!important;height:30px!important}
+  .hero-title-compact{max-width:13ch!important;font-size:clamp(2.35rem,11vw,3.6rem)!important}
+  .portfolio-title-one-line{font-size:clamp(1.65rem,7.2vw,2.35rem)!important;letter-spacing:-.04em!important}
+  .service-title-compact{max-width:12ch!important;font-size:clamp(2.2rem,10vw,3.25rem)!important}
+}
