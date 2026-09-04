@@ -4,7 +4,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.5.0';
+const VERSION = 'infotech-pwa-v9.6.0';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -38,8 +38,10 @@ const APP_SHELL = [
   '/assets/projects/stoski-films-logo.svg',
   '/assets/projects/mundo-kids.svg',
   '/css/v6.css',
+  '/css/mobile-fixes-v15.css',
   '/css/site-premium-v10.css',
-  '/css/jss/v6-ui.js'
+  '/css/jss/v6-ui.js',
+  '/css/jss/about-services-v13.js'
 ];
 
 const SENSITIVE_PATH = /\/(?:admin(?:-|\/)|painel-(?:admin|cliente)|cliente-admin|clientes-admin|solicitacoes-antigas|login|cadastro|perfil|nova-solicitacao|detalhes-solicitacao|recuperar-senha|email-confirmado)(?:\.html)?(?:$|[/?#])/i;
