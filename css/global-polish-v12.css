@@ -36,10 +36,82 @@
   line-height:1!important;
 }
 
+/* Sobre: logo como protagonista e identificador azul no lugar do título gigante. */
+.about-hero-clean{
+  min-height:500px!important;
+  padding-block:50px!important;
+  gap:clamp(34px,5vw,68px)!important;
+}
+.about-hero-clean .about-hero-copy{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:18px;
+}
+.about-hero-clean .about-main-badge{
+  font-size:clamp(.88rem,1.25vw,1.02rem)!important;
+  padding:11px 17px!important;
+  letter-spacing:.11em!important;
+  box-shadow:0 0 28px rgba(36,231,255,.10)!important;
+}
+.about-hero-clean .about-hero-copy>p{
+  margin:0!important;
+  max-width:46ch;
+  color:var(--muted);
+  font-size:1rem;
+  line-height:1.7;
+}
+.about-hero-clean .page-hero-media img{
+  width:min(420px,88%)!important;
+  margin-inline:auto;
+}
+
+.about-services-section{padding-top:42px!important;padding-bottom:26px!important}
+.about-services-carousel article strong{font-size:1.08rem}
+.about-services-carousel article small{max-width:25ch;margin-inline:auto;line-height:1.45}
+.about-service-banner{margin-top:18px!important;margin-bottom:58px!important;min-height:170px}
+.about-service-banner h2{margin:10px 0 8px!important;font-size:clamp(1.75rem,3vw,2.65rem)!important}
+.about-service-banner p{max-width:58ch!important;min-height:3.2em}
+.about-service-banner.is-changing h2,
+.about-service-banner.is-changing p{animation:aboutDetailIn .32s ease both}
+@keyframes aboutDetailIn{from{opacity:.28;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Cadeado: a alça abre em dobradiça, presa pelo lado esquerdo. */
+.lock-shackle{
+  transform-origin:7px calc(100% - 3px)!important;
+  animation:unlockRealV13 3.1s cubic-bezier(.45,0,.2,1) infinite!important;
+}
+@keyframes unlockRealV13{
+  0%,28%,100%{transform:translateY(0) rotate(0deg)}
+  39%{transform:translateY(-3px) rotate(0deg)}
+  50%,70%{transform:translateY(-3px) rotate(-39deg)}
+  82%{transform:translateY(-1px) rotate(-8deg)}
+}
+
+/* Telas de conta: conteúdo e rodapé ficam visualmente conectados, sem vazio enorme. */
+.auth-page main{min-height:auto!important}
+.auth-page .auth-shell,
+.auth-page .auth-shell-v7{
+  min-height:0!important;
+  padding-top:clamp(28px,4vw,46px)!important;
+  padding-bottom:clamp(30px,4.5vw,52px)!important;
+}
+.auth-page .site-footer-v7{margin-top:0!important}
+
 @media (max-width:700px){
   .header-person-clean{width:38px!important;height:38px!important;min-width:38px!important}
   .header-person-clean svg{width:30px!important;height:30px!important}
   .hero-title-compact{max-width:13ch!important;font-size:clamp(2.35rem,11vw,3.6rem)!important}
   .portfolio-title-one-line{font-size:clamp(1.65rem,7.2vw,2.35rem)!important;letter-spacing:-.04em!important}
   .service-title-compact{max-width:12ch!important;font-size:clamp(2.2rem,10vw,3.25rem)!important}
+  .about-hero-clean{min-height:0!important;padding-block:34px 28px!important;gap:24px!important}
+  .about-hero-clean .about-main-badge{font-size:.84rem!important;padding:10px 14px!important}
+  .about-hero-clean .about-hero-copy{gap:14px}
+  .about-hero-clean .page-hero-media img{width:min(300px,78vw)!important}
+  .about-service-banner{margin-top:12px!important;margin-bottom:40px!important}
+  .auth-page .auth-shell,.auth-page .auth-shell-v7{padding-top:22px!important;padding-bottom:30px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .lock-shackle,.about-service-banner.is-changing h2,.about-service-banner.is-changing p{animation:none!important}
 }
