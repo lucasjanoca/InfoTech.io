@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
 import json
+import re
 import sys
 import xml.etree.ElementTree as ET
 
@@ -85,6 +86,14 @@ demo_storage_markers = {
     'infotechDemoUser',
 }
 
+# Scripts de terceiros executam com os privilégios da página. Para reduzir risco de
+# supply-chain, o frontend só pode carregar o SDK do Supabase pelo host aprovado e
+# com versão semântica exata (nunca @latest, tags flutuantes ou URLs sem versão).
+approved_external_script_hosts = {'cdn.jsdelivr.net'}
+pinned_supabase_sdk_path = re.compile(
+    r'^/npm/@supabase/supabase-js@\d+\.\d+\.\d+(?:/.*)?$'
+)
+
 for page in sorted(ROOT.glob('*.html')):
     parser = PageParser(page)
     try:
@@ -108,6 +117,17 @@ for page in sorted(ROOT.glob('*.html')):
             fail(f'{page.name}: recurso local inexistente -> {ref}')
 
     for ref in parser.scripts:
+        parsed_script = urlsplit((ref or '').strip())
+        if parsed_script.scheme or parsed_script.netloc:
+            host = (parsed_script.hostname or '').lower()
+            if parsed_script.scheme.lower() != 'https':
+                fail(f'{page.name}: script externo sem HTTPS -> {ref}')
+            elif host not in approved_external_script_hosts:
+                fail(f'{page.name}: host de script externo não aprovado -> {ref}')
+            elif host == 'cdn.jsdelivr.net' and not pinned_supabase_sdk_path.fullmatch(parsed_script.path):
+                fail(f'{page.name}: SDK externo deve usar versão exata do Supabase -> {ref}')
+            continue
+
         target = local_path(ref, page)
         if target is None or not target.exists() or target.suffix.lower() != '.js':
             continue
