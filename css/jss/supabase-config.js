@@ -10,7 +10,7 @@ window.INFOTECH_SUPABASE_CONFIG = Object.freeze({
   if (!document.querySelector('link[data-infotech-global-polish]')) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'css/global-polish-v12.css?v=12.0';
+    link.href = 'css/global-polish-v12.css?v=13.0';
     link.dataset.infotechGlobalPolish = 'true';
     document.head.appendChild(link);
   }
