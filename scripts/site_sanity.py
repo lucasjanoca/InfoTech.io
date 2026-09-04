@@ -77,10 +77,12 @@ private_pages = {
     'nova-solicitacao.html', 'recuperar-senha.html', 'login.html', 'cadastro.html',
 }
 
+# Somente chaves exclusivas do armazenamento persistente do fluxo demo.
+# infotechLastProtocol não entra aqui: a produção usa essa chave em sessionStorage
+# apenas para levar o protocolo recém-criado à tela de sucesso.
 demo_storage_markers = {
     'infotechDemoRequests',
     'infotechDemoUser',
-    'infotechLastProtocol',
 }
 
 for page in sorted(ROOT.glob('*.html')):
