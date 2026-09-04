@@ -20,6 +20,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - A auditoria local agora valida também `start_url`, ícones e atalhos do `manifest.webmanifest`, impedindo que futuras alterações publiquem um PWA com rota ou asset de instalação inexistente.
 
 ### Segurança / CI
+- O sitemap passa por validação dedicada no CI: apenas URLs HTTPS da origem oficial são aceitas, páginas privadas/admin são proibidas, destinos locais precisam existir e URLs duplicadas, com query ou fragmento são rejeitadas.
 - O Site security check passa a rejeitar páginas HTML de produção que voltem a referenciar scripts `demo` ou `legacy`, evitando regressão acidental para fluxos locais antigos.
 - O sanity check inspeciona o conteúdo dos scripts JavaScript locais realmente carregados pelas páginas de produção e rejeita as chaves exclusivas do armazenamento demo (`infotechDemoRequests` e `infotechDemoUser`), mesmo quando o nome do arquivo não contém `demo` ou `legacy`. A chave `infotechLastProtocol` permanece permitida porque o fluxo real a usa apenas em `sessionStorage` para transportar o protocolo recém-criado até a tela de sucesso.
 - O CI também exige a allowlist de navegação pública do Service Worker e o bloqueio de cache para navegações fora dela.
