@@ -4,6 +4,25 @@ window.INFOTECH_SUPABASE_CONFIG = Object.freeze({
   publishableKey: 'sb_publishable_Nw2oaGdMQHVIJNhUpjv5ag_JcxmRu2w'
 });
 
+// Carrega o acabamento visual comum da conta em todas as páginas que usam a configuração.
+(() => {
+  'use strict';
+  if (!document.querySelector('link[data-infotech-global-polish]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'css/global-polish-v12.css?v=12.0';
+    link.dataset.infotechGlobalPolish = 'true';
+    document.head.appendChild(link);
+  }
+  if (!document.querySelector('script[data-infotech-account-clean]')) {
+    const script = document.createElement('script');
+    script.src = 'css/jss/header-account-clean.js?v=1.1';
+    script.defer = true;
+    script.dataset.infotechAccountClean = 'true';
+    document.head.appendChild(script);
+  }
+})();
+
 // Camada preventiva para as rotas administrativas.
 // O banco continua sendo a autoridade final; esta camada garante que o painel
 // encaminhe o administrador para configurar/validar MFA antes de continuar.
