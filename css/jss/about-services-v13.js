@@ -4,7 +4,12 @@
   const track = document.querySelector('#about-services');
   const title = document.querySelector('[data-about-service-title]');
   const text = document.querySelector('[data-about-service-text]');
+  const nextButton = document.querySelector('[data-about-next]');
+  const dotsRoot = document.querySelector('[data-about-dots]');
   if (!track || !title || !text) return;
+
+  const slides = [...track.querySelectorAll('[data-about-slide]')];
+  if (!slides.length) return;
 
   const details = [
     {
@@ -21,49 +26,102 @@
     }
   ];
 
-  let active = -1;
-  let raf = 0;
+  let active = 0;
+  let timer = 0;
+  let pointerStart = null;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const logicalIndex = node => Number(node?.dataset?.loopIndex || 0);
+  const dots = [];
+  if (dotsRoot) {
+    dotsRoot.replaceChildren();
+    slides.forEach((_, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', `Ver ${details[index]?.title || `item ${index + 1}`}`);
+      button.addEventListener('click', () => show(index, true));
+      dotsRoot.appendChild(button);
+      dots.push(button);
+    });
+  }
 
-  const update = () => {
-    raf = 0;
-    const items = [...track.children].filter(node => node.matches('article,a,.card,.process-step'));
-    if (!items.length) return;
+  const animateBanner = () => {
+    const banner = title.closest('.about-service-banner');
+    if (!banner || reduced) return;
+    banner.classList.remove('is-changing');
+    void banner.offsetWidth;
+    banner.classList.add('is-changing');
+  };
 
-    const center = track.scrollLeft + track.clientWidth / 2;
-    let nearest = items[0];
-    let distance = Infinity;
-    for (const item of items) {
-      const itemCenter = item.offsetLeft + item.offsetWidth / 2;
-      const current = Math.abs(itemCenter - center);
-      if (current < distance) {
-        distance = current;
-        nearest = item;
-      }
-    }
+  const render = () => {
+    slides.forEach((slide, index) => {
+      const on = index === active;
+      slide.classList.toggle('is-active', on);
+      slide.setAttribute('aria-hidden', String(!on));
+      slide.tabIndex = on ? 0 : -1;
+    });
+    dots.forEach((dot, index) => {
+      const on = index === active;
+      dot.classList.toggle('active', on);
+      dot.setAttribute('aria-current', on ? 'true' : 'false');
+    });
 
-    const index = Math.max(0, Math.min(details.length - 1, logicalIndex(nearest)));
-    if (index === active) return;
-    active = index;
-    const detail = details[index];
+    const detail = details[active] || details[0];
     title.textContent = detail.title;
     text.textContent = detail.text;
-
-    const banner = title.closest('.about-service-banner');
-    if (banner) {
-      banner.classList.remove('is-changing');
-      void banner.offsetWidth;
-      banner.classList.add('is-changing');
-    }
+    animateBanner();
   };
 
   const schedule = () => {
-    if (!raf) raf = requestAnimationFrame(update);
+    clearTimeout(timer);
+    if (reduced || document.hidden) return;
+    timer = setTimeout(() => show(active + 1, false), 4200);
   };
 
-  track.addEventListener('scroll', schedule, { passive: true });
-  new MutationObserver(schedule).observe(track, { childList: true });
-  addEventListener('resize', schedule, { passive: true });
-  requestAnimationFrame(() => requestAnimationFrame(schedule));
+  function show(index, userInitiated = false) {
+    active = (index + slides.length) % slides.length;
+    render();
+    if (userInitiated || !document.hidden) schedule();
+  }
+
+  nextButton?.addEventListener('click', () => show(active + 1, true));
+
+  track.addEventListener('pointerdown', event => {
+    pointerStart = { x: event.clientX, y: event.clientY };
+    clearTimeout(timer);
+  });
+  track.addEventListener('pointerup', event => {
+    if (!pointerStart) return schedule();
+    const dx = event.clientX - pointerStart.x;
+    const dy = event.clientY - pointerStart.y;
+    pointerStart = null;
+    if (Math.abs(dx) > 38 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+      show(active + (dx < 0 ? 1 : -1), true);
+    } else {
+      schedule();
+    }
+  });
+  track.addEventListener('pointercancel', () => {
+    pointerStart = null;
+    schedule();
+  });
+
+  track.addEventListener('keydown', event => {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      show(active + 1, true);
+    }
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      show(active - 1, true);
+    }
+  });
+
+  track.addEventListener('mouseenter', () => clearTimeout(timer));
+  track.addEventListener('mouseleave', schedule);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) clearTimeout(timer);
+    else schedule();
+  });
+
+  show(0, false);
 })();
