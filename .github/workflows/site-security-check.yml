@@ -191,10 +191,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -nEi '<script[^>]+src=["'"'][^"'"']*(demo|legacy)[^"'"']*["'"']' ./*.html; then
-            echo "Página de produção referencia script demo/legacy. Use somente os fluxos reais do site principal."
-            exit 1
-          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          pattern = re.compile(r'<script[^>]+src=["\'][^"\']*(demo|legacy)[^"\']*["\']', re.IGNORECASE)
+          failures = []
+
+          for path in sorted(Path('.').glob('*.html')):
+              text = path.read_text(encoding='utf-8')
+              for match in pattern.finditer(text):
+                  line = text.count('\n', 0, match.start()) + 1
+                  failures.append(f'{path}:{line}')
+
+          if failures:
+              print('Página de produção referencia script demo/legacy:', file=sys.stderr)
+              for failure in failures:
+                  print(f'- {failure}', file=sys.stderr)
+              raise SystemExit(1)
+          PY
 
       - name: Verify local site references and metadata
         run: python3 scripts/site_sanity.py
