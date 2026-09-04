@@ -13,6 +13,61 @@
   scale:1!important;
 }
 .header-person-clean svg{width:27px!important;height:27px!important;display:block!important}
+
+/* Primeiro frame: o mascote antigo nunca aparece. O HTML legado já nasce com visual de perfil limpo. */
+.header-person:not(.header-person-clean){
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  display:block!important;
+  position:relative!important;
+  color:#63eaff!important;
+  border-radius:50%!important;
+  background:rgba(36,231,255,.08)!important;
+  border:1px solid rgba(69,222,255,.24)!important;
+  box-shadow:0 0 18px rgba(36,231,255,.13)!important;
+  filter:none!important;
+  animation:none!important;
+  transform:none!important;
+  scale:1!important;
+  overflow:hidden!important;
+}
+.header-person:not(.header-person-clean)>i{display:none!important}
+.header-person:not(.header-person-clean)::before{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:6px!important;
+  bottom:auto!important;
+  width:8px!important;
+  height:8px!important;
+  border:2px solid currentColor!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:none!important;
+  opacity:1!important;
+  animation:none!important;
+  transform:translateX(-50%)!important;
+}
+.header-person:not(.header-person-clean)::after{
+  content:""!important;
+  position:absolute!important;
+  left:50%!important;
+  top:auto!important;
+  bottom:5px!important;
+  width:18px!important;
+  height:9px!important;
+  border:2px solid currentColor!important;
+  border-bottom:0!important;
+  border-radius:14px 14px 2px 2px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:none!important;
+  opacity:1!important;
+  animation:none!important;
+  transform:translateX(-50%)!important;
+}
 .account-avatar{width:36px!important;height:36px!important;overflow:visible!important;background:transparent!important}
 .account-login-link{gap:10px!important}
 
@@ -67,8 +122,66 @@
 }
 
 .about-services-section{padding-top:42px!important;padding-bottom:26px!important}
-.about-services-carousel article strong{font-size:1.08rem}
-.about-services-carousel article small{max-width:25ch;margin-inline:auto;line-height:1.45}
+.about-values-shell{position:relative!important;padding-right:68px!important}
+.about-services-carousel{
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  min-height:205px!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:24px!important;
+  background:linear-gradient(180deg,rgba(7,29,51,.58),rgba(3,10,21,.72))!important;
+  box-shadow:inset 0 0 0 1px rgba(70,220,255,.12),0 18px 50px rgba(0,0,0,.18)!important;
+  contain:layout paint!important;
+  transform:none!important;
+}
+.about-services-carousel article{
+  grid-area:1/1!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  min-height:205px!important;
+  margin:0!important;
+  padding:30px 34px!important;
+  display:grid!important;
+  grid-template-columns:58px 1fr!important;
+  grid-template-rows:auto auto!important;
+  column-gap:18px!important;
+  align-content:center!important;
+  align-items:center!important;
+  border:0!important;
+  border-radius:24px!important;
+  background:radial-gradient(circle at 18% 20%,rgba(36,231,255,.11),transparent 34%),rgba(5,17,33,.94)!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  transform:translateX(26px) scale(.985)!important;
+  transition:opacity .34s ease,transform .34s ease,visibility .34s ease!important;
+}
+.about-services-carousel article>span{
+  grid-row:1/3!important;
+  width:58px!important;
+  height:58px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid rgba(82,230,255,.22)!important;
+  border-radius:17px!important;
+  background:linear-gradient(145deg,rgba(36,231,255,.12),rgba(36,118,255,.14))!important;
+  color:#77f2ff!important;
+  font-size:1.4rem!important;
+}
+.about-services-carousel article strong{font-size:1.35rem!important;align-self:end!important}
+.about-services-carousel article small{max-width:42ch!important;margin:5px 0 0!important;line-height:1.5!important;font-size:.9rem!important;align-self:start!important;color:var(--muted)!important}
+.about-services-carousel article.is-active{
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  transform:none!important;
+}
+.about-service-dots{margin-top:13px!important}
+.about-service-dots button{cursor:pointer}
+.about-next-star{z-index:5!important}
 .about-service-banner{margin-top:18px!important;margin-bottom:58px!important;min-height:170px}
 .about-service-banner h2{margin:10px 0 8px!important;font-size:clamp(1.75rem,3vw,2.65rem)!important}
 .about-service-banner p{max-width:58ch!important;min-height:3.2em}
@@ -99,8 +212,11 @@
 .auth-page .site-footer-v7{margin-top:0!important}
 
 @media (max-width:700px){
-  .header-person-clean{width:38px!important;height:38px!important;min-width:38px!important}
+  .header-person-clean,
+  .header-person:not(.header-person-clean){width:38px!important;height:38px!important;min-width:38px!important}
   .header-person-clean svg{width:30px!important;height:30px!important}
+  .header-person:not(.header-person-clean)::before{top:7px!important;width:9px!important;height:9px!important}
+  .header-person:not(.header-person-clean)::after{bottom:6px!important;width:20px!important;height:10px!important}
   .hero-title-compact{max-width:13ch!important;font-size:clamp(2.35rem,11vw,3.6rem)!important}
   .portfolio-title-one-line{font-size:clamp(1.65rem,7.2vw,2.35rem)!important;letter-spacing:-.04em!important}
   .service-title-compact{max-width:12ch!important;font-size:clamp(2.2rem,10vw,3.25rem)!important}
@@ -108,10 +224,17 @@
   .about-hero-clean .about-main-badge{font-size:.84rem!important;padding:10px 14px!important}
   .about-hero-clean .about-hero-copy{gap:14px}
   .about-hero-clean .page-hero-media img{width:min(300px,78vw)!important}
+  .about-values-shell{padding-right:52px!important}
+  .about-services-carousel{min-height:185px!important}
+  .about-services-carousel article{min-height:185px!important;padding:24px 20px!important;grid-template-columns:48px 1fr!important;column-gap:14px!important}
+  .about-services-carousel article>span{width:48px!important;height:48px!important;font-size:1.15rem!important}
+  .about-services-carousel article strong{font-size:1.15rem!important}
+  .about-services-carousel article small{font-size:.82rem!important}
   .about-service-banner{margin-top:12px!important;margin-bottom:40px!important}
   .auth-page .auth-shell,.auth-page .auth-shell-v7{padding-top:22px!important;padding-bottom:30px!important}
 }
 
 @media(prefers-reduced-motion:reduce){
   .lock-shackle,.about-service-banner.is-changing h2,.about-service-banner.is-changing p{animation:none!important}
+  .about-services-carousel article{transition:none!important}
 }
