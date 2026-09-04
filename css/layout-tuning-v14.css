@@ -1,0 +1,166 @@
+/* InfoTech.io V14 — quebras controladas, Sobre simplificado e cadeado realista */
+
+.title-line{display:block}
+.brand-dot-io{color:var(--cyan)!important}
+
+/* Home: exatamente duas linhas, sem quebra automática no meio. */
+.hero-title-fixed-lines{
+  max-width:none!important;
+  width:max-content;
+  font-size:clamp(2.65rem,4.7vw,4.9rem)!important;
+  line-height:.98!important;
+  letter-spacing:-.05em!important;
+}
+.hero-title-fixed-lines .title-line{white-space:nowrap!important}
+.hero-title-fixed-lines .title-line:last-child{
+  color:transparent;
+  background:linear-gradient(90deg,#fff,#5becff 45%,#2980ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+
+/* Serviços: identidade e quebras exatamente definidas. */
+.service-brand-eyebrow{white-space:nowrap}
+.service-title-fixed{
+  max-width:none!important;
+  width:max-content;
+  font-size:clamp(2.45rem,4.35vw,4.25rem)!important;
+  line-height:1!important;
+  letter-spacing:-.045em!important;
+}
+.service-title-fixed .title-line,
+.service-grid-title-fixed .title-line,
+.service-idea-title-fixed .title-line{white-space:nowrap!important}
+.service-grid-title-fixed{
+  width:max-content;
+  max-width:100%;
+  margin-inline:auto!important;
+  line-height:1.03!important;
+}
+.service-idea-title-fixed{
+  width:max-content;
+  max-width:100%;
+  line-height:1.04!important;
+}
+
+/* Sobre: texto centralizado e somente o banner inferior como carrossel. */
+.about-hero-clean .about-hero-copy{
+  align-items:center!important;
+  text-align:center!important;
+}
+.about-hero-clean .about-hero-copy>p{
+  text-align:center!important;
+  margin-inline:auto!important;
+}
+.about-service-carousel{
+  position:relative;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:28px!important;
+  overflow:hidden;
+  min-height:190px!important;
+}
+.about-service-carousel::after{
+  content:"";
+  position:absolute;
+  inset:auto -8% -70% 48%;
+  height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(36,231,255,.12),transparent 68%);
+  pointer-events:none;
+}
+.about-service-copy{position:relative;z-index:1;min-width:0}
+.about-service-actions{
+  position:relative;
+  z-index:1;
+  display:grid;
+  gap:10px;
+  align-content:center;
+  min-width:180px;
+}
+.about-carousel-next{
+  min-height:46px;
+  padding:0 17px;
+  border-radius:14px;
+  border:1px solid rgba(82,229,255,.28);
+  color:#bff7ff;
+  background:rgba(5,24,42,.72);
+  font-weight:850;
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+.about-carousel-next:hover{transform:translateY(-2px);border-color:rgba(82,229,255,.58);background:rgba(11,56,78,.62)}
+.about-service-dots{display:flex;align-items:center;gap:7px;margin-top:18px;min-height:10px}
+.about-service-dots button{
+  width:8px;height:8px;padding:0;border:0;border-radius:99px;
+  background:rgba(126,192,222,.34);cursor:pointer;transition:.22s
+}
+.about-service-dots button.active{
+  width:30px;background:linear-gradient(90deg,var(--cyan),var(--blue));
+  box-shadow:0 0 15px rgba(36,231,255,.3)
+}
+.about-service-carousel.is-changing h2,
+.about-service-carousel.is-changing p{animation:aboutLowerSlideV14 .34s ease both}
+@keyframes aboutLowerSlideV14{
+  from{opacity:.18;transform:translateX(12px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+/* Cadeado: destrava para cima e a haste gira no próprio eixo lateral, sem tombar. */
+.tech-lock{perspective:240px!important;transform-style:preserve-3d!important}
+.lock-shackle{
+  transform-origin:7px calc(100% - 3px)!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:visible!important;
+  animation:unlockSwivelV14 3.25s cubic-bezier(.42,0,.18,1) infinite!important;
+}
+@keyframes unlockSwivelV14{
+  0%,25%,100%{transform:translate3d(0,0,0) rotateY(0)}
+  34%{transform:translate3d(0,-6px,0) rotateY(0)}
+  46%,67%{transform:translate3d(0,-6px,0) rotateY(-72deg)}
+  77%{transform:translate3d(0,-6px,0) rotateY(-24deg)}
+  87%{transform:translate3d(0,0,0) rotateY(0)}
+}
+
+@media(max-width:700px){
+  .hero-title-fixed-lines{
+    font-size:clamp(2rem,9.2vw,3.05rem)!important;
+    width:100%;
+    text-align:center;
+  }
+  .hero-title-fixed-lines .title-line{white-space:nowrap!important}
+  .service-title-fixed{
+    width:100%;
+    font-size:clamp(2rem,9.1vw,3rem)!important;
+    text-align:center;
+  }
+  .service-title-fixed .title-line{white-space:nowrap!important}
+  .service-grid-title-fixed{
+    width:100%;
+    font-size:clamp(1.85rem,8vw,2.5rem)!important;
+  }
+  .service-grid-title-fixed .title-line{white-space:nowrap!important}
+  .service-idea-title-fixed{
+    width:100%;
+    font-size:clamp(1.85rem,8vw,2.5rem)!important;
+  }
+  .service-idea-title-fixed .title-line{white-space:nowrap!important}
+  .about-service-carousel{
+    grid-template-columns:1fr!important;
+    gap:20px!important;
+    text-align:center;
+  }
+  .about-service-copy .eyebrow{margin-inline:auto}
+  .about-service-dots{justify-content:center}
+  .about-service-actions{min-width:0;width:100%}
+  .about-service-actions .btn,.about-carousel-next{width:100%}
+}
+
+@media(max-width:390px){
+  .hero-title-fixed-lines{font-size:clamp(1.78rem,8.6vw,2.35rem)!important}
+  .service-title-fixed{font-size:clamp(1.78rem,8.5vw,2.3rem)!important}
+  .service-grid-title-fixed,.service-idea-title-fixed{font-size:clamp(1.55rem,7.2vw,2rem)!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .lock-shackle,.about-service-carousel.is-changing h2,.about-service-carousel.is-changing p{animation:none!important}
+}
