@@ -27,6 +27,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - O sanity check valida referências do manifest PWA além das referências HTML, mantendo instalação e atalhos protegidos contra links quebrados.
 - A validação de integridade PWA também cobre `admin-manifest.webmanifest`, incluindo `start_url`, ícones e atalhos quando existirem, evitando regressões no app administrativo.
 - O sanity check passa a permitir scripts externos apenas via HTTPS no host aprovado `cdn.jsdelivr.net` e exige versão semântica exata do SDK `@supabase/supabase-js`, bloqueando `@latest`, tags flutuantes, URLs sem versão e hosts de script não aprovados.
+- A validação dos manifests agora também rejeita `start_url`, `scope` e atalhos externos à origem do app e garante que `start_url`/atalhos permaneçam dentro do `scope` declarado.
 
 ## V9.5
 
