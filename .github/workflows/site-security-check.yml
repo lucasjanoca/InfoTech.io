@@ -213,7 +213,9 @@ jobs:
           PY
 
       - name: Verify local site references and metadata
-        run: python3 scripts/site_sanity.py
+        run: |
+          python3 scripts/site_sanity.py
+          python3 scripts/sitemap_sanity.py
 
       - name: Verify HTTPS-only production references
         shell: bash
