@@ -1,3 +1,3 @@
-InfoTech.io V9.5 — Mobile App Shell + Android Native Wrapper
-Data: 2026-09-02
-Status: produção; menu mobile inferior único e projeto Android incluído
+InfoTech.io V9.6 — Mobile polish + PWA refresh
+Data: 2026-09-04
+Status: produção; refinamentos mobile V15–V17 aplicados e cache PWA atualizado para v9.6.0
