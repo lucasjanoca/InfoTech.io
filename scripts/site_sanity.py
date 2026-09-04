@@ -24,6 +24,8 @@ def local_path(raw: str, source: Path):
     path = unquote(parsed.path)
     if not path:
         return None
+    if path == '/':
+        return ROOT / 'index.html'
     if path.startswith('/'):
         return ROOT / path.lstrip('/')
     return source.parent / path
@@ -94,10 +96,71 @@ for page in sorted(ROOT.glob('*.html')):
         if target is not None and not target.exists():
             fail(f'{page.name}: recurso local inexistente -> {ref}')
 
+manifest_path = ROOT / 'manifest.webmanifest'
 try:
-    json.loads((ROOT / 'manifest.webmanifest').read_text(encoding='utf-8'))
+    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
 except Exception as exc:
+    manifest = None
     fail(f'manifest.webmanifest inválido: {exc}')
+
+if manifest is not None:
+    for field in ('start_url', 'scope'):
+        value = manifest.get(field)
+        if not isinstance(value, str) or not value.strip():
+            fail(f'manifest.webmanifest: {field} ausente ou inválido')
+
+    start_url = manifest.get('start_url')
+    if isinstance(start_url, str):
+        target = local_path(start_url, manifest_path)
+        if target is not None and not target.exists():
+            fail(f'manifest.webmanifest: start_url inexistente -> {start_url}')
+
+    icons = manifest.get('icons', [])
+    if not isinstance(icons, list) or not icons:
+        fail('manifest.webmanifest: nenhum ícone declarado')
+    else:
+        for index, icon in enumerate(icons, 1):
+            if not isinstance(icon, dict):
+                fail(f'manifest.webmanifest: ícone #{index} inválido')
+                continue
+            src = icon.get('src')
+            if not isinstance(src, str) or not src.strip():
+                fail(f'manifest.webmanifest: ícone #{index} sem src')
+                continue
+            target = local_path(src, manifest_path)
+            if target is not None and not target.exists():
+                fail(f'manifest.webmanifest: ícone inexistente -> {src}')
+
+    shortcuts = manifest.get('shortcuts', [])
+    if shortcuts is not None and not isinstance(shortcuts, list):
+        fail('manifest.webmanifest: shortcuts deve ser uma lista')
+    elif isinstance(shortcuts, list):
+        for index, shortcut in enumerate(shortcuts, 1):
+            if not isinstance(shortcut, dict):
+                fail(f'manifest.webmanifest: atalho #{index} inválido')
+                continue
+            url = shortcut.get('url')
+            if not isinstance(url, str) or not url.strip():
+                fail(f'manifest.webmanifest: atalho #{index} sem url')
+            else:
+                target = local_path(url, manifest_path)
+                if target is not None and not target.exists():
+                    fail(f'manifest.webmanifest: atalho inexistente -> {url}')
+            shortcut_icons = shortcut.get('icons', [])
+            if shortcut_icons is not None and not isinstance(shortcut_icons, list):
+                fail(f'manifest.webmanifest: ícones do atalho #{index} devem ser uma lista')
+                continue
+            for icon in shortcut_icons or []:
+                if not isinstance(icon, dict):
+                    fail(f'manifest.webmanifest: ícone inválido no atalho #{index}')
+                    continue
+                src = icon.get('src')
+                if not isinstance(src, str) or not src.strip():
+                    fail(f'manifest.webmanifest: ícone sem src no atalho #{index}')
+                    continue
+                target = local_path(src, manifest_path)
+                if target is not None and not target.exists():
+                    fail(f'manifest.webmanifest: ícone de atalho inexistente -> {src}')
 
 try:
     ET.parse(ROOT / 'sitemap.xml')
