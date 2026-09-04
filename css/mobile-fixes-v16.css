@@ -1,0 +1,112 @@
+/* InfoTech.io V16 — acabamento mobile: espaçamento, serviços e cadeado */
+
+/* Serviços: remove o falso espaço antes do .IO e mantém tudo centralizado. */
+.service-brand-eyebrow{
+  gap:0!important;
+  text-align:center!important;
+}
+.service-brand-eyebrow .brand-dot-io{
+  display:inline-block!important;
+  position:relative!important;
+  left:-6px!important;
+  margin-right:-6px!important;
+  margin-left:0!important;
+}
+.service-hero>div:first-child,
+.service-title-fixed,
+.service-hero>div:first-child>p{
+  text-align:center!important;
+}
+.service-hero>div:first-child>p{
+  margin-left:auto!important;
+  margin-right:auto!important;
+  max-width:38ch!important;
+}
+.service-title-fixed{
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* Remove o vazio exagerado que existia antes do rodapé nas páginas públicas. */
+main>.cta-band:last-child,
+main>.cta-band-v7:last-child{
+  margin-bottom:18px!important;
+}
+
+/* Login, cadastro e recuperação: não força mais uma tela inteira antes do rodapé. */
+.auth-page .auth-shell{
+  min-height:0!important;
+  padding-bottom:20px!important;
+  margin-bottom:0!important;
+}
+
+/* O rodapé começa logo depois do conteúdo final, mantendo apenas respiro natural. */
+.site-footer-v7{
+  margin-top:0!important;
+}
+
+/* Cadeado: destrava, permanece preso no pino esquerdo e abre bem mais para a direita. */
+.tech-lock{
+  perspective:420px!important;
+  perspective-origin:18% 50%!important;
+  transform-style:preserve-3d!important;
+  overflow:visible!important;
+}
+body.auth-login-page .tech-lock .lock-shackle,
+.tech-lock .lock-shackle{
+  transform-origin:7px calc(100% - 3px)!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:visible!important;
+  animation:unlockRightV16 3.6s cubic-bezier(.42,0,.18,1) infinite!important;
+}
+@keyframes unlockRightV16{
+  0%,22%,100%{transform:translate3d(0,0,0) rotateY(0deg)}
+  31%{transform:translate3d(0,-8px,0) rotateY(0deg)}
+  43%{transform:translate3d(8px,-8px,2px) rotateY(42deg)}
+  56%{transform:translate3d(18px,-8px,5px) rotateY(72deg)}
+  64%,76%{transform:translate3d(24px,-8px,8px) rotateY(84deg)}
+  84%{transform:translate3d(15px,-7px,4px) rotateY(58deg)}
+  92%{transform:translate3d(4px,-3px,0) rotateY(18deg)}
+}
+
+@media(max-width:760px){
+  /* Espaço uniforme entre o último quadro e o rodapé em Home, Serviços, Sobre e Projetos. */
+  main>.cta-band:last-child,
+  main>.cta-band-v7:last-child{
+    margin-top:28px!important;
+    margin-bottom:14px!important;
+  }
+  .auth-page .auth-shell{
+    padding-top:28px!important;
+    padding-bottom:14px!important;
+  }
+  .site-footer-v7{
+    padding-top:24px!important;
+  }
+  .service-brand-eyebrow .brand-dot-io{
+    left:-6px!important;
+    margin-right:-6px!important;
+  }
+  .service-title-fixed{
+    text-align:center!important;
+  }
+  .service-title-fixed .title-line{
+    text-align:center!important;
+  }
+  .service-hero>div:first-child>p{
+    max-width:34ch!important;
+    text-align:center!important;
+  }
+}
+
+@media(max-width:390px){
+  .service-brand-eyebrow .brand-dot-io{
+    left:-5px!important;
+    margin-right:-5px!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.auth-login-page .tech-lock .lock-shackle,
+  .tech-lock .lock-shackle{animation:none!important}
+}
