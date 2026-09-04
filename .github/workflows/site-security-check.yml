@@ -148,6 +148,15 @@ jobs:
             exit 1
           fi
 
+      - name: Reject demo and legacy scripts in production pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -nEi '<script[^>]+src=["'"'][^"'"']*(demo|legacy)[^"'"']*["'"']' ./*.html; then
+            echo "Página de produção referencia script demo/legacy. Use somente os fluxos reais do site principal."
+            exit 1
+          fi
+
       - name: Verify local site references and metadata
         run: python3 scripts/site_sanity.py
 
