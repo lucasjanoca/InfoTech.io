@@ -13,12 +13,14 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
-- Cache do Service Worker atualizado para `infotech-pwa-v9.6.0`.
+- Cache do Service Worker atualizado para `infotech-pwa-v9.6.1`.
 - App shell atualizado com recursos usados pelos refinamentos mobile e pelo carrossel da página Sobre.
+- Navegações só entram no cache quando pertencem a uma allowlist explícita de páginas públicas; rotas novas, desconhecidas, autenticadas e administrativas ficam fora do cache por padrão.
 - Rotas sensíveis continuam fora do cache público do Service Worker.
 
 ### Segurança / CI
 - O Site security check passa a rejeitar páginas HTML de produção que voltem a referenciar scripts `demo` ou `legacy`, evitando regressão acidental para fluxos locais antigos.
+- O CI também exige a allowlist de navegação pública do Service Worker e o bloqueio de cache para navegações fora dela.
 
 ## V9.5
 
