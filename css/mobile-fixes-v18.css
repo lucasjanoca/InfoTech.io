@@ -22,14 +22,61 @@ body.auth-login-page .tech-lock .lock-shackle,
   92%{transform:translate(0,-2px) rotate(-16deg)}
 }
 
-/* Rótulos curtos com .io preservam a identidade visual. */
-.portfolio-hero>.reveal>.eyebrow,
-.service-grid-heading>.eyebrow{
+/* Projetos: troca o rótulo antigo por PROJETOS INFOTECH.IO. */
+.portfolio-hero>.reveal>.eyebrow{
+  font-size:0!important;
   white-space:nowrap!important;
 }
-.portfolio-hero>.reveal>.eyebrow .brand-dot-io,
-.service-grid-heading>.eyebrow .brand-dot-io{
+.portfolio-hero>.reveal>.eyebrow::before{
+  content:"PROJETOS INFOTECH";
+  font-size:.78rem;
+  letter-spacing:.14em;
+  color:inherit;
+}
+.portfolio-hero>.reveal>.eyebrow::after{
+  content:".IO";
+  font-size:.78rem;
+  letter-spacing:.14em;
   color:var(--cyan)!important;
+}
+
+/* Serviços: troca o rótulo para SOLUÇÕES INFOTECH.IO. */
+.service-grid-heading>.eyebrow{
+  font-size:0!important;
+  white-space:nowrap!important;
+}
+.service-grid-heading>.eyebrow::before{
+  content:"SOLUÇÕES INFOTECH";
+  font-size:.78rem;
+  letter-spacing:.14em;
+  color:inherit;
+}
+.service-grid-heading>.eyebrow::after{
+  content:".IO";
+  font-size:.78rem;
+  letter-spacing:.14em;
+  color:var(--cyan)!important;
+}
+
+/* Rass Studio: usa a marca local para não quebrar por hotlink/CSP. */
+.rass-emblem{
+  background-image:url("../assets/brand/rass-logo.svg")!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+}
+.rass-emblem>img{
+  visibility:hidden!important;
+}
+
+@media(max-width:760px){
+  .portfolio-hero>.reveal>.eyebrow::before,
+  .portfolio-hero>.reveal>.eyebrow::after,
+  .service-grid-heading>.eyebrow::before,
+  .service-grid-heading>.eyebrow::after{
+    font-size:.72rem;
+    letter-spacing:.11em;
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
