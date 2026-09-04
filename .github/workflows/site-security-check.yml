@@ -85,6 +85,45 @@ jobs:
             exit 1
           fi
 
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          import json
+          import re
+          import sys
+
+          token_re = re.compile(r'eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+')
+          suffixes = {'.html', '.js', '.json', '.md', '.txt', '.yml', '.yaml', '.css'}
+          failures = []
+
+          def decode_segment(segment):
+              padding = '=' * (-len(segment) % 4)
+              return base64.urlsafe_b64decode(segment + padding)
+
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts or path.suffix.lower() not in suffixes:
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              for match in token_re.finditer(text):
+                  token = match.group(0)
+                  try:
+                      payload = json.loads(decode_segment(token.split('.')[1]))
+                  except Exception:
+                      continue
+                  if payload.get('role') == 'service_role':
+                      line = text.count('\n', 0, match.start()) + 1
+                      failures.append(f'{path}:{line}: JWT Supabase com role=service_role')
+
+          if failures:
+              print('Segredo administrativo Supabase detectado:', file=sys.stderr)
+              for failure in failures:
+                  print(f'- {failure}', file=sys.stderr)
+              raise SystemExit(1)
+          PY
+
       - name: Reject oversized tracked files
         shell: bash
         run: |
