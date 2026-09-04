@@ -1,0 +1,102 @@
+/* InfoTech.io V19 — badges limpos, Rass local e cadeado em giro lateral real */
+
+/* Remove os conteúdos artificiais da V18 e usa o texto real do HTML. */
+.portfolio-hero>.reveal>.eyebrow,
+.service-grid-heading>.eyebrow{
+  font-size:inherit!important;
+  white-space:nowrap!important;
+}
+.portfolio-hero>.reveal>.eyebrow::before,
+.portfolio-hero>.reveal>.eyebrow::after,
+.service-grid-heading>.eyebrow::before,
+.service-grid-heading>.eyebrow::after{
+  content:none!important;
+  display:none!important;
+}
+
+/* Badges com o mesmo acabamento e sem espaço antes do .IO. */
+.brand-eyebrow-clean{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  white-space:nowrap!important;
+}
+.brand-eyebrow-clean .brand-dot-io{
+  display:inline!important;
+  position:static!important;
+  margin:0!important;
+  padding:0!important;
+  left:auto!important;
+  color:var(--cyan)!important;
+  letter-spacing:inherit!important;
+}
+
+/* Projetos: mantém o título dentro da tela sem perder impacto. */
+.portfolio-title-one-line{
+  width:100%!important;
+  max-width:100%!important;
+  margin-inline:auto!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
+/* Rass Studio: usa o SVG local de verdade, sem background/hotlink. */
+.rass-emblem{
+  background-image:none!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.rass-emblem>img{
+  visibility:visible!important;
+  display:block!important;
+  width:88%!important;
+  height:auto!important;
+  max-height:82%!important;
+  object-fit:contain!important;
+  opacity:1!important;
+}
+
+/* Cadeado: gira para o lado no eixo vertical, mantendo a alça em pé. */
+.tech-lock{
+  perspective:360px!important;
+  perspective-origin:50% 46%!important;
+  transform-style:preserve-3d!important;
+  overflow:visible!important;
+}
+body.auth-login-page .tech-lock .lock-shackle,
+.tech-lock .lock-shackle{
+  transform-origin:7px 31px!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:visible!important;
+  animation:unlockSideV19 4s cubic-bezier(.42,0,.18,1) infinite!important;
+}
+@keyframes unlockSideV19{
+  0%,22%,100%{transform:translate3d(0,0,0) rotateY(0deg)}
+  32%{transform:translate3d(0,-8px,0) rotateY(0deg)}
+  46%{transform:translate3d(-3px,-8px,3px) rotateY(-34deg)}
+  58%,74%{transform:translate3d(-9px,-8px,8px) rotateY(-68deg)}
+  83%{transform:translate3d(-4px,-7px,4px) rotateY(-38deg)}
+  92%{transform:translate3d(0,-2px,0) rotateY(-10deg)}
+}
+
+@media(max-width:760px){
+  .brand-eyebrow-clean{
+    max-width:calc(100vw - 52px)!important;
+  }
+  .portfolio-title-one-line{
+    font-size:clamp(2rem,9.2vw,3.2rem)!important;
+    letter-spacing:-.045em!important;
+  }
+}
+
+@media(max-width:390px){
+  .portfolio-title-one-line{
+    font-size:clamp(1.9rem,8.7vw,2.75rem)!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.auth-login-page .tech-lock .lock-shackle,
+  .tech-lock .lock-shackle{animation:none!important}
+}
