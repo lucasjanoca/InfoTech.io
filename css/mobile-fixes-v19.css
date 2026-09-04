@@ -1,35 +1,29 @@
 /* InfoTech.io V19 — badges limpos, Rass local e cadeado em giro lateral real */
 
-/* Remove os conteúdos artificiais da V18 e usa o texto real do HTML. */
+/* Badges: uma única string evita qualquer espaço antes do .IO. */
 .portfolio-hero>.reveal>.eyebrow,
 .service-grid-heading>.eyebrow{
-  font-size:inherit!important;
+  font-size:0!important;
   white-space:nowrap!important;
 }
-.portfolio-hero>.reveal>.eyebrow::before,
 .portfolio-hero>.reveal>.eyebrow::after,
-.service-grid-heading>.eyebrow::before,
 .service-grid-heading>.eyebrow::after{
   content:none!important;
   display:none!important;
 }
-
-/* Badges com o mesmo acabamento e sem espaço antes do .IO. */
-.brand-eyebrow-clean{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  gap:0!important;
-  white-space:nowrap!important;
-}
-.brand-eyebrow-clean .brand-dot-io{
+.portfolio-hero>.reveal>.eyebrow::before{
+  content:"PROJETOS INFOTECH.IO"!important;
   display:inline!important;
-  position:static!important;
-  margin:0!important;
-  padding:0!important;
-  left:auto!important;
-  color:var(--cyan)!important;
-  letter-spacing:inherit!important;
+  font-size:.78rem!important;
+  letter-spacing:.14em!important;
+  color:inherit!important;
+}
+.service-grid-heading>.eyebrow::before{
+  content:"SOLUÇÕES INFOTECH.IO"!important;
+  display:inline!important;
+  font-size:.78rem!important;
+  letter-spacing:.14em!important;
+  color:inherit!important;
 }
 
 /* Projetos: mantém o título dentro da tela sem perder impacto. */
@@ -41,26 +35,27 @@
   white-space:nowrap!important;
 }
 
-/* Rass Studio: usa o SVG local de verdade, sem background/hotlink. */
+/* Rass Studio: força a própria tag IMG a renderizar o SVG local. */
 .rass-emblem{
   background-image:none!important;
   display:grid!important;
   place-items:center!important;
 }
 .rass-emblem>img{
+  content:url("../assets/brand/rass-logo.svg")!important;
   visibility:visible!important;
   display:block!important;
-  width:88%!important;
+  width:90%!important;
   height:auto!important;
-  max-height:82%!important;
+  max-height:84%!important;
   object-fit:contain!important;
   opacity:1!important;
 }
 
-/* Cadeado: gira para o lado no eixo vertical, mantendo a alça em pé. */
+/* Cadeado: giro no eixo vertical. A alça continua em pé e abre para o lado. */
 .tech-lock{
-  perspective:360px!important;
-  perspective-origin:50% 46%!important;
+  perspective:300px!important;
+  perspective-origin:45% 48%!important;
   transform-style:preserve-3d!important;
   overflow:visible!important;
 }
@@ -74,15 +69,17 @@ body.auth-login-page .tech-lock .lock-shackle,
 @keyframes unlockSideV19{
   0%,22%,100%{transform:translate3d(0,0,0) rotateY(0deg)}
   32%{transform:translate3d(0,-8px,0) rotateY(0deg)}
-  46%{transform:translate3d(-3px,-8px,3px) rotateY(-34deg)}
-  58%,74%{transform:translate3d(-9px,-8px,8px) rotateY(-68deg)}
-  83%{transform:translate3d(-4px,-7px,4px) rotateY(-38deg)}
-  92%{transform:translate3d(0,-2px,0) rotateY(-10deg)}
+  46%{transform:translate3d(-4px,-8px,4px) rotateY(-40deg)}
+  58%,74%{transform:translate3d(-11px,-8px,10px) rotateY(-78deg)}
+  83%{transform:translate3d(-5px,-8px,5px) rotateY(-44deg)}
+  92%{transform:translate3d(0,-3px,0) rotateY(-12deg)}
 }
 
 @media(max-width:760px){
-  .brand-eyebrow-clean{
-    max-width:calc(100vw - 52px)!important;
+  .portfolio-hero>.reveal>.eyebrow::before,
+  .service-grid-heading>.eyebrow::before{
+    font-size:.72rem!important;
+    letter-spacing:.11em!important;
   }
   .portfolio-title-one-line{
     font-size:clamp(2rem,9.2vw,3.2rem)!important;
