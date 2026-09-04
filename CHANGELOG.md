@@ -2,6 +2,20 @@
 
 Histórico consolidado das principais versões do projeto. Este arquivo substitui os antigos arquivos de alterações e READMEs de preview espalhados na raiz do repositório.
 
+## V9.6
+
+### Mobile / UX
+- Refinamentos V15–V17 aplicados globalmente para melhorar espaçamento, títulos e acabamento das páginas no celular.
+- Página de Serviços com badge e título centralizados e contidos na largura da tela.
+- Carrossel da página Sobre simplificado para navegação por swipe/arraste ou indicadores, sem botão Próximo redundante.
+- Animação visual do cadeado refinada e respeitando `prefers-reduced-motion`.
+- Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
+
+### PWA
+- Cache do Service Worker atualizado para `infotech-pwa-v9.6.0`.
+- App shell atualizado com recursos usados pelos refinamentos mobile e pelo carrossel da página Sobre.
+- Rotas sensíveis continuam fora do cache público do Service Worker.
+
 ## V9.5
 
 ### Segurança / CI
