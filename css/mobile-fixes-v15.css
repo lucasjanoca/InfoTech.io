@@ -1,0 +1,190 @@
+/* InfoTech.io V15 — correções visuais finais para mobile/PWA */
+
+/* SOBRE: elimina definitivamente o carrossel antigo de cards. */
+.about-services-section,
+.about-values-shell,
+.about-services-carousel{
+  display:none!important;
+}
+.about-hero-clean .about-hero-copy{
+  align-items:center!important;
+  text-align:center!important;
+}
+.about-hero-clean .about-hero-copy>p{
+  margin-inline:auto!important;
+  text-align:center!important;
+}
+.about-service-carousel{
+  margin-top:18px!important;
+}
+
+/* HOME: duas linhas exatas e sem corte horizontal. */
+.hero.hero-v7 .hero-copy .hero-title-fixed-lines{
+  width:100%!important;
+  max-width:100%!important;
+  margin-inline:auto!important;
+  overflow:visible!important;
+  text-align:center!important;
+  text-wrap:initial!important;
+}
+.hero.hero-v7 .hero-copy .hero-title-fixed-lines .title-line{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  margin:0!important;
+}
+
+/* SERVIÇOS: identidade, alinhamento e espaçamento. */
+.service-hero>div:first-child{
+  text-align:center!important;
+}
+.service-brand-eyebrow{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:max-content!important;
+  max-width:100%!important;
+  margin-inline:auto!important;
+  white-space:nowrap!important;
+  letter-spacing:.105em!important;
+}
+.service-brand-eyebrow .brand-dot-io{
+  margin-left:-.105em!important;
+  color:var(--cyan)!important;
+}
+.service-title-fixed{
+  width:100%!important;
+  max-width:100%!important;
+  margin-inline:auto!important;
+  text-align:center!important;
+  text-wrap:initial!important;
+}
+.service-title-fixed .title-line{
+  display:block!important;
+  width:100%!important;
+  white-space:nowrap!important;
+}
+.service-hero>div:first-child>p{
+  margin-inline:auto!important;
+  text-align:center!important;
+}
+.service-hero .hero-actions{
+  justify-content:center!important;
+}
+.service-grid-title-fixed,
+.service-idea-title-fixed{
+  margin-inline:auto!important;
+  text-align:center!important;
+}
+.service-idea-band>div{
+  text-align:center!important;
+}
+.service-idea-band>div>p{
+  margin-inline:auto!important;
+}
+
+/* PROJETOS: só fica o cabeçalho principal do portfólio. */
+.portfolio-section>.section-heading{
+  display:none!important;
+}
+.portfolio-section{
+  padding-top:24px!important;
+}
+.portfolio-title-one-line{
+  max-width:100%!important;
+  margin-inline:auto!important;
+  text-align:center!important;
+}
+
+/* CADEADO: sobe para destravar e gira para a direita em torno do pino esquerdo. */
+.tech-lock{
+  perspective:320px!important;
+  transform-style:preserve-3d!important;
+  overflow:visible!important;
+}
+body.auth-login-page .tech-lock .lock-shackle,
+.tech-lock .lock-shackle{
+  transform-origin:7px calc(100% - 3px)!important;
+  transform-style:preserve-3d!important;
+  backface-visibility:visible!important;
+  animation:unlockRightV15 3.45s cubic-bezier(.42,0,.18,1) infinite!important;
+}
+@keyframes unlockRightV15{
+  0%,24%,100%{transform:translate3d(0,0,0) rotateY(0deg)}
+  34%{transform:translate3d(0,-7px,0) rotateY(0deg)}
+  48%{transform:translate3d(7px,-7px,0) rotateY(38deg)}
+  60%,72%{transform:translate3d(13px,-7px,0) rotateY(68deg)}
+  82%{transform:translate3d(6px,-5px,0) rotateY(28deg)}
+  91%{transform:translate3d(0,0,0) rotateY(0deg)}
+}
+
+@media(max-width:700px){
+  .hero.hero-v7 .hero-copy .hero-title-fixed-lines{
+    font-size:clamp(1.78rem,8.15vw,2.42rem)!important;
+    line-height:1.02!important;
+    letter-spacing:-.042em!important;
+  }
+  .hero.hero-v7 .hero-copy .hero-title-fixed-lines .title-line{
+    display:block!important;
+  }
+  .service-hero{
+    gap:14px!important;
+    padding-top:24px!important;
+    padding-bottom:30px!important;
+  }
+  .service-hero .page-hero-media{
+    margin-bottom:0!important;
+  }
+  .service-brand-eyebrow{
+    font-size:.72rem!important;
+    padding:9px 13px!important;
+    letter-spacing:.09em!important;
+  }
+  .service-brand-eyebrow .brand-dot-io{
+    margin-left:-.09em!important;
+  }
+  .service-title-fixed{
+    font-size:clamp(2rem,9vw,2.9rem)!important;
+    line-height:1.02!important;
+    letter-spacing:-.04em!important;
+    margin-top:18px!important;
+    margin-bottom:16px!important;
+  }
+  .service-grid-title-fixed{
+    font-size:clamp(1.75rem,7.6vw,2.35rem)!important;
+    line-height:1.04!important;
+  }
+  .service-idea-title-fixed{
+    font-size:clamp(1.65rem,7.2vw,2.25rem)!important;
+    line-height:1.05!important;
+  }
+  .portfolio-title-one-line{
+    white-space:nowrap!important;
+    font-size:clamp(1.95rem,8.8vw,2.75rem)!important;
+    letter-spacing:-.045em!important;
+  }
+  .portfolio-section{
+    padding-top:18px!important;
+  }
+  .about-service-carousel{
+    margin-top:10px!important;
+  }
+}
+
+@media(max-width:390px){
+  .hero.hero-v7 .hero-copy .hero-title-fixed-lines{
+    font-size:clamp(1.68rem,7.8vw,2.15rem)!important;
+  }
+  .service-title-fixed{
+    font-size:clamp(1.85rem,8.5vw,2.45rem)!important;
+  }
+  .portfolio-title-one-line{
+    font-size:clamp(1.78rem,8.1vw,2.35rem)!important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.auth-login-page .tech-lock .lock-shackle,
+  .tech-lock .lock-shackle{animation:none!important}
+}
