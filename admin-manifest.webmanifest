@@ -4,6 +4,7 @@
   "short_name": "InfoTech ADM",
   "description": "Aplicativo administrativo de InfoTech.io.",
   "lang": "pt-BR",
+  "dir": "ltr",
   "start_url": "/admin-login.html",
   "scope": "/",
   "display": "standalone",
