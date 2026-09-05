@@ -43,6 +43,7 @@ class PageParser(HTMLParser):
         self.has_noindex = False
         self.resources = []
         self.scripts = []
+        self.unsafe_new_tab_links = []
 
     def handle_starttag(self, tag, attrs):
         data = {k.lower(): (v or '') for k, v in attrs}
@@ -58,6 +59,12 @@ class PageParser(HTMLParser):
                 self.csp = data.get('content', '')
             if data.get('name', '').lower() == 'robots' and 'noindex' in data.get('content', '').lower():
                 self.has_noindex = True
+
+        if tag.lower() == 'a' and data.get('target', '').strip().lower() == '_blank':
+            rel_tokens = {token.lower() for token in data.get('rel', '').split()}
+            required_rel = {'noopener', 'noreferrer'}
+            if not required_rel.issubset(rel_tokens):
+                self.unsafe_new_tab_links.append(data.get('href') or '(sem href)')
 
         resource_attr = None
         if tag.lower() in {'script', 'img', 'source'}:
@@ -105,6 +112,11 @@ for page in sorted(ROOT.glob('*.html')):
 
     if parser.duplicate_ids:
         fail(f'{page.name}: IDs duplicados: {sorted(parser.duplicate_ids)}')
+    if parser.unsafe_new_tab_links:
+        fail(
+            f'{page.name}: links target="_blank" sem rel="noopener noreferrer": '
+            f'{parser.unsafe_new_tab_links}'
+        )
     if not parser.has_csp:
         fail(f'{page.name}: CSP ausente')
     elif "'unsafe-inline'" in parser.csp:
