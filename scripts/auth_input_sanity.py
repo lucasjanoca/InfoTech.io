@@ -99,6 +99,18 @@ for page in sorted(ROOT.glob('*.html')):
                 'autocomplete="current-password" deve ter exatamente um identificador '
                 f'com autocomplete="username"; encontrados {len(username_fields)}.'
             )
+            continue
+
+        username_field = username_fields[0]
+        username_type = username_field.get('type', '').strip().lower()
+        username_name = username_field.get('name', '').strip().lower()
+        if username_type != 'email' or username_name != 'email':
+            errors.append(
+                f'{page.name}: identificador de login de {form_id} deve permanecer '
+                'type="email" e name="email" para preservar validação nativa e o contrato '
+                f'do fluxo Supabase; encontrado type={username_type or "ausente"!r}, '
+                f'name={username_name or "ausente"!r}.'
+            )
 
 if password_inputs == 0:
     errors.append('Nenhum campo type="password" foi encontrado nas páginas de produção; a auditoria perdeu cobertura.')
@@ -114,6 +126,6 @@ if errors:
 
 print(
     f'Auth input sanity: OK — {password_inputs} campo(s) de senha com autocomplete válido e '
-    f'{login_forms} formulário(s) de login de produção com identificador autocomplete="username" '
-    'e fallback HTTP POST explícito.'
+    f'{login_forms} formulário(s) de login de produção com identificador de e-mail '
+    'autocomplete="username" e fallback HTTP POST explícito.'
 )
