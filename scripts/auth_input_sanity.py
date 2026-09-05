@@ -40,16 +40,15 @@ class AuthInputParser(HTMLParser):
             self.form_stack.pop()
 
 
-for page in sorted(ROOT.rglob('*.html')):
-    # Ignore generated/vendor directories if any are added in the future.
-    if any(part in {'.git', 'node_modules', 'dist', 'build'} for part in page.parts):
-        continue
-
+# As páginas HTML publicadas do site principal ficam na raiz. Manter a mesma
+# fronteira de produção usada por site_sanity.py evita misturar ferramentas ou
+# experiências paralelas armazenadas em subdiretórios do mesmo repositório.
+for page in sorted(ROOT.glob('*.html')):
     parser = AuthInputParser(page)
     try:
         parser.feed(page.read_text(encoding='utf-8'))
     except Exception as exc:
-        errors.append(f'{page.relative_to(ROOT)}: HTML não pôde ser analisado: {exc}')
+        errors.append(f'{page.name}: HTML não pôde ser analisado: {exc}')
         continue
 
     for field in parser.inputs:
@@ -60,7 +59,7 @@ for page in sorted(ROOT.rglob('*.html')):
         identifier = field.get('id') or field.get('name') or '(sem id/name)'
         if autocomplete not in ALLOWED_PASSWORD_AUTOCOMPLETE:
             errors.append(
-                f'{page.relative_to(ROOT)}: campo de senha {identifier} deve usar '
+                f'{page.name}: campo de senha {identifier} deve usar '
                 f'autocomplete="current-password" ou "new-password"; encontrado '
                 f'{autocomplete or "ausente"!r}'
             )
@@ -88,16 +87,16 @@ for page in sorted(ROOT.rglob('*.html')):
         if len(username_fields) != 1:
             form_id = form['attrs'].get('id') or form['attrs'].get('name') or '(form sem id/name)'
             errors.append(
-                f'{page.relative_to(ROOT)}: formulário de login {form_id} com '
+                f'{page.name}: formulário de login {form_id} com '
                 'autocomplete="current-password" deve ter exatamente um identificador '
                 f'com autocomplete="username"; encontrados {len(username_fields)}.'
             )
 
 if password_inputs == 0:
-    errors.append('Nenhum campo type="password" foi encontrado; a auditoria perdeu cobertura.')
+    errors.append('Nenhum campo type="password" foi encontrado nas páginas de produção; a auditoria perdeu cobertura.')
 
 if login_forms == 0:
-    errors.append('Nenhum formulário com autocomplete="current-password" foi encontrado; a auditoria perdeu cobertura de login.')
+    errors.append('Nenhum formulário com autocomplete="current-password" foi encontrado nas páginas de produção; a auditoria perdeu cobertura de login.')
 
 if errors:
     print('Auth input sanity: FALHOU')
@@ -107,5 +106,5 @@ if errors:
 
 print(
     f'Auth input sanity: OK — {password_inputs} campo(s) de senha com autocomplete válido e '
-    f'{login_forms} formulário(s) de login com identificador autocomplete="username".'
+    f'{login_forms} formulário(s) de login de produção com identificador autocomplete="username".'
 )
