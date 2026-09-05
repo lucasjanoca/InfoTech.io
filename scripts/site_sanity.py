@@ -209,6 +209,9 @@ def validate_manifest(manifest_path: Path) -> None:
             if not isinstance(src, str) or not src.strip():
                 fail(f'{manifest_path.name}: ícone #{index} sem src')
                 continue
+            if manifest_local_path(src) is None:
+                fail(f'{manifest_path.name}: ícone #{index} deve permanecer na origem do app -> {src}')
+                continue
             target = local_path(src, manifest_path)
             if target is not None and not target.exists():
                 fail(f'{manifest_path.name}: ícone inexistente -> {src}')
@@ -248,6 +251,9 @@ def validate_manifest(manifest_path: Path) -> None:
                 src = icon.get('src')
                 if not isinstance(src, str) or not src.strip():
                     fail(f'{manifest_path.name}: ícone sem src no atalho #{index}')
+                    continue
+                if manifest_local_path(src) is None:
+                    fail(f'{manifest_path.name}: ícone de atalho #{index} deve permanecer na origem do app -> {src}')
                     continue
                 target = local_path(src, manifest_path)
                 if target is not None and not target.exists():
