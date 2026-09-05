@@ -21,7 +21,7 @@ def load_manifest(name: str):
 
 
 def validate_common(name: str, manifest: dict) -> None:
-    required_text = ('id', 'name', 'short_name', 'description', 'lang', 'display', 'theme_color', 'background_color')
+    required_text = ('id', 'name', 'short_name', 'description', 'lang', 'start_url', 'scope', 'display', 'theme_color', 'background_color')
     for field in required_text:
         value = manifest.get(field)
         if not isinstance(value, str) or not value.strip():
@@ -31,6 +31,10 @@ def validate_common(name: str, manifest: dict) -> None:
         fail(f'{name}: lang deve permanecer pt-BR')
     if manifest.get('display') != 'standalone':
         fail(f'{name}: display deve permanecer standalone para experiência de app')
+    if manifest.get('orientation') != 'any':
+        fail(f'{name}: orientation deve permanecer any para não forçar a orientação do dispositivo')
+    if manifest.get('prefer_related_applications') is not False:
+        fail(f'{name}: prefer_related_applications deve permanecer false para priorizar o PWA da própria origem')
 
     for field in ('theme_color', 'background_color'):
         value = manifest.get(field)
@@ -52,6 +56,10 @@ if main is not None:
         fail('manifest.webmanifest: name deve permanecer InfoTech.io')
     if main.get('short_name') != 'InfoTech':
         fail('manifest.webmanifest: short_name deve permanecer InfoTech')
+    if main.get('start_url') != '/':
+        fail('manifest.webmanifest: start_url deve permanecer / para abrir o app principal na Home')
+    if main.get('scope') != '/':
+        fail('manifest.webmanifest: scope deve permanecer / para preservar as rotas instaladas do app principal')
 
 admin = load_manifest('admin-manifest.webmanifest')
 if admin is not None:
@@ -62,6 +70,10 @@ if admin is not None:
         fail('admin-manifest.webmanifest: name deve permanecer InfoTech.io ADM')
     if admin.get('short_name') != 'InfoTech ADM':
         fail('admin-manifest.webmanifest: short_name deve permanecer InfoTech ADM')
+    if admin.get('start_url') != '/admin-login.html':
+        fail('admin-manifest.webmanifest: start_url deve permanecer /admin-login.html para manter a entrada do app administrativo')
+    if admin.get('scope') != '/':
+        fail('admin-manifest.webmanifest: scope deve permanecer / para alcançar as páginas administrativas publicadas na raiz')
 
 if errors:
     for error in errors:
@@ -69,4 +81,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: identidade e experiência instalada dos manifests PWA estão consistentes.')
+print('OK: identidade, entrada e experiência instalada dos manifests PWA estão consistentes.')
