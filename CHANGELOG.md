@@ -15,6 +15,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- A auditoria de identidade PWA agora fixa também as fronteiras de lançamento: o app principal deve abrir em `/`, o app administrativo em `/admin-login.html`, ambos mantêm `scope=/`, orientação livre e `prefer_related_applications=false`, evitando regressões que troquem a entrada instalada ou desviem a instalação para outro aplicativo.
 - A auditoria de vínculos do manifest agora exige exatamente um `meta theme-color` em cada página que participa de um PWA e valida que a cor corresponde ao `theme_color` do manifest referenciado, evitando divergência visual entre a página, a instalação e a UI do navegador.
 - Nova auditoria dedicada dos vínculos de manifest garante que os pontos de entrada do app administrativo (`admin-install.html` e `admin-login.html`) usem o `admin-manifest.webmanifest`; demais páginas só podem referenciar manifests locais aprovados, e manifests externos, inexistentes ou múltiplos são bloqueados.
 - Nova auditoria dedicada da identidade instalada valida `id`, nome, nome curto, idioma, modo `standalone`, cores e prioridade de `display_override` dos manifests principal e administrativo, evitando colisão entre os dois apps e regressões na experiência instalada.
