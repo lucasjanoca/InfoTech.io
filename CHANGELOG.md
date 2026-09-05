@@ -22,6 +22,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- O sanity check agora rejeita links HTML com `target="_blank"` sem `rel="noopener noreferrer"`, reduzindo risco de reverse tabnabbing em futuras alterações que abram conteúdo em nova aba.
 - Nova auditoria dedicada da CSP valida a proteção `<meta http-equiv="Content-Security-Policy">` realmente portátil no GitHub Pages em todas as páginas HTML, exigindo baseline segura, rejeitando `unsafe-inline`, `unsafe-eval`, wildcards e origens HTTP; páginas sem scripts podem usar corretamente o fallback de `default-src`.
 - Nova auditoria dedicada do `.well-known/security.txt` valida campos obrigatórios, `Canonical` oficial, URLs HTTPS de contato/política apontando para páginas locais existentes, `Preferred-Languages` com `pt-BR` e data de expiração ainda válida.
 - O sanity check agora exige `noindex` também nas páginas utilitárias sensíveis `admin-install.html`, `email-confirmado.html` e `solicitacao-enviada.html`; a auditoria do `robots.txt` passa a incluir explicitamente o instalador administrativo.
