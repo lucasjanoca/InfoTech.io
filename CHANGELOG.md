@@ -15,6 +15,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- Nova auditoria dedicada da identidade instalada valida `id`, nome, nome curto, idioma, modo `standalone`, cores e prioridade de `display_override` dos manifests principal e administrativo, evitando colisão entre os dois apps e regressões na experiência instalada.
 - Cache do Service Worker atualizado para `infotech-pwa-v9.6.1`.
 - App shell atualizado com recursos usados pelos refinamentos mobile e pelo carrossel da página Sobre.
 - Navegações só entram no cache quando pertencem a uma allowlist explícita de páginas públicas; rotas novas, desconhecidas, autenticadas e administrativas ficam fora do cache por padrão.
