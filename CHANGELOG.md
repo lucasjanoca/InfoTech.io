@@ -22,7 +22,8 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
-- A auditoria CSP agora exige também `form-action 'self'` e `frame-src 'none'` em todas as páginas HTML, mantendo submissões de formulário limitadas à própria origem e bloqueando carregamento de frames por regressão futura.
+- Corrigida a baseline CSP para aceitar `form-action 'none'` como alternativa mais restritiva a `form-action 'self'` em páginas sem formulários, sem permitir origens adicionais; `frame-src 'none'` continua obrigatório em todas as páginas.
+- O instalador administrativo agora declara explicitamente `frame-src 'none'`, fechando a única lacuna que fazia o workflow CSP falhar.
 - O sanity check agora rejeita links HTML com `target="_blank"` sem `rel="noopener noreferrer"`, reduzindo risco de reverse tabnabbing em futuras alterações que abram conteúdo em nova aba.
 - Nova auditoria dedicada da CSP valida a proteção `<meta http-equiv="Content-Security-Policy">` realmente portátil no GitHub Pages em todas as páginas HTML, exigindo baseline segura, rejeitando `unsafe-inline`, `unsafe-eval`, wildcards e origens HTTP; páginas sem scripts podem usar corretamente o fallback de `default-src`.
 - Nova auditoria dedicada do `.well-known/security.txt` valida campos obrigatórios, `Canonical` oficial, URLs HTTPS de contato/política apontando para páginas locais existentes, `Preferred-Languages` com `pt-BR` e data de expiração ainda válida.
