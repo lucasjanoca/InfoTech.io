@@ -34,7 +34,22 @@ def extract_array(source: str, name: str) -> list[str]:
     if not match:
         fail(f'sw.js: lista {name} não encontrada')
         return []
-    return re.findall(r"['\"]([^'\"]+)['\"]", match.group(1))
+
+    body = match.group(1)
+    values = re.findall(r"['\"]([^'\"]+)['\"]", body)
+
+    # APP_SHELL também pode reutilizar constantes locais, como OFFLINE_URL.
+    for identifier in re.findall(r'(?m)^\s*([A-Z][A-Z0-9_]*)\s*,?\s*$', body):
+        constant = re.search(
+            rf"const\s+{re.escape(identifier)}\s*=\s*['\"]([^'\"]+)['\"]\s*;",
+            source,
+        )
+        if constant:
+            values.append(constant.group(1))
+        else:
+            fail(f'sw.js: constante {identifier} usada em {name} não pôde ser resolvida')
+
+    return values
 
 
 def local_target(raw: str):
