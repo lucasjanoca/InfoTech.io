@@ -74,6 +74,15 @@ for page in sorted(ROOT.glob('*.html')):
             continue
 
         login_forms += 1
+        form_id = form['attrs'].get('id') or form['attrs'].get('name') or '(form sem id/name)'
+        method = form['attrs'].get('method', '').strip().lower()
+        if method != 'post':
+            errors.append(
+                f'{page.name}: formulário de login {form_id} deve declarar method="post" '
+                f'para que uma falha do JavaScript nunca faça o navegador usar GET; '
+                f'encontrado {method or "ausente"!r}.'
+            )
+
         identifiers = [
             field for field in form['inputs']
             if field.get('type', '').strip().lower() in {'email', 'text'}
@@ -85,7 +94,6 @@ for page in sorted(ROOT.glob('*.html')):
         ]
 
         if len(username_fields) != 1:
-            form_id = form['attrs'].get('id') or form['attrs'].get('name') or '(form sem id/name)'
             errors.append(
                 f'{page.name}: formulário de login {form_id} com '
                 'autocomplete="current-password" deve ter exatamente um identificador '
@@ -106,5 +114,6 @@ if errors:
 
 print(
     f'Auth input sanity: OK — {password_inputs} campo(s) de senha com autocomplete válido e '
-    f'{login_forms} formulário(s) de login de produção com identificador autocomplete="username".'
+    f'{login_forms} formulário(s) de login de produção com identificador autocomplete="username" '
+    'e fallback HTTP POST explícito.'
 )
