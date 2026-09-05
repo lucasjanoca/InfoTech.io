@@ -50,7 +50,6 @@ for page in sorted(ROOT.glob('*.html')):
 
     required = {
         'default-src': "'self'",
-        'script-src': "'self'",
         'object-src': "'none'",
         'base-uri': "'self'",
     }
@@ -61,10 +60,14 @@ for page in sorted(ROOT.glob('*.html')):
         elif required_value not in values:
             errors.append(f'{page.name}: {directive} deve conter {required_value}')
 
-    script_values = directives.get('script-src', [])
+    # script-src é opcional em páginas sem scripts: nesse caso default-src é o fallback CSP.
+    # Quando declarado, porém, deve manter a mesma baseline segura do restante do site.
+    script_values = directives.get('script-src', directives.get('default-src', []))
+    if "'self'" not in script_values:
+        errors.append(f"{page.name}: fonte efetiva de scripts deve conter 'self'")
     for forbidden in ("'unsafe-inline'", "'unsafe-eval'", '*'):
         if forbidden in script_values:
-            errors.append(f'{page.name}: script-src contém fonte perigosa {forbidden}')
+            errors.append(f'{page.name}: fonte efetiva de scripts contém valor perigoso {forbidden}')
 
     if '*' in directives.get('default-src', []):
         errors.append(f'{page.name}: default-src não pode usar wildcard')
