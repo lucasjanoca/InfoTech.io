@@ -20,6 +20,40 @@ def load_manifest(name: str):
         return None
 
 
+def validate_install_icons(name: str, manifest: dict) -> None:
+    icons = manifest.get('icons')
+    if not isinstance(icons, list):
+        fail(f'{name}: icons deve permanecer uma lista')
+        return
+
+    required = {
+        ('192x192', 'image/webp'),
+        ('512x512', 'image/webp'),
+    }
+    found = set()
+
+    for index, icon in enumerate(icons, 1):
+        if not isinstance(icon, dict):
+            fail(f'{name}: ícone #{index} inválido')
+            continue
+
+        sizes = icon.get('sizes')
+        media_type = icon.get('type')
+        purpose = icon.get('purpose')
+        purposes = {token.strip().lower() for token in purpose.split()} if isinstance(purpose, str) else set()
+
+        if 'any' not in purposes:
+            fail(f'{name}: ícone #{index} deve manter purpose com suporte a any')
+
+        if (sizes, media_type) in required:
+            found.add((sizes, media_type))
+
+    missing = sorted(required - found)
+    if missing:
+        labels = ', '.join(f'{sizes} {media_type}' for sizes, media_type in missing)
+        fail(f'{name}: ícones de instalação obrigatórios ausentes: {labels}')
+
+
 def validate_common(name: str, manifest: dict) -> None:
     required_text = ('id', 'name', 'short_name', 'description', 'lang', 'dir', 'start_url', 'scope', 'display', 'theme_color', 'background_color')
     for field in required_text:
@@ -51,6 +85,8 @@ def validate_common(name: str, manifest: dict) -> None:
     if override is not None:
         if not isinstance(override, list) or not override or override[0] != 'standalone':
             fail(f'{name}: display_override deve priorizar standalone')
+
+    validate_install_icons(name, manifest)
 
 
 main = load_manifest('manifest.webmanifest')
@@ -87,4 +123,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: identidade, direção de texto, entrada e experiência instalada dos manifests PWA estão consistentes.')
+print('OK: identidade, direção de texto, ícones, entrada e experiência instalada dos manifests PWA estão consistentes.')
