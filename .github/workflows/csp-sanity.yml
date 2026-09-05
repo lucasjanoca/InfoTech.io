@@ -12,12 +12,10 @@ permissions:
 jobs:
   csp-sanity:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
       - name: Validate CSP baseline
-        run: python scripts/csp_sanity.py
+        run: python3 scripts/csp_sanity.py
