@@ -36,6 +36,10 @@ def validate_common(name: str, manifest: dict) -> None:
     if manifest.get('prefer_related_applications') is not False:
         fail(f'{name}: prefer_related_applications deve permanecer false para priorizar o PWA da própria origem')
 
+    launch_handler = manifest.get('launch_handler')
+    if not isinstance(launch_handler, dict) or launch_handler.get('client_mode') != ['navigate-existing', 'auto']:
+        fail(f'{name}: launch_handler.client_mode deve priorizar navigate-existing e manter auto como fallback')
+
     for field in ('theme_color', 'background_color'):
         value = manifest.get(field)
         if not isinstance(value, str) or not value.startswith('#') or len(value) not in (4, 7):
