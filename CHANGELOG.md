@@ -19,6 +19,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Rotas sensíveis continuam fora do cache público do Service Worker.
 - A auditoria local agora valida também `start_url`, ícones e atalhos do `manifest.webmanifest`, impedindo que futuras alterações publiquem um PWA com rota ou asset de instalação inexistente.
 - Ícones do manifest principal, do manifest administrativo e dos atalhos PWA agora precisam permanecer na própria origem do app; referências externas são rejeitadas pelo sanity check.
+- Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
 - O sitemap passa por validação dedicada no CI: apenas URLs HTTPS da origem oficial são aceitas, páginas privadas/admin são proibidas, destinos locais precisam existir e URLs duplicadas, com query ou fragmento são rejeitadas.
