@@ -10,6 +10,7 @@ OFFICIAL_SITEMAP = 'https://infotech-io.com.br/sitemap.xml'
 # controle de acesso; esta auditoria apenas reduz exposição acidental de rotas
 # privadas/operacionais enquanto o noindex e as proteções reais continuam ativos.
 SENSITIVE_PATHS = {
+    '/admin-install.html',
     '/admin-login.html',
     '/admin-seguranca.html',
     '/admin-solicitacao.html',
