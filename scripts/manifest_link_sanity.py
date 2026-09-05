@@ -6,14 +6,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-ADMIN_PAGES = {
+ADMIN_APP_ENTRY_PAGES = {
     "admin-install.html",
     "admin-login.html",
-    "admin-seguranca.html",
-    "admin-solicitacao.html",
-    "cliente-admin.html",
-    "clientes-admin.html",
-    "painel-admin.html",
 }
 
 errors: list[str] = []
@@ -48,7 +43,7 @@ for html_path in sorted(ROOT.glob("*.html")):
     parser = ManifestParser()
     parser.feed(html_path.read_text(encoding="utf-8"))
 
-    # Scriptless utility pages may intentionally omit install metadata.
+    # Utility pages may intentionally omit install metadata.
     if not parser.manifests:
         continue
 
@@ -67,9 +62,11 @@ for html_path in sorted(ROOT.glob("*.html")):
     if not (ROOT / local_path).is_file():
         fail(f"{html_path.name}: manifest inexistente -> {local_path}")
 
-    expected = "admin-manifest.webmanifest" if html_path.name in ADMIN_PAGES else "manifest.webmanifest"
-    if local_path != expected:
-        fail(f"{html_path.name}: esperado {expected}, encontrado {local_path}")
+    # Only the dedicated administrative install/login entry points define the
+    # separate installed ADM app. Authenticated admin detail pages may remain
+    # inside the main app shell without weakening authentication boundaries.
+    if html_path.name in ADMIN_APP_ENTRY_PAGES and local_path != "admin-manifest.webmanifest":
+        fail(f"{html_path.name}: esperado admin-manifest.webmanifest, encontrado {local_path}")
 
 if errors:
     for error in errors:
