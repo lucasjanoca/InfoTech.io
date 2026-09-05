@@ -72,10 +72,11 @@ class PageParser(HTMLParser):
 
 
 private_pages = {
-    'admin-login.html', 'admin-seguranca.html', 'admin-solicitacao.html',
+    'admin-install.html', 'admin-login.html', 'admin-seguranca.html', 'admin-solicitacao.html',
     'painel-admin.html', 'cliente-admin.html', 'clientes-admin.html',
     'painel-cliente.html', 'detalhes-solicitacao.html', 'perfil.html',
     'nova-solicitacao.html', 'recuperar-senha.html', 'login.html', 'cadastro.html',
+    'email-confirmado.html', 'solicitacao-enviada.html',
 }
 
 # Somente chaves exclusivas do armazenamento persistente do fluxo demo.
