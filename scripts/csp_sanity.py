@@ -52,7 +52,6 @@ for page in sorted(ROOT.glob('*.html')):
         'default-src': "'self'",
         'object-src': "'none'",
         'base-uri': "'self'",
-        'form-action': "'self'",
         'frame-src': "'none'",
     }
     for directive, required_value in required.items():
@@ -61,6 +60,14 @@ for page in sorted(ROOT.glob('*.html')):
             errors.append(f'{page.name}: CSP sem diretiva obrigatória {directive}')
         elif required_value not in values:
             errors.append(f'{page.name}: {directive} deve conter {required_value}')
+
+    # form-action 'none' é mais restritivo que 'self' e é apropriado para páginas
+    # que não submetem formulários. Nunca aceite origens adicionais nessa baseline.
+    form_values = directives.get('form-action')
+    if form_values is None:
+        errors.append(f'{page.name}: CSP sem diretiva obrigatória form-action')
+    elif form_values not in (["'self'"], ["'none'"]):
+        errors.append(f"{page.name}: form-action deve ser exclusivamente 'self' ou 'none'")
 
     # script-src é opcional em páginas sem scripts: nesse caso default-src é o fallback CSP.
     # Quando declarado, porém, deve manter a mesma baseline segura do restante do site.
