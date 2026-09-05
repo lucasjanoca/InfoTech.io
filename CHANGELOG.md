@@ -22,6 +22,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- Nova auditoria dedicada do `robots.txt` valida o sitemap oficial e garante que rotas privadas, administrativas e pós-autenticação continuem efetivamente cobertas pelas regras de exclusão de indexação; o próprio check documenta que `robots.txt` não substitui autenticação, `noindex` ou RLS.
 - O sitemap passa por validação dedicada no CI: apenas URLs HTTPS da origem oficial são aceitas, páginas privadas/admin são proibidas, destinos locais precisam existir e URLs duplicadas, com query ou fragmento são rejeitadas.
 - O Site security check passa a rejeitar páginas HTML de produção que voltem a referenciar scripts `demo` ou `legacy`, evitando regressão acidental para fluxos locais antigos.
 - O sanity check inspeciona o conteúdo dos scripts JavaScript locais realmente carregados pelas páginas de produção e rejeita as chaves exclusivas do armazenamento demo (`infotechDemoRequests` e `infotechDemoUser`), mesmo quando o nome do arquivo não contém `demo` ou `legacy`. A chave `infotechLastProtocol` permanece permitida porque o fluxo real a usa apenas em `sessionStorage` para transportar o protocolo recém-criado até a tela de sucesso.
