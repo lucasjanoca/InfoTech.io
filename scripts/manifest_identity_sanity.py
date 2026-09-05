@@ -21,7 +21,7 @@ def load_manifest(name: str):
 
 
 def validate_common(name: str, manifest: dict) -> None:
-    required_text = ('id', 'name', 'short_name', 'description', 'lang', 'start_url', 'scope', 'display', 'theme_color', 'background_color')
+    required_text = ('id', 'name', 'short_name', 'description', 'lang', 'dir', 'start_url', 'scope', 'display', 'theme_color', 'background_color')
     for field in required_text:
         value = manifest.get(field)
         if not isinstance(value, str) or not value.strip():
@@ -29,6 +29,8 @@ def validate_common(name: str, manifest: dict) -> None:
 
     if manifest.get('lang') != 'pt-BR':
         fail(f'{name}: lang deve permanecer pt-BR')
+    if manifest.get('dir') != 'ltr':
+        fail(f'{name}: dir deve permanecer ltr para manter a direção de texto consistente com a interface pt-BR')
     if manifest.get('display') != 'standalone':
         fail(f'{name}: display deve permanecer standalone para experiência de app')
     if manifest.get('orientation') != 'any':
@@ -85,4 +87,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: identidade, entrada e experiência instalada dos manifests PWA estão consistentes.')
+print('OK: identidade, direção de texto, entrada e experiência instalada dos manifests PWA estão consistentes.')
