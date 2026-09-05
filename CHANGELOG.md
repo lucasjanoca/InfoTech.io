@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- Nova auditoria mobile-first exige exatamente um `meta viewport` por página de produção, com `width=device-width` e `initial-scale=1`, e bloqueia configurações que desabilitem ou restrinjam excessivamente o zoom no celular.
 - O identificador de e-mail do login principal agora usa `autocomplete="username"`, alinhando o par `username` + `current-password` esperado por gerenciadores de senha sem alterar o tipo do campo, o e-mail enviado ao Supabase ou o fluxo de autenticação.
 - Refinamentos V15–V17 aplicados globalmente para melhorar espaçamento, títulos e acabamento das páginas no celular.
 - Refinamentos V18–V19 incorporados com ajustes de badges/labels, apresentação da logo local do Rass Studio, preferência de contato e animação do cadeado de login.
