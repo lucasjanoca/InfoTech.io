@@ -52,6 +52,8 @@ for page in sorted(ROOT.glob('*.html')):
         'default-src': "'self'",
         'object-src': "'none'",
         'base-uri': "'self'",
+        'form-action': "'self'",
+        'frame-src': "'none'",
     }
     for directive, required_value in required.items():
         values = directives.get(directive)
