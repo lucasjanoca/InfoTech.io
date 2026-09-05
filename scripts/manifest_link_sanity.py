@@ -15,6 +15,13 @@ APPROVED_MANIFESTS = {
     "manifest.webmanifest",
     "admin-manifest.webmanifest",
 }
+ADMIN_INSTALL_META = {
+    "application-name": "InfoTech.io ADM",
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "InfoTech.io ADM",
+}
 
 errors: list[str] = []
 
@@ -24,6 +31,7 @@ class ManifestParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.manifests: list[str] = []
         self.theme_colors: list[str] = []
+        self.meta: dict[str, list[str]] = {}
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         data = {key.lower(): (value or "") for key, value in attrs}
@@ -34,8 +42,14 @@ class ManifestParser(HTMLParser):
                 self.manifests.append(data.get("href", "").strip())
             return
 
-        if tag.lower() == "meta" and data.get("name", "").lower() == "theme-color":
-            self.theme_colors.append(data.get("content", "").strip())
+        if tag.lower() == "meta":
+            name = data.get("name", "").lower()
+            if not name:
+                return
+            value = data.get("content", "").strip()
+            self.meta.setdefault(name, []).append(value)
+            if name == "theme-color":
+                self.theme_colors.append(value)
 
 
 def fail(message: str) -> None:
@@ -90,8 +104,19 @@ for html_path in sorted(ROOT.glob("*.html")):
     # Only the dedicated administrative install/login entry points define the
     # separate installed ADM app. Authenticated admin detail pages may remain
     # inside the main app shell without weakening authentication boundaries.
-    if html_path.name in ADMIN_APP_ENTRY_PAGES and local_path != "admin-manifest.webmanifest":
-        fail(f"{html_path.name}: esperado admin-manifest.webmanifest, encontrado {local_path}")
+    if html_path.name in ADMIN_APP_ENTRY_PAGES:
+        if local_path != "admin-manifest.webmanifest":
+            fail(f"{html_path.name}: esperado admin-manifest.webmanifest, encontrado {local_path}")
+
+        # Keep standalone/mobile metadata aligned on both routes that users can
+        # enter through when installing or launching the ADM app, including iOS.
+        for name, expected in ADMIN_INSTALL_META.items():
+            values = parser.meta.get(name, [])
+            if len(values) != 1:
+                fail(f"{html_path.name}: deve declarar exatamente um meta {name}")
+                continue
+            if values[0] != expected:
+                fail(f"{html_path.name}: meta {name} deve ser {expected!r}, encontrado {values[0]!r}")
 
     # Pages that opt into an installable app must expose one browser theme color
     # and keep it aligned with the referenced manifest. This prevents visible
