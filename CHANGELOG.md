@@ -22,6 +22,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- Nova auditoria dedicada do `.well-known/security.txt` valida campos obrigatórios, `Canonical` oficial, URLs HTTPS de contato/política apontando para páginas locais existentes, `Preferred-Languages` com `pt-BR` e data de expiração ainda válida.
 - O sanity check agora exige `noindex` também nas páginas utilitárias sensíveis `admin-install.html`, `email-confirmado.html` e `solicitacao-enviada.html`; a auditoria do `robots.txt` passa a incluir explicitamente o instalador administrativo.
 - Nova auditoria dedicada do `robots.txt` valida o sitemap oficial e garante que rotas privadas, administrativas e pós-autenticação continuem efetivamente cobertas pelas regras de exclusão de indexação; o próprio check documenta que `robots.txt` não substitui autenticação, `noindex` ou RLS.
 - O sitemap passa por validação dedicada no CI: apenas URLs HTTPS da origem oficial são aceitas, páginas privadas/admin são proibidas, destinos locais precisam existir e URLs duplicadas, com query ou fragmento são rejeitadas.
