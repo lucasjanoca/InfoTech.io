@@ -15,7 +15,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
-- Nova auditoria dedicada dos vínculos de manifest garante que páginas administrativas instaláveis usem exclusivamente o `admin-manifest.webmanifest`, páginas não administrativas usem o manifest principal, e bloqueia manifests externos, inexistentes ou múltiplos.
+- Nova auditoria dedicada dos vínculos de manifest garante que os pontos de entrada do app administrativo (`admin-install.html` e `admin-login.html`) usem o `admin-manifest.webmanifest`; demais páginas só podem referenciar manifests locais aprovados, e manifests externos, inexistentes ou múltiplos são bloqueados.
 - Nova auditoria dedicada da identidade instalada valida `id`, nome, nome curto, idioma, modo `standalone`, cores e prioridade de `display_override` dos manifests principal e administrativo, evitando colisão entre os dois apps e regressões na experiência instalada.
 - Cache do Service Worker atualizado para `infotech-pwa-v9.6.1`.
 - App shell atualizado com recursos usados pelos refinamentos mobile e pelo carrossel da página Sobre.
