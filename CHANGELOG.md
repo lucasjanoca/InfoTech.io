@@ -15,6 +15,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- A auditoria de identidade PWA agora exige os ícones mínimos de instalação 192×192 e 512×512 em WebP nos manifests principal e administrativo, com `purpose` incluindo `any`, bloqueando regressões que prejudiquem a instalação ou a apresentação do app.
 - Os manifests principal e administrativo agora declaram `dir="ltr"`, coerente com a interface `pt-BR`; a auditoria de identidade bloqueia regressões que removam ou alterem essa direção de texto.
 - Os manifests principal e administrativo agora mantêm `launch_handler.client_mode` em `navigate-existing` com fallback `auto`, reduzindo janelas duplicadas ao reabrir o PWA instalado; a auditoria de identidade bloqueia regressões desse contrato.
 - A auditoria de identidade PWA agora fixa também as fronteiras de lançamento: o app principal deve abrir em `/`, o app administrativo em `/admin-login.html`, ambos mantêm `scope=/`, orientação livre e `prefer_related_applications=false`, evitando regressões que troquem a entrada instalada ou desviem a instalação para outro aplicativo.
