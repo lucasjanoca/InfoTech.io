@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- A auditoria de baseline do documento agora exige títulos únicos entre todas as páginas HTML de produção da raiz, evitando abas, histórico e telas PWA diferentes com identificação duplicada.
 - A auditoria de baseline do documento agora exige exatamente um `<head>` e um `<body>` por página HTML de produção, evitando estrutura ausente ou duplicada que possa causar parsing inconsistente entre navegadores e no modo PWA.
 - A auditoria de baseline do documento agora exige que a declaração `<meta charset="utf-8">` permaneça nos primeiros 1024 bytes de cada página HTML de produção, garantindo detecção antecipada e consistente da codificação pelos navegadores.
 - A auditoria de baseline do documento agora exige exatamente um `<title>` não vazio por página HTML de produção, evitando páginas sem título ou títulos duplicados e preservando identificação consistente em abas, histórico e tecnologias assistivas.
