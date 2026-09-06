@@ -20,3 +20,9 @@ Nunca devem ser enviados ao repositório:
 - chaves privadas, certificados privados ou tokens pessoais.
 
 A chave publicável do Supabase usada pelo navegador não é um segredo; a proteção dos dados deve permanecer no RLS, nas permissões e nas funções do banco.
+
+## Isolamento entre projetos
+
+Este repositório contém o produto principal **InfoTech.io**. Projetos de clientes podem aparecer apenas como referências de portfólio, links ou assets de apresentação; o código de aplicação, backend, credenciais, regras de acesso e configurações operacionais desses projetos não devem ser reutilizados aqui para corrigir ou ampliar o site principal.
+
+Antes de qualquer alteração em banco, autenticação, RLS, policies, grants, triggers ou Edge Functions, confirme explicitamente que o backend selecionado pertence à InfoTech.io e aplique somente os privilégios mínimos necessários. Nunca reutilize URL de projeto, identificador, chave, policy ou função de um projeto de cliente como atalho para resolver erros no produto principal.
