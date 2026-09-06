@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- Nova auditoria de baseline do documento exige exatamente um `<!doctype html>`, um elemento `<html lang="pt-BR">` e um `<meta charset="utf-8">` em cada página HTML de produção da raiz, preservando idioma, codificação e interpretação consistente do conteúdo por navegadores e tecnologias assistivas.
 - A auditoria mobile-first agora exige `viewport-fit=cover` nas entradas principais do PWA (`index.html`, `admin-install.html`, `admin-login.html` e `offline.html`), preservando a experiência edge-to-edge e o uso correto de safe areas no modo instalado sem restringir o zoom.
 - Nova auditoria mobile-first exige exatamente um `meta viewport` por página de produção, com `width=device-width` e `initial-scale=1`, e bloqueia configurações que desabilitem ou restrinjam excessivamente o zoom no celular.
 - O identificador de e-mail do login principal agora usa `autocomplete="username"`, alinhando o par `username` + `current-password` esperado por gerenciadores de senha sem alterar o tipo do campo, o e-mail enviado ao Supabase ou o fluxo de autenticação.
