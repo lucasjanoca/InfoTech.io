@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- A auditoria de baseline do documento agora exige exatamente um `<title>` não vazio por página HTML de produção, evitando páginas sem título ou títulos duplicados e preservando identificação consistente em abas, histórico e tecnologias assistivas.
 - Nova auditoria de baseline do documento exige exatamente um `<!doctype html>`, um elemento `<html lang="pt-BR">` e um `<meta charset="utf-8">` em cada página HTML de produção da raiz, preservando idioma, codificação e interpretação consistente do conteúdo por navegadores e tecnologias assistivas.
 - A auditoria mobile-first agora exige `viewport-fit=cover` nas entradas principais do PWA (`index.html`, `admin-install.html`, `admin-login.html` e `offline.html`), preservando a experiência edge-to-edge e o uso correto de safe areas no modo instalado sem restringir o zoom.
 - Nova auditoria mobile-first exige exatamente um `meta viewport` por página de produção, com `width=device-width` e `initial-scale=1`, e bloqueia configurações que desabilitem ou restrinjam excessivamente o zoom no celular.
