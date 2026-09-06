@@ -91,6 +91,7 @@ private_pages = {
 # apenas para levar o protocolo recém-criado à tela de sucesso.
 demo_storage_markers = {
     'infotechDemoAccounts',
+    'infotechDemoAdmin',
     'infotechDemoRequests',
     'infotechDemoUser',
 }
