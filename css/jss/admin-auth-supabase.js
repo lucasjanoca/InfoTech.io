@@ -55,10 +55,6 @@
   );
   window.infotechSupabase = client;
 
-  const clearLegacyAdmin = () => {
-    try { sessionStorage.removeItem('infotechDemoAdmin'); } catch {}
-  };
-
   const getAccess = async userId => {
     const { data, error } = await client
       .from('profiles')
@@ -91,17 +87,14 @@
     verifyAdmin()
       .then(isAdmin => {
         if (!isAdmin) {
-          clearLegacyAdmin();
           redirectToAdminLogin();
           return;
         }
-        try { sessionStorage.setItem('infotechDemoAdmin', 'true'); } catch {}
         document.documentElement.classList.remove('admin-auth-checking');
         document.documentElement.classList.add('admin-auth-ok');
       })
       .catch(error => {
         console.error('Falha ao validar administrador:', error);
-        clearLegacyAdmin();
         redirectToAdminLogin();
       });
   }
@@ -136,14 +129,12 @@
         const access = await getAccess(data.user.id);
         if (access.role !== 'admin' || access.blocked) {
           await client.auth.signOut();
-          clearLegacyAdmin();
           setMessage(access.blocked
             ? 'Esta conta administrativa está bloqueada.'
             : 'Esta conta não possui permissão administrativa.');
           return;
         }
 
-        try { sessionStorage.setItem('infotechDemoAdmin', 'true'); } catch {}
         setMessage('Acesso autorizado. Abrindo o painel...', 'success');
 
         const params = new URLSearchParams(location.search);
@@ -165,7 +156,6 @@
   document.querySelectorAll('[data-admin-logout]').forEach(link => {
     link.addEventListener('click', async event => {
       event.preventDefault();
-      clearLegacyAdmin();
       await client.auth.signOut();
       location.replace(ADMIN_LOGIN_PAGE);
     });
