@@ -13,6 +13,8 @@ class DocumentParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.doctypes = []
         self.html_langs = []
+        self.head_count = 0
+        self.body_count = 0
         self.charsets = []
         self.titles = []
         self.in_title = False
@@ -27,6 +29,10 @@ class DocumentParser(HTMLParser):
 
         if tag == 'html':
             self.html_langs.append(data.get('lang', '').strip())
+        elif tag == 'head':
+            self.head_count += 1
+        elif tag == 'body':
+            self.body_count += 1
         elif tag == 'meta' and 'charset' in data:
             self.charsets.append(data.get('charset', '').strip())
         elif tag == 'title':
@@ -66,6 +72,12 @@ for page in pages:
         fail(f'{page.name}: deve conter exatamente um elemento <html>')
     elif parser.html_langs[0].lower() != 'pt-br':
         fail(f'{page.name}: <html> deve declarar lang="pt-BR"')
+
+    if parser.head_count != 1:
+        fail(f'{page.name}: deve conter exatamente um elemento <head>')
+
+    if parser.body_count != 1:
+        fail(f'{page.name}: deve conter exatamente um elemento <body>')
 
     normalized_charsets = [value.lower().replace('_', '-') for value in parser.charsets]
     if len(normalized_charsets) != 1 or normalized_charsets[0] != 'utf-8':
