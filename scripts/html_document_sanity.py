@@ -13,6 +13,8 @@ class DocumentParser(HTMLParser):
         self.doctypes = []
         self.html_langs = []
         self.charsets = []
+        self.titles = []
+        self.in_title = False
 
     def handle_decl(self, decl):
         if decl.strip().lower().startswith('doctype'):
@@ -26,6 +28,17 @@ class DocumentParser(HTMLParser):
             self.html_langs.append(data.get('lang', '').strip())
         elif tag == 'meta' and 'charset' in data:
             self.charsets.append(data.get('charset', '').strip())
+        elif tag == 'title':
+            self.titles.append('')
+            self.in_title = True
+
+    def handle_data(self, data):
+        if self.in_title and self.titles:
+            self.titles[-1] += data
+
+    def handle_endtag(self, tag):
+        if tag.lower() == 'title':
+            self.in_title = False
 
 
 def fail(message: str) -> None:
@@ -55,6 +68,12 @@ for page in pages:
     normalized_charsets = [value.lower().replace('_', '-') for value in parser.charsets]
     if len(normalized_charsets) != 1 or normalized_charsets[0] != 'utf-8':
         fail(f'{page.name}: deve declarar exatamente um <meta charset="utf-8">')
+
+    normalized_titles = [' '.join(value.split()) for value in parser.titles]
+    if len(normalized_titles) != 1:
+        fail(f'{page.name}: deve declarar exatamente um <title>')
+    elif not normalized_titles[0]:
+        fail(f'{page.name}: <title> não pode estar vazio')
 
 if errors:
     for error in errors:
