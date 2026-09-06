@@ -16,6 +16,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- O clique em notificações push agora revalida mesma origem e a allowlist `NOTIFICATION_PATHS`, usando `painel-cliente.html` como fallback seguro; a auditoria do Service Worker fixa essa fronteira para impedir navegação para destinos externos ou não autorizados.
 - A auditoria dos pontos de entrada do PWA administrativo agora exige exatamente um `apple-touch-icon` local em `assets/brand/logo-192.webp` e confirma que o arquivo existe, evitando regressões visuais no ícone instalado do iOS sem alterar autenticação ou permissões.
 - As rotas de instalação e login do PWA administrativo agora mantêm metadados standalone consistentes (`mobile-web-app-capable`, equivalentes Apple, título e estilo da barra); a auditoria de vínculos do manifest bloqueia regressões nesses pontos de entrada sem alterar autenticação ou permissões.
 - A auditoria de identidade PWA agora exige os ícones mínimos de instalação 192×192 e 512×512 em WebP nos manifests principal e administrativo, com `purpose` incluindo `any`, bloqueando regressões que prejudiquem a instalação ou a apresentação do app.
