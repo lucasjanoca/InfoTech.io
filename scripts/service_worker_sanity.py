@@ -71,10 +71,13 @@ except Exception as exc:
     raise SystemExit(1)
 
 public_navigation = extract_set(source, 'PUBLIC_NAVIGATION_PATHS')
+notification_paths = extract_set(source, 'NOTIFICATION_PATHS')
 app_shell = extract_array(source, 'APP_SHELL')
 
 if not public_navigation:
     fail('sw.js: PUBLIC_NAVIGATION_PATHS está vazio')
+if not notification_paths:
+    fail('sw.js: NOTIFICATION_PATHS está vazio')
 if not app_shell:
     fail('sw.js: APP_SHELL está vazio')
 
@@ -103,6 +106,11 @@ for route in sorted(public_navigation):
     if target is None or not target.exists():
         fail(f'sw.js: rota pública inexistente -> {route}')
 
+for route in sorted(notification_paths):
+    target = local_target(route)
+    if target is None or not target.exists():
+        fail(f'sw.js: destino de notificação inexistente ou externo -> {route}')
+
 seen_shell = set()
 for resource in app_shell:
     if resource in seen_shell:
@@ -126,6 +134,24 @@ if '/offline.html' not in public_navigation:
     fail('sw.js: offline.html deve permanecer na allowlist pública')
 if '/offline.html' not in seen_shell:
     fail('sw.js: offline.html deve permanecer no APP_SHELL')
+if '/painel-cliente.html' not in notification_paths:
+    fail('sw.js: painel-cliente.html deve permanecer como destino seguro de notificação')
+
+notification_click = re.search(
+    r"self\.addEventListener\(['\"]notificationclick['\"],\s*event\s*=>\s*\{(.*?)\n\}\);",
+    source,
+    re.DOTALL,
+)
+if not notification_click:
+    fail('sw.js: handler notificationclick não encontrado')
+else:
+    body = notification_click.group(1)
+    if 'candidate.origin === self.location.origin' not in body:
+        fail('sw.js: notificationclick deve validar mesma origem antes de navegar')
+    if 'NOTIFICATION_PATHS.has(candidate.pathname)' not in body:
+        fail('sw.js: notificationclick deve validar a allowlist NOTIFICATION_PATHS')
+    if "new URL('/painel-cliente.html', self.location.origin).href" not in body:
+        fail('sw.js: notificationclick deve manter fallback seguro para painel-cliente.html')
 
 if errors:
     for error in errors:
@@ -135,5 +161,5 @@ if errors:
 
 print(
     f'OK: Service Worker verificado ({len(public_navigation)} rotas públicas, '
-    f'{len(app_shell)} recursos no APP_SHELL).'
+    f'{len(notification_paths)} destinos de notificação, {len(app_shell)} recursos no APP_SHELL).'
 )
