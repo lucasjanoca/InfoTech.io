@@ -5,6 +5,8 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- A auditoria de baseline do documento agora exige descrições únicas entre todas as páginas HTML de produção da raiz, evitando metadados duplicados entre telas diferentes e preservando identificação mais consistente para navegação e compartilhamento.
+- A auditoria de baseline do documento agora exige exatamente uma `<meta name="description">` não vazia por página HTML de produção; `admin-install.html` e `offline.html` foram alinhadas à nova regra sem alterar seus fluxos.
 - A auditoria de baseline do documento agora exige títulos únicos entre todas as páginas HTML de produção da raiz, evitando abas, histórico e telas PWA diferentes com identificação duplicada.
 - A auditoria de baseline do documento agora exige exatamente um `<head>` e um `<body>` por página HTML de produção, evitando estrutura ausente ou duplicada que possa causar parsing inconsistente entre navegadores e no modo PWA.
 - A auditoria de baseline do documento agora exige que a declaração `<meta charset="utf-8">` permaneça nos primeiros 1024 bytes de cada página HTML de produção, garantindo detecção antecipada e consistente da codificação pelos navegadores.
