@@ -56,6 +56,8 @@ pages = sorted(ROOT.glob('*.html'))
 if not pages:
     fail('nenhuma página HTML de produção encontrada na raiz')
 
+title_owners = {}
+
 for page in pages:
     parser = DocumentParser()
     try:
@@ -92,6 +94,15 @@ for page in pages:
         fail(f'{page.name}: deve declarar exatamente um <title>')
     elif not normalized_titles[0]:
         fail(f'{page.name}: <title> não pode estar vazio')
+    else:
+        title_key = normalized_titles[0].casefold()
+        if title_key in title_owners:
+            fail(
+                f'{page.name}: <title> duplica o título de {title_owners[title_key]} '
+                f'("{normalized_titles[0]}")'
+            )
+        else:
+            title_owners[title_key] = page.name
 
 if errors:
     for error in errors:
