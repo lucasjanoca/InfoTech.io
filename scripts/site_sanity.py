@@ -44,6 +44,7 @@ class PageParser(HTMLParser):
         self.resources = []
         self.scripts = []
         self.unsafe_new_tab_links = []
+        self.unsafe_javascript_urls = []
 
     def handle_starttag(self, tag, attrs):
         data = {k.lower(): (v or '') for k, v in attrs}
@@ -59,6 +60,11 @@ class PageParser(HTMLParser):
                 self.csp = data.get('content', '')
             if data.get('name', '').lower() == 'robots' and 'noindex' in data.get('content', '').lower():
                 self.has_noindex = True
+
+        for attr_name in ('href', 'src', 'action', 'formaction'):
+            value = data.get(attr_name, '').strip()
+            if value.lower().startswith('javascript:'):
+                self.unsafe_javascript_urls.append(f'{tag.lower()}[{attr_name}]')
 
         if tag.lower() == 'a' and data.get('target', '').strip().lower() == '_blank':
             rel_tokens = {token.lower() for token in data.get('rel', '').split()}
@@ -114,6 +120,11 @@ for page in sorted(ROOT.glob('*.html')):
 
     if parser.duplicate_ids:
         fail(f'{page.name}: IDs duplicados: {sorted(parser.duplicate_ids)}')
+    if parser.unsafe_javascript_urls:
+        fail(
+            f'{page.name}: URLs javascript: não são permitidas em atributos HTML executáveis: '
+            f'{parser.unsafe_javascript_urls}'
+        )
     if parser.unsafe_new_tab_links:
         fail(
             f'{page.name}: links target="_blank" sem rel="noopener noreferrer": '
