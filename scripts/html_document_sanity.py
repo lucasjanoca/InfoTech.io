@@ -3,8 +3,10 @@ from html.parser import HTMLParser
 from pathlib import Path
 import re
 import sys
+from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+OFFICIAL_ORIGIN = 'https://infotech-io.com.br'
 errors = []
 
 
@@ -18,6 +20,8 @@ class DocumentParser(HTMLParser):
         self.charsets = []
         self.titles = []
         self.descriptions = []
+        self.robots = []
+        self.canonicals = []
         self.in_title = False
 
     def handle_decl(self, decl):
@@ -38,6 +42,10 @@ class DocumentParser(HTMLParser):
             self.charsets.append(data.get('charset', '').strip())
         elif tag == 'meta' and data.get('name', '').strip().lower() == 'description':
             self.descriptions.append(data.get('content', '').strip())
+        elif tag == 'meta' and data.get('name', '').strip().lower() == 'robots':
+            self.robots.append(data.get('content', '').strip())
+        elif tag == 'link' and data.get('rel', '').strip().lower() == 'canonical':
+            self.canonicals.append(data.get('href', '').strip())
         elif tag == 'title':
             self.titles.append('')
             self.in_title = True
@@ -55,12 +63,17 @@ def fail(message: str) -> None:
     errors.append(message)
 
 
+def expected_canonical(page: Path) -> str:
+    return f'{OFFICIAL_ORIGIN}/' if page.name == 'index.html' else f'{OFFICIAL_ORIGIN}/{page.name}'
+
+
 pages = sorted(ROOT.glob('*.html'))
 if not pages:
     fail('nenhuma página HTML de produção encontrada na raiz')
 
 title_owners = {}
 description_owners = {}
+canonical_owners = {}
 
 for page in pages:
     parser = DocumentParser()
@@ -122,6 +135,34 @@ for page in pages:
             )
         else:
             description_owners[description_key] = page.name
+
+    robots_tokens = {
+        token.strip().lower()
+        for value in parser.robots
+        for token in value.split(',')
+        if token.strip()
+    }
+    is_indexable = 'noindex' not in robots_tokens
+    if is_indexable:
+        if len(parser.canonicals) != 1:
+            fail(f'{page.name}: página indexável deve declarar exatamente um link canonical')
+        else:
+            canonical = parser.canonicals[0]
+            parsed = urlparse(canonical)
+            if parsed.scheme != 'https' or parsed.netloc != 'infotech-io.com.br':
+                fail(f'{page.name}: canonical deve usar a origem HTTPS oficial da InfoTech.io')
+            elif parsed.query or parsed.fragment:
+                fail(f'{page.name}: canonical não pode conter query string ou fragmento')
+            elif canonical != expected_canonical(page):
+                fail(
+                    f'{page.name}: canonical deve ser "{expected_canonical(page)}" '
+                    f'(encontrado "{canonical}")'
+                )
+            canonical_key = canonical.casefold()
+            if canonical_key in canonical_owners:
+                fail(f'{page.name}: canonical duplica o de {canonical_owners[canonical_key]}')
+            else:
+                canonical_owners[canonical_key] = page.name
 
 if errors:
     for error in errors:
