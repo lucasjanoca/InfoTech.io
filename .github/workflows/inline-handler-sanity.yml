@@ -1,0 +1,61 @@
+name: Inline event handler sanity check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  inline-handler-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Reject inline HTML event handlers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import re
+          import sys
+
+          event_attribute = re.compile(r'^on[a-z]+$', re.IGNORECASE)
+          failures = []
+
+          class InlineEventParser(HTMLParser):
+              def __init__(self, path):
+                  super().__init__(convert_charrefs=True)
+                  self.path = path
+
+              def handle_starttag(self, tag, attrs):
+                  for name, _ in attrs:
+                      if name and event_attribute.fullmatch(name):
+                          failures.append(f'{self.path}: <{tag}> usa atributo inline {name}')
+
+              handle_startendtag = handle_starttag
+
+          # O site principal publicado fica na raiz. Subdiretórios podem conter
+          # experiências isoladas e não entram nesta fronteira de produção.
+          for path in sorted(Path('.').glob('*.html')):
+              parser = InlineEventParser(path)
+              try:
+                  parser.feed(path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  failures.append(f'{path}: HTML não pôde ser analisado: {exc}')
+
+          if failures:
+              print('Event handlers inline não são permitidos nas páginas de produção:', file=sys.stderr)
+              for failure in failures:
+                  print(f'- {failure}', file=sys.stderr)
+              raise SystemExit(1)
+
+          print('OK: páginas de produção sem event handlers HTML inline.')
+          PY
