@@ -34,6 +34,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- O Site security check agora também rejeita `infotechDemoAdmin` em scripts JavaScript carregados por páginas de produção, impedindo que a flag administrativa demonstrativa já removida volte silenciosamente ao fluxo real.
 - O Site security check agora também rejeita `infotechDemoAccounts` em scripts JavaScript carregados por páginas de produção, completando a proteção das chaves persistentes do antigo fluxo demo de contas sem alterar autenticação, RLS ou permissões.
 - O fluxo administrativo deixou de gravar a flag legada `infotechDemoAdmin` no `sessionStorage`; autorização, bloqueio e sessão continuam sendo validados exclusivamente pelo Supabase e pelo perfil real do usuário, removendo estado demonstrativo sem alterar RLS, policies ou permissões.
 - A tela `offline.html` agora usa `form-action 'none'` na CSP, bloqueando qualquer submissão de formulário no fallback offline; a auditoria CSP fixa essa fronteira para impedir regressões.
