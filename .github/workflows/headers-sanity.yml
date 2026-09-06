@@ -1,0 +1,17 @@
+name: Response headers sanity check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  headers-sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - name: Validate response headers policy
+        run: python3 scripts/headers_sanity.py
