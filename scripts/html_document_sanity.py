@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from html.parser import HTMLParser
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -52,7 +53,8 @@ if not pages:
 for page in pages:
     parser = DocumentParser()
     try:
-        parser.feed(page.read_text(encoding='utf-8'))
+        raw = page.read_text(encoding='utf-8')
+        parser.feed(raw)
     except Exception as exc:
         fail(f'{page.name}: HTML não pôde ser analisado: {exc}')
         continue
@@ -68,6 +70,10 @@ for page in pages:
     normalized_charsets = [value.lower().replace('_', '-') for value in parser.charsets]
     if len(normalized_charsets) != 1 or normalized_charsets[0] != 'utf-8':
         fail(f'{page.name}: deve declarar exatamente um <meta charset="utf-8">')
+    else:
+        prefix = raw.encode('utf-8')[:1024]
+        if not re.search(rb'<meta\s+[^>]*charset\s*=\s*["\']?utf-8(?:["\']|\s|/?>)', prefix, re.IGNORECASE):
+            fail(f'{page.name}: <meta charset="utf-8"> deve estar nos primeiros 1024 bytes')
 
     normalized_titles = [' '.join(value.split()) for value in parser.titles]
     if len(normalized_titles) != 1:
