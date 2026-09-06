@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- A auditoria de baseline do documento agora exige exatamente um canonical HTTPS da origem oficial em cada página indexável, sem query/fragmento e sem duplicação entre páginas, evitando sinais de indexação divergentes sem afetar páginas `noindex`.
 - A auditoria de baseline do documento agora exige descrições únicas entre todas as páginas HTML de produção da raiz, evitando metadados duplicados entre telas diferentes e preservando identificação mais consistente para navegação e compartilhamento.
 - A auditoria de baseline do documento agora exige exatamente uma `<meta name="description">` não vazia por página HTML de produção; `admin-install.html` e `offline.html` foram alinhadas à nova regra sem alterar seus fluxos.
 - A auditoria de baseline do documento agora exige títulos únicos entre todas as páginas HTML de produção da raiz, evitando abas, histórico e telas PWA diferentes com identificação duplicada.
