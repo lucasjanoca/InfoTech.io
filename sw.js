@@ -223,7 +223,13 @@ self.addEventListener('push', event => {
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const target = new URL(event.notification.data?.url || '/', self.location.origin).href;
+  let target = new URL('/painel-cliente.html', self.location.origin).href;
+  try {
+    const candidate = new URL(event.notification.data?.url || '/painel-cliente.html', self.location.origin);
+    if (candidate.origin === self.location.origin && NOTIFICATION_PATHS.has(candidate.pathname)) {
+      target = candidate.href;
+    }
+  } catch {}
   event.waitUntil((async () => {
     const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const client of windows) {
