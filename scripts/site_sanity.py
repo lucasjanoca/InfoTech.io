@@ -90,6 +90,7 @@ private_pages = {
 # infotechLastProtocol não entra aqui: a produção usa essa chave em sessionStorage
 # apenas para levar o protocolo recém-criado à tela de sucesso.
 demo_storage_markers = {
+    'infotechDemoAccounts',
     'infotechDemoRequests',
     'infotechDemoUser',
 }
