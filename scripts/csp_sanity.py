@@ -69,6 +69,11 @@ for page in sorted(ROOT.glob('*.html')):
     elif form_values not in (["'self'"], ["'none'"]):
         errors.append(f"{page.name}: form-action deve ser exclusivamente 'self' ou 'none'")
 
+    # A tela offline é conteúdo estático e nunca deve aceitar submissões, mesmo para
+    # a própria origem. Isso reduz a superfície disponível caso o fallback seja exibido.
+    if page.name == 'offline.html' and form_values != ["'none'"]:
+        errors.append("offline.html: form-action deve permanecer exclusivamente 'none'")
+
     # script-src é opcional em páginas sem scripts: nesse caso default-src é o fallback CSP.
     # Quando declarado, porém, deve manter a mesma baseline segura do restante do site.
     script_values = directives.get('script-src', directives.get('default-src', []))
