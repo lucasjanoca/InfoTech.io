@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- A auditoria de baseline do documento agora exige que a declaração `<meta charset="utf-8">` permaneça nos primeiros 1024 bytes de cada página HTML de produção, garantindo detecção antecipada e consistente da codificação pelos navegadores.
 - A auditoria de baseline do documento agora exige exatamente um `<title>` não vazio por página HTML de produção, evitando páginas sem título ou títulos duplicados e preservando identificação consistente em abas, histórico e tecnologias assistivas.
 - Nova auditoria de baseline do documento exige exatamente um `<!doctype html>`, um elemento `<html lang="pt-BR">` e um `<meta charset="utf-8">` em cada página HTML de produção da raiz, preservando idioma, codificação e interpretação consistente do conteúdo por navegadores e tecnologias assistivas.
 - A auditoria mobile-first agora exige `viewport-fit=cover` nas entradas principais do PWA (`index.html`, `admin-install.html`, `admin-login.html` e `offline.html`), preservando a experiência edge-to-edge e o uso correto de safe areas no modo instalado sem restringir o zoom.
