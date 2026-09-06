@@ -258,3 +258,24 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Pesquisa em tempo real.
 - Filtros rápidos por situação.
 - Layout responsivo preservando chat, arquivos, projeto, histórico e orçamentos.
+
+## V4.6.1
+- Títulos administrativos padronizados com a marca.
+- Favicon adicionado às páginas administrativas.
+- Correção de espaço extra antes do banner no celular.
+- Cabeçalho móvel mantido com comportamento sticky.
+
+## V4.6 — Refinamento
+- Melhorias de responsividade e prevenção de rolagem horizontal.
+- Abas de Conversa, Arquivos, Projeto e Histórico adaptadas ao celular.
+- Áreas clicáveis maiores e foco visível para teclado.
+- Melhor quebra de textos, protocolos, e-mails e nomes de arquivos.
+- Padronização de formulários, cards e botões.
+- Carregamento progressivo de imagens.
+- Suporte a redução de movimento e fechamento de menus com Escape.
+- Proteção contra duplo clique em formulários.
+- Layout de impressão para detalhes e orçamento.
+
+---
+
+> Observação: versões intermediárias e artefatos de teste permanecem disponíveis no histórico do Git, mesmo após a limpeza da raiz do repositório.
