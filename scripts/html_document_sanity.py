@@ -60,6 +60,7 @@ if not pages:
     fail('nenhuma página HTML de produção encontrada na raiz')
 
 title_owners = {}
+description_owners = {}
 
 for page in pages:
     parser = DocumentParser()
@@ -112,6 +113,15 @@ for page in pages:
         fail(f'{page.name}: deve declarar exatamente uma <meta name="description">')
     elif not normalized_descriptions[0]:
         fail(f'{page.name}: meta description não pode estar vazia')
+    else:
+        description_key = normalized_descriptions[0].casefold()
+        if description_key in description_owners:
+            fail(
+                f'{page.name}: meta description duplica a de {description_owners[description_key]} '
+                f'("{normalized_descriptions[0]}")'
+            )
+        else:
+            description_owners[description_key] = page.name
 
 if errors:
     for error in errors:
