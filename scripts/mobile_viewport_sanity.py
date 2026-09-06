@@ -6,6 +6,12 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 errors = []
 checked_pages = 0
+PWA_EDGE_TO_EDGE_PAGES = {
+    'index.html',
+    'admin-install.html',
+    'admin-login.html',
+    'offline.html',
+}
 
 
 class ViewportParser(HTMLParser):
@@ -59,6 +65,12 @@ for page in sorted(ROOT.glob('*.html')):
     if directives.get('initial-scale') not in {'1', '1.0'}:
         errors.append(f'{page.name}: viewport deve usar initial-scale=1; encontrado {content!r}.')
 
+    if page.name in PWA_EDGE_TO_EDGE_PAGES and directives.get('viewport-fit') != 'cover':
+        errors.append(
+            f'{page.name}: entrada PWA deve manter viewport-fit=cover para preservar a experiência '
+            'edge-to-edge e as safe areas no modo instalado.'
+        )
+
     if directives.get('user-scalable') == 'no':
         errors.append(f'{page.name}: viewport não pode desabilitar zoom com user-scalable=no.')
 
@@ -83,6 +95,6 @@ if errors:
     sys.exit(1)
 
 print(
-    f'Mobile viewport sanity: OK — {checked_pages} página(s) de produção com viewport responsivo '
-    'e zoom preservado.'
+    f'Mobile viewport sanity: OK — {checked_pages} página(s) de produção com viewport responsivo, '
+    'zoom preservado e entradas PWA preparadas para safe areas.'
 )
