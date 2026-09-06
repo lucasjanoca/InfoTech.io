@@ -22,6 +22,7 @@ ADMIN_INSTALL_META = {
     "apple-mobile-web-app-status-bar-style": "default",
     "apple-mobile-web-app-title": "InfoTech.io ADM",
 }
+ADMIN_TOUCH_ICON = "assets/brand/logo-192.webp"
 
 errors: list[str] = []
 
@@ -30,6 +31,7 @@ class ManifestParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.manifests: list[str] = []
+        self.touch_icons: list[str] = []
         self.theme_colors: list[str] = []
         self.meta: dict[str, list[str]] = {}
 
@@ -40,6 +42,8 @@ class ManifestParser(HTMLParser):
             rel_tokens = {token.lower() for token in data.get("rel", "").split()}
             if "manifest" in rel_tokens:
                 self.manifests.append(data.get("href", "").strip())
+            if "apple-touch-icon" in rel_tokens:
+                self.touch_icons.append(data.get("href", "").strip())
             return
 
         if tag.lower() == "meta":
@@ -117,6 +121,24 @@ for html_path in sorted(ROOT.glob("*.html")):
                 continue
             if values[0] != expected:
                 fail(f"{html_path.name}: meta {name} deve ser {expected!r}, encontrado {values[0]!r}")
+
+        # iOS still relies on apple-touch-icon for the installed home-screen
+        # artwork. Keep a single local, repository-backed icon on both ADM
+        # entry points so an external or missing asset cannot silently degrade
+        # the installed app identity.
+        if len(parser.touch_icons) != 1:
+            fail(f"{html_path.name}: deve declarar exatamente um rel=apple-touch-icon")
+        else:
+            touch_icon = local_manifest_path(parser.touch_icons[0])
+            if touch_icon is None:
+                fail(f"{html_path.name}: apple-touch-icon deve permanecer na mesma origem")
+            elif touch_icon != ADMIN_TOUCH_ICON:
+                fail(
+                    f"{html_path.name}: apple-touch-icon deve ser {ADMIN_TOUCH_ICON}, "
+                    f"encontrado {touch_icon or parser.touch_icons[0]}"
+                )
+            elif not (ROOT / touch_icon).is_file():
+                fail(f"{html_path.name}: apple-touch-icon inexistente -> {touch_icon}")
 
     # Pages that opt into an installable app must expose one browser theme color
     # and keep it aligned with the referenced manifest. This prevents visible
