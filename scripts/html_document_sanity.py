@@ -17,6 +17,7 @@ class DocumentParser(HTMLParser):
         self.body_count = 0
         self.charsets = []
         self.titles = []
+        self.descriptions = []
         self.in_title = False
 
     def handle_decl(self, decl):
@@ -35,6 +36,8 @@ class DocumentParser(HTMLParser):
             self.body_count += 1
         elif tag == 'meta' and 'charset' in data:
             self.charsets.append(data.get('charset', '').strip())
+        elif tag == 'meta' and data.get('name', '').strip().lower() == 'description':
+            self.descriptions.append(data.get('content', '').strip())
         elif tag == 'title':
             self.titles.append('')
             self.in_title = True
@@ -103,6 +106,12 @@ for page in pages:
             )
         else:
             title_owners[title_key] = page.name
+
+    normalized_descriptions = [' '.join(value.split()) for value in parser.descriptions]
+    if len(normalized_descriptions) != 1:
+        fail(f'{page.name}: deve declarar exatamente uma <meta name="description">')
+    elif not normalized_descriptions[0]:
+        fail(f'{page.name}: meta description não pode estar vazia')
 
 if errors:
     for error in errors:
