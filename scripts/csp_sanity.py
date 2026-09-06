@@ -23,14 +23,21 @@ class CSPParser(HTMLParser):
 
 def parse_directives(policy: str):
     directives = {}
+    duplicates = set()
     for raw in policy.split(';'):
         raw = raw.strip()
         if not raw:
             continue
         parts = raw.split()
         name = parts[0].lower()
+        if name in directives:
+            duplicates.add(name)
+            # Navegadores consideram a primeira ocorrência da diretiva. Manter o
+            # primeiro valor evita que a auditoria valide uma política diferente
+            # daquela efetivamente aplicada quando houver uma duplicata acidental.
+            continue
         directives[name] = [value.lower() for value in parts[1:]]
-    return directives
+    return directives, duplicates
 
 
 for page in sorted(ROOT.glob('*.html')):
@@ -46,7 +53,11 @@ for page in sorted(ROOT.glob('*.html')):
         continue
 
     policy = parser.policies[0]
-    directives = parse_directives(policy)
+    directives, duplicate_directives = parse_directives(policy)
+    if duplicate_directives:
+        errors.append(
+            f'{page.name}: CSP contém diretivas duplicadas: {sorted(duplicate_directives)}'
+        )
 
     required = {
         'default-src': "'self'",
