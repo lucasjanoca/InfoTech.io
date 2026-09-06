@@ -34,6 +34,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- A tela `offline.html` agora usa `form-action 'none'` na CSP, bloqueando qualquer submissão de formulário no fallback offline; a auditoria CSP fixa essa fronteira para impedir regressões.
 - A auditoria de autenticação agora fixa o contrato do identificador de login: todo formulário com `current-password` deve manter exatamente um campo `autocomplete="username"` com `type="email"` e `name="email"`, preservando a validação nativa do navegador e o formato esperado pelo fluxo Supabase.
 - Os formulários de login de cliente e administrador agora declaram `method="post"` como fallback seguro; a auditoria de autenticação bloqueia regressões para o método GET implícito, evitando que uma falha do JavaScript possa colocar credenciais na URL.
 - A auditoria de campos de autenticação agora também exige que todo formulário com `autocomplete="current-password"` tenha exatamente um identificador de usuário com `autocomplete="username"`, protegendo o pareamento correto de credenciais por navegadores e gerenciadores de senha.
