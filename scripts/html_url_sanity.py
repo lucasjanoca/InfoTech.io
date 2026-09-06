@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+from html.parser import HTMLParser
+from pathlib import Path
+from urllib.parse import urlsplit
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+errors = []
+
+# Atributos que podem iniciar navegação, submissão ou carregamento de recursos.
+URL_ATTRIBUTES = {
+    'href', 'src', 'action', 'formaction', 'poster',
+}
+
+
+class UrlParser(HTMLParser):
+    def __init__(self, page: Path):
+        super().__init__(convert_charrefs=True)
+        self.page = page
+
+    def handle_starttag(self, tag, attrs):
+        for attr_name, raw_value in attrs:
+            name = (attr_name or '').lower()
+            if name not in URL_ATTRIBUTES:
+                continue
+            value = (raw_value or '').strip()
+            if not value:
+                continue
+
+            # URLs protocol-relative herdam o esquema da página e tornam a política
+            # menos explícita. Em produção, recursos/navegações externas devem declarar
+            # HTTPS diretamente.
+            if value.startswith('//'):
+                errors.append(
+                    f'{self.page.name}: URL protocol-relative não permitida em '
+                    f'{tag.lower()}[{name}] -> {value}'
+                )
+                continue
+
+            parsed = urlsplit(value)
+            if parsed.scheme.lower() == 'http':
+                errors.append(
+                    f'{self.page.name}: URL HTTP insegura em '
+                    f'{tag.lower()}[{name}] -> {value}'
+                )
+
+
+for page in sorted(ROOT.glob('*.html')):
+    parser = UrlParser(page)
+    try:
+        parser.feed(page.read_text(encoding='utf-8'))
+    except Exception as exc:
+        errors.append(f'{page.name}: HTML não pôde ser analisado: {exc}')
+
+if errors:
+    for error in errors:
+        print(f'ERRO: {error}')
+    print(f'FALHOU: {len(errors)} URL(s) insegura(s).')
+    sys.exit(1)
+
+print(
+    f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP ou '
+    'protocol-relative em atributos navegáveis/carregáveis.'
+)
