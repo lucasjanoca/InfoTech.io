@@ -40,6 +40,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- A página `404.html` agora usa `form-action 'none'` na CSP por não possuir formulários, reduzindo a superfície permitida pelo fallback de erro; também recebeu uma descrição própria sem alterar indexação, navegação ou autenticação.
 - Nova auditoria dedicada rejeita URLs `http://` e URLs protocol-relative (`//`) em atributos HTML que podem navegar, submeter formulários ou carregar recursos (`href`, `src`, `action`, `formaction` e `poster`), preservando HTTPS explícito nas páginas de produção.
 - Nova auditoria dedicada rejeita `window.open(..., '_blank', ...)` sem `noopener` explícito nos scripts JavaScript realmente carregados pelas páginas de produção, preservando isolamento contra reverse tabnabbing também em aberturas feitas por código.
 - Nova auditoria dedicada rejeita event handlers HTML inline (`onclick`, `onload` e equivalentes) nas páginas de produção da raiz, preservando a fronteira de scripts externos e a CSP sem `unsafe-inline`.
