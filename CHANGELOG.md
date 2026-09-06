@@ -35,6 +35,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- O header global `Permissions-Policy` agora desabilita explicitamente `browsing-topics`, e um novo sanity check valida essa fronteira tanto em `/*` quanto em `/io/*`, além de preservar `nosniff` e `strict-origin-when-cross-origin`.
 - A auditoria CSP agora rejeita diretivas duplicadas e preserva a primeira ocorrência durante a validação, espelhando o comportamento efetivo do navegador e impedindo que o CI aprove uma política diferente da aplicada em produção.
 - `SECURITY.md` agora formaliza o isolamento entre o produto principal e projetos de clientes: referências de portfólio podem permanecer, mas código de aplicação, backend, credenciais, policies e configurações operacionais não devem ser reutilizados entre projetos; alterações de backend exigem confirmação explícita do projeto InfoTech.io e privilégios mínimos.
 - O Site security check agora também rejeita `infotechDemoAdmin` em scripts JavaScript carregados por páginas de produção, impedindo que a flag administrativa demonstrativa já removida volte silenciosamente ao fluxo real.
