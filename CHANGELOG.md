@@ -178,6 +178,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Atividades recentes.
 - Indicador de saúde e conexão com Supabase.
 - Layout responsivo em desktop, tablet e celular.
+
 ## V5.0.5.2 — Estabilidade
 - Revisado salvamento do andamento do projeto.
 - Função SQL atualiza `updated_at` e solicita recarga do cache da API.
