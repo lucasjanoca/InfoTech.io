@@ -57,7 +57,10 @@ def validate_install_icons(name: str, manifest: dict) -> None:
 
         purpose_tokens = [token.strip().lower() for token in purpose.split()] if isinstance(purpose, str) else []
         purposes = set(purpose_tokens)
-        signature = (src, sizes, media_type)
+        normalized_src = src.strip() if isinstance(src, str) else src
+        normalized_sizes = ' '.join(sizes_tokens)
+        normalized_media_type = media_type.strip().lower() if isinstance(media_type, str) else media_type
+        signature = (normalized_src, normalized_sizes, normalized_media_type)
 
         if signature in seen:
             fail(f'{name}: ícone de instalação duplicado no item #{index} para o mesmo src, sizes e type')
@@ -74,8 +77,8 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         if 'any' not in purposes:
             fail(f'{name}: ícone #{index} deve manter purpose com suporte a any')
 
-        if (sizes, media_type) in required:
-            found.add((sizes, media_type))
+        if (normalized_sizes, normalized_media_type) in required:
+            found.add((normalized_sizes, normalized_media_type))
 
     missing = sorted(required - found)
     if missing:
