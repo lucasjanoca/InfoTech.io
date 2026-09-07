@@ -32,6 +32,7 @@ def parse_directives(content: str):
     directives = {}
     duplicates = []
     empty_segments = 0
+    empty_keys = 0
     for item in content.split(','):
         part = item.strip()
         if not part:
@@ -44,11 +45,14 @@ def parse_directives(content: str):
         else:
             key = part.lower()
             value = ''
+        if not key:
+            empty_keys += 1
+            continue
         if key in directives:
             duplicates.append(key)
         else:
             directives[key] = value
-    return directives, duplicates, empty_segments
+    return directives, duplicates, empty_segments, empty_keys
 
 
 for page in sorted(ROOT.glob('*.html')):
@@ -67,12 +71,17 @@ for page in sorted(ROOT.glob('*.html')):
         continue
 
     content = parser.viewports[0]
-    directives, duplicate_directives, empty_segments = parse_directives(content)
+    directives, duplicate_directives, empty_segments, empty_keys = parse_directives(content)
 
     if empty_segments:
         errors.append(
             f'{page.name}: viewport não deve conter segmentos vazios separados por vírgula; '
             f'encontrado {content!r}.'
+        )
+
+    if empty_keys:
+        errors.append(
+            f'{page.name}: viewport não deve conter diretiva sem nome; encontrado {content!r}.'
         )
 
     if duplicate_directives:
