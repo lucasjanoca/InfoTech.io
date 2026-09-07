@@ -44,8 +44,10 @@ class DocumentParser(HTMLParser):
             self.descriptions.append(data.get('content', '').strip())
         elif tag == 'meta' and data.get('name', '').strip().lower() == 'robots':
             self.robots.append(data.get('content', '').strip())
-        elif tag == 'link' and data.get('rel', '').strip().lower() == 'canonical':
-            self.canonicals.append(data.get('href', '').strip())
+        elif tag == 'link':
+            rel_tokens = {token.casefold() for token in data.get('rel', '').split()}
+            if 'canonical' in rel_tokens:
+                self.canonicals.append(data.get('href', '').strip())
         elif tag == 'title':
             self.titles.append('')
             self.in_title = True
