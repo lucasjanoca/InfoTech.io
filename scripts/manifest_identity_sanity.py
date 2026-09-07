@@ -47,7 +47,7 @@ def validate_install_icons(name: str, manifest: dict) -> None:
 
         if not isinstance(src, str) or not src.strip():
             fail(f'{name}: ícone #{index} deve ter src não vazio')
-        if not isinstance(sizes, str) or re.fullmatch(r'(?:\d+x\d+|any)(?:\s+(?:\d+x\d+|any))*', sizes.strip()) is None:
+        if not isinstance(sizes, str) or re.fullmatch(r'(?:[1-9]\d*x[1-9]\d*|any)(?:\s+(?:[1-9]\d*x[1-9]\d*|any))*', sizes.strip()) is None:
             fail(f'{name}: ícone #{index} deve ter sizes válido')
         if not isinstance(media_type, str) or re.fullmatch(r'image/[a-z0-9.+-]+', media_type.strip().lower()) is None:
             fail(f'{name}: ícone #{index} deve ter type de imagem válido')
