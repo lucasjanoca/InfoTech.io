@@ -31,6 +31,7 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         ('192x192', 'image/webp'),
         ('512x512', 'image/webp'),
     }
+    allowed_purposes = {'any', 'maskable', 'monochrome'}
     found = set()
     seen = set()
 
@@ -43,13 +44,21 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         sizes = icon.get('sizes')
         media_type = icon.get('type')
         purpose = icon.get('purpose')
-        purposes = {token.strip().lower() for token in purpose.split()} if isinstance(purpose, str) else set()
+        purpose_tokens = [token.strip().lower() for token in purpose.split()] if isinstance(purpose, str) else []
+        purposes = set(purpose_tokens)
         signature = (src, sizes, media_type)
 
         if signature in seen:
             fail(f'{name}: ícone de instalação duplicado no item #{index} para o mesmo src, sizes e type')
         else:
             seen.add(signature)
+
+        if len(purpose_tokens) != len(purposes):
+            fail(f'{name}: ícone #{index} contém tokens purpose duplicados')
+
+        invalid_purposes = sorted(purposes - allowed_purposes)
+        if invalid_purposes:
+            fail(f'{name}: ícone #{index} contém purpose inválido: {", ".join(invalid_purposes)}')
 
         if 'any' not in purposes:
             fail(f'{name}: ícone #{index} deve manter purpose com suporte a any')
