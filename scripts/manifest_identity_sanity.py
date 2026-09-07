@@ -58,7 +58,7 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         purpose_tokens = [token.strip().lower() for token in purpose.split()] if isinstance(purpose, str) else []
         purposes = set(purpose_tokens)
         normalized_src = src.strip() if isinstance(src, str) else src
-        normalized_sizes = ' '.join(sizes_tokens)
+        normalized_sizes = ' '.join(sorted(sizes_tokens))
         normalized_media_type = media_type.strip().lower() if isinstance(media_type, str) else media_type
         signature = (normalized_src, normalized_sizes, normalized_media_type)
 
@@ -77,8 +77,9 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         if 'any' not in purposes:
             fail(f'{name}: ícone #{index} deve manter purpose com suporte a any')
 
-        if (normalized_sizes, normalized_media_type) in required:
-            found.add((normalized_sizes, normalized_media_type))
+        for size_token in sizes_tokens:
+            if (size_token, normalized_media_type) in required:
+                found.add((size_token, normalized_media_type))
 
     missing = sorted(required - found)
     if missing:
