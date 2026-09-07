@@ -49,6 +49,9 @@ def validate_install_icons(name: str, manifest: dict) -> None:
             fail(f'{name}: ícone #{index} deve ter src não vazio')
         if not isinstance(sizes, str) or re.fullmatch(r'(?:[1-9]\d*x[1-9]\d*|any)(?:\s+(?:[1-9]\d*x[1-9]\d*|any))*', sizes.strip()) is None:
             fail(f'{name}: ícone #{index} deve ter sizes válido')
+        sizes_tokens = sizes.strip().split() if isinstance(sizes, str) else []
+        if len(sizes_tokens) != len(set(sizes_tokens)):
+            fail(f'{name}: ícone #{index} contém dimensões sizes duplicadas')
         if not isinstance(media_type, str) or re.fullmatch(r'image/[a-z0-9.+-]+', media_type.strip().lower()) is None:
             fail(f'{name}: ícone #{index} deve ter type de imagem válido')
 
