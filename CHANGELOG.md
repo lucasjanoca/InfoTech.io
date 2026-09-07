@@ -224,25 +224,6 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Corrigido redirecionamento indevido para “Solicitação não encontrada”.
 - Cliente passa a ver o mesmo progresso salvo pelo administrador.
 
-## V5.0.5.1
-- Corrigido salvamento do andamento do projeto.
-- Prazo, etapas e porcentagem salvos por função segura do Supabase.
-- Sucesso exibido somente após confirmação do banco.
-- Erros do Supabase expostos para diagnóstico.
-
-## V5.0.5
-- Arquivos migrados para Supabase Storage, com limite de 10 MB.
-- Chat online com atualização em tempo real.
-- Histórico automático de solicitações, mensagens, arquivos e andamento.
-- Notificações para cliente e administrador.
-- Prazo e etapas persistidos e sincronizados pelo Supabase.
-
-## V5.0.4.1 — Correção de projeto
-- Restauradas cinco etapas padrão no painel administrativo.
-- Prazo e etapas passam a ser salvos no Supabase.
-- Corrigido redirecionamento indevido para “Solicitação não encontrada”.
-- Cliente passa a ver o mesmo progresso salvo pelo administrador.
-
 ## V5.0.1 — Autenticação Supabase
 - Cadastro e login reais via Supabase Auth.
 - Sessão persistente e logout real.
