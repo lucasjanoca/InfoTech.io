@@ -44,10 +44,10 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         media_type = icon.get('type')
         purpose = icon.get('purpose')
         purposes = {token.strip().lower() for token in purpose.split()} if isinstance(purpose, str) else set()
-        signature = (src, sizes, media_type, purpose)
+        signature = (src, sizes, media_type)
 
         if signature in seen:
-            fail(f'{name}: ícone de instalação duplicado no item #{index}')
+            fail(f'{name}: ícone de instalação duplicado no item #{index} para o mesmo src, sizes e type')
         else:
             seen.add(signature)
 
