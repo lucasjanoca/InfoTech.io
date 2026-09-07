@@ -84,8 +84,17 @@ for page in sorted(ROOT.glob('*.html')):
             'edge-to-edge e as safe areas no modo instalado.'
         )
 
-    if directives.get('user-scalable') == 'no':
-        errors.append(f'{page.name}: viewport não pode desabilitar zoom com user-scalable=no.')
+    user_scalable = directives.get('user-scalable')
+    if user_scalable is not None:
+        if user_scalable in {'no', '0', 'false'}:
+            errors.append(
+                f'{page.name}: viewport não pode desabilitar zoom com user-scalable={user_scalable}.'
+            )
+        elif user_scalable not in {'yes', '1', 'true'}:
+            errors.append(
+                f'{page.name}: user-scalable inválido no viewport -> {user_scalable!r}; '
+                'remova a diretiva ou use um valor que preserve o zoom.'
+            )
 
     maximum_scale = directives.get('maximum-scale')
     if maximum_scale:
