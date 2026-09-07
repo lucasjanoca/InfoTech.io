@@ -22,6 +22,7 @@ class DocumentParser(HTMLParser):
         self.descriptions = []
         self.robots = []
         self.canonicals = []
+        self.base_elements = []
         self.in_head = False
         self.in_title = False
         self.metadata_outside_head = []
@@ -41,6 +42,8 @@ class DocumentParser(HTMLParser):
             self.in_head = True
         elif tag == 'body':
             self.body_count += 1
+        elif tag == 'base':
+            self.base_elements.append(data.get('href', '').strip())
         elif tag == 'meta' and 'charset' in data:
             self.charsets.append(data.get('charset', '').strip())
             if not self.in_head:
@@ -115,6 +118,9 @@ for page in pages:
 
     if parser.body_count != 1:
         fail(f'{page.name}: deve conter exatamente um elemento <body>')
+
+    if parser.base_elements:
+        fail(f'{page.name}: não deve declarar elemento <base>; URLs relativas devem permanecer na origem atual')
 
     if parser.metadata_outside_head:
         invalid = ', '.join(sorted(set(parser.metadata_outside_head)))
