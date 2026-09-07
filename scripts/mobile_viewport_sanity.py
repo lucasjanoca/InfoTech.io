@@ -31,9 +31,11 @@ class ViewportParser(HTMLParser):
 def parse_directives(content: str):
     directives = {}
     duplicates = []
+    empty_segments = 0
     for item in content.split(','):
         part = item.strip()
         if not part:
+            empty_segments += 1
             continue
         if '=' in part:
             key, value = part.split('=', 1)
@@ -46,7 +48,7 @@ def parse_directives(content: str):
             duplicates.append(key)
         else:
             directives[key] = value
-    return directives, duplicates
+    return directives, duplicates, empty_segments
 
 
 for page in sorted(ROOT.glob('*.html')):
@@ -65,7 +67,13 @@ for page in sorted(ROOT.glob('*.html')):
         continue
 
     content = parser.viewports[0]
-    directives, duplicate_directives = parse_directives(content)
+    directives, duplicate_directives, empty_segments = parse_directives(content)
+
+    if empty_segments:
+        errors.append(
+            f'{page.name}: viewport não deve conter segmentos vazios separados por vírgula; '
+            f'encontrado {content!r}.'
+        )
 
     if duplicate_directives:
         duplicates = ', '.join(sorted(set(duplicate_directives)))
