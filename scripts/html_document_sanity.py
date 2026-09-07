@@ -153,6 +153,10 @@ for page in pages:
             fail(f'{page.name}: meta robots não pode combinar index e noindex')
         if {'follow', 'nofollow'} <= robots_tokens:
             fail(f'{page.name}: meta robots não pode combinar follow e nofollow')
+        if not ({'index', 'noindex'} & robots_tokens):
+            fail(f'{page.name}: meta robots deve declarar explicitamente index ou noindex')
+        if not ({'follow', 'nofollow'} & robots_tokens):
+            fail(f'{page.name}: meta robots deve declarar explicitamente follow ou nofollow')
 
     is_indexable = 'noindex' not in robots_tokens
     if is_indexable:
