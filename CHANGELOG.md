@@ -5,6 +5,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- A auditoria mobile-first agora rejeita segmentos vazios separados por vírgula no `meta viewport`, evitando que configurações malformadas sejam aceitas silenciosamente pelo CI.
 - A auditoria de baseline do documento agora reconhece `canonical` como token dentro de listas `rel`, evitando que uma declaração canônica combinada com outros tokens escape da contagem e das validações de origem, rota e unicidade.
 - A auditoria de baseline do documento agora exige exatamente um canonical HTTPS da origem oficial em cada página indexável, sem query/fragmento e sem duplicação entre páginas, evitando sinais de indexação divergentes sem afetar páginas `noindex`.
 - A auditoria de baseline do documento agora exige descrições únicas entre todas as páginas HTML de produção da raiz, evitando metadados duplicados entre telas diferentes e preservando identificação mais consistente para navegação e compartilhamento.
