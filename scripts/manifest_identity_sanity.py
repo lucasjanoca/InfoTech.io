@@ -44,6 +44,14 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         sizes = icon.get('sizes')
         media_type = icon.get('type')
         purpose = icon.get('purpose')
+
+        if not isinstance(src, str) or not src.strip():
+            fail(f'{name}: ícone #{index} deve ter src não vazio')
+        if not isinstance(sizes, str) or re.fullmatch(r'(?:\d+x\d+|any)(?:\s+(?:\d+x\d+|any))*', sizes.strip()) is None:
+            fail(f'{name}: ícone #{index} deve ter sizes válido')
+        if not isinstance(media_type, str) or re.fullmatch(r'image/[a-z0-9.+-]+', media_type.strip().lower()) is None:
+            fail(f'{name}: ícone #{index} deve ter type de imagem válido')
+
         purpose_tokens = [token.strip().lower() for token in purpose.split()] if isinstance(purpose, str) else []
         purposes = set(purpose_tokens)
         signature = (src, sizes, media_type)
