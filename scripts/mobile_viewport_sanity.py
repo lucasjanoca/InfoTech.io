@@ -98,7 +98,7 @@ for page in sorted(ROOT.glob('*.html')):
             )
 
     maximum_scale = directives.get('maximum-scale')
-    if maximum_scale:
+    if maximum_scale is not None:
         try:
             parsed_maximum_scale = float(maximum_scale)
             if not math.isfinite(parsed_maximum_scale):
