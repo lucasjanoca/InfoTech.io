@@ -138,12 +138,22 @@ for page in pages:
         else:
             description_owners[description_key] = page.name
 
-    robots_tokens = {
-        token.strip().lower()
-        for value in parser.robots
-        for token in value.split(',')
-        if token.strip()
-    }
+    if len(parser.robots) != 1:
+        fail(f'{page.name}: deve declarar exatamente uma <meta name="robots">')
+        robots_tokens = set()
+    else:
+        robots_tokens = {
+            token.casefold()
+            for token in re.split(r'[\s,]+', parser.robots[0].strip())
+            if token
+        }
+        if not robots_tokens:
+            fail(f'{page.name}: meta robots não pode estar vazia')
+        if {'index', 'noindex'} <= robots_tokens:
+            fail(f'{page.name}: meta robots não pode combinar index e noindex')
+        if {'follow', 'nofollow'} <= robots_tokens:
+            fail(f'{page.name}: meta robots não pode combinar follow e nofollow')
+
     is_indexable = 'noindex' not in robots_tokens
     if is_indexable:
         if len(parser.canonicals) != 1:
