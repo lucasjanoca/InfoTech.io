@@ -26,14 +26,20 @@ class DocumentParser(HTMLParser):
         self.in_head = False
         self.in_title = False
         self.metadata_outside_head = []
+        self.duplicate_document_attributes = []
 
     def handle_decl(self, decl):
         if decl.strip().lower().startswith('doctype'):
             self.doctypes.append(decl.strip())
 
     def handle_starttag(self, tag, attrs):
-        data = {name.lower(): (value or '') for name, value in attrs}
         tag = tag.lower()
+        attr_names = [name.lower() for name, _ in attrs]
+        duplicate_names = sorted({name for name in attr_names if attr_names.count(name) > 1})
+        if duplicate_names and tag in {'html', 'head', 'body', 'meta', 'link', 'base', 'title'}:
+            self.duplicate_document_attributes.append(f'{tag}: {", ".join(duplicate_names)}')
+
+        data = {name.lower(): (value or '') for name, value in attrs}
 
         if tag == 'html':
             self.html_langs.append(data.get('lang', '').strip())
@@ -121,6 +127,10 @@ for page in pages:
 
     if parser.base_elements:
         fail(f'{page.name}: não deve declarar elemento <base>; URLs relativas devem permanecer na origem atual')
+
+    if parser.duplicate_document_attributes:
+        invalid = '; '.join(parser.duplicate_document_attributes)
+        fail(f'{page.name}: atributos duplicados em elementos estruturais/metadados não são permitidos ({invalid})')
 
     if parser.metadata_outside_head:
         invalid = ', '.join(sorted(set(parser.metadata_outside_head)))
