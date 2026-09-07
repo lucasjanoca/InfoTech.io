@@ -181,6 +181,9 @@ for page in pages:
             fail(f'{page.name}: páginas noindex devem também declarar noarchive')
 
     is_indexable = 'noindex' not in robots_tokens
+    if not is_indexable and parser.canonicals:
+        fail(f'{page.name}: página noindex não deve declarar link canonical')
+
     if is_indexable:
         if len(parser.canonicals) != 1:
             fail(f'{page.name}: página indexável deve declarar exatamente um link canonical')
