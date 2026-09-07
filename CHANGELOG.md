@@ -26,6 +26,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- A auditoria de identidade PWA agora rejeita ícones de instalação duplicados nos manifests principal e administrativo, evitando declarações redundantes ou ambíguas sem alterar os assets instalados atuais.
 - O clique em notificações push agora revalida mesma origem e a allowlist `NOTIFICATION_PATHS`, usando `painel-cliente.html` como fallback seguro; a auditoria do Service Worker fixa essa fronteira para impedir navegação para destinos externos ou não autorizados.
 - A auditoria dos pontos de entrada do PWA administrativo agora exige exatamente um `apple-touch-icon` local em `assets/brand/logo-192.webp` e confirma que o arquivo existe, evitando regressões visuais no ícone instalado do iOS sem alterar autenticação ou permissões.
 - As rotas de instalação e login do PWA administrativo agora mantêm metadados standalone consistentes (`mobile-web-app-capable`, equivalentes Apple, título e estilo da barra); a auditoria de vínculos do manifest bloqueia regressões nesses pontos de entrada sem alterar autenticação ou permissões.
@@ -203,6 +204,25 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Mensagens de erro mais claras para cache de função.
 - Cache-busting do script de projeto no GitHub Pages.
 - Links e arquivos locais revisados.
+
+## V5.0.5.1
+- Corrigido salvamento do andamento do projeto.
+- Prazo, etapas e porcentagem salvos por função segura do Supabase.
+- Sucesso exibido somente após confirmação do banco.
+- Erros do Supabase expostos para diagnóstico.
+
+## V5.0.5
+- Arquivos migrados para Supabase Storage, com limite de 10 MB.
+- Chat online com atualização em tempo real.
+- Histórico automático de solicitações, mensagens, arquivos e andamento.
+- Notificações para cliente e administrador.
+- Prazo e etapas persistidos e sincronizados pelo Supabase.
+
+## V5.0.4.1 — Correção de projeto
+- Restauradas cinco etapas padrão no painel administrativo.
+- Prazo e etapas passam a ser salvos no Supabase.
+- Corrigido redirecionamento indevido para “Solicitação não encontrada”.
+- Cliente passa a ver o mesmo progresso salvo pelo administrador.
 
 ## V5.0.5.1
 - Corrigido salvamento do andamento do projeto.
