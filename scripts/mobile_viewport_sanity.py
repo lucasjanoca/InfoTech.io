@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from html.parser import HTMLParser
 from pathlib import Path
+import math
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -99,7 +100,10 @@ for page in sorted(ROOT.glob('*.html')):
     maximum_scale = directives.get('maximum-scale')
     if maximum_scale:
         try:
-            if float(maximum_scale) < 2:
+            parsed_maximum_scale = float(maximum_scale)
+            if not math.isfinite(parsed_maximum_scale):
+                raise ValueError
+            if parsed_maximum_scale < 2:
                 errors.append(
                     f'{page.name}: maximum-scale={maximum_scale} restringe excessivamente o zoom; '
                     'remova a diretiva ou permita pelo menos 2x.'
