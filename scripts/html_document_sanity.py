@@ -157,6 +157,8 @@ for page in pages:
             fail(f'{page.name}: meta robots deve declarar explicitamente index ou noindex')
         if not ({'follow', 'nofollow'} & robots_tokens):
             fail(f'{page.name}: meta robots deve declarar explicitamente follow ou nofollow')
+        if 'noindex' in robots_tokens and 'noarchive' not in robots_tokens:
+            fail(f'{page.name}: páginas noindex devem também declarar noarchive')
 
     is_indexable = 'noindex' not in robots_tokens
     if is_indexable:
