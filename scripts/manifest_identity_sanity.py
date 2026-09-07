@@ -32,16 +32,24 @@ def validate_install_icons(name: str, manifest: dict) -> None:
         ('512x512', 'image/webp'),
     }
     found = set()
+    seen = set()
 
     for index, icon in enumerate(icons, 1):
         if not isinstance(icon, dict):
             fail(f'{name}: ícone #{index} inválido')
             continue
 
+        src = icon.get('src')
         sizes = icon.get('sizes')
         media_type = icon.get('type')
         purpose = icon.get('purpose')
         purposes = {token.strip().lower() for token in purpose.split()} if isinstance(purpose, str) else set()
+        signature = (src, sizes, media_type, purpose)
+
+        if signature in seen:
+            fail(f'{name}: ícone de instalação duplicado no item #{index}')
+        else:
+            seen.add(signature)
 
         if 'any' not in purposes:
             fail(f'{name}: ícone #{index} deve manter purpose com suporte a any')
