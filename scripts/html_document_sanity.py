@@ -162,13 +162,16 @@ for page in pages:
         fail(f'{page.name}: deve declarar exatamente uma <meta name="robots">')
         robots_tokens = set()
     else:
-        robots_tokens = {
+        robots_token_list = [
             token.casefold()
             for token in re.split(r'[\s,]+', parser.robots[0].strip())
             if token
-        }
+        ]
+        robots_tokens = set(robots_token_list)
         if not robots_tokens:
             fail(f'{page.name}: meta robots não pode estar vazia')
+        if len(robots_tokens) != len(robots_token_list):
+            fail(f'{page.name}: meta robots não deve repetir diretivas')
         if {'index', 'noindex'} <= robots_tokens:
             fail(f'{page.name}: meta robots não pode combinar index e noindex')
         if {'follow', 'nofollow'} <= robots_tokens:
