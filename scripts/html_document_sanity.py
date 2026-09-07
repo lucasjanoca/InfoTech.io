@@ -22,7 +22,9 @@ class DocumentParser(HTMLParser):
         self.descriptions = []
         self.robots = []
         self.canonicals = []
+        self.in_head = False
         self.in_title = False
+        self.metadata_outside_head = []
 
     def handle_decl(self, decl):
         if decl.strip().lower().startswith('doctype'):
@@ -36,29 +38,43 @@ class DocumentParser(HTMLParser):
             self.html_langs.append(data.get('lang', '').strip())
         elif tag == 'head':
             self.head_count += 1
+            self.in_head = True
         elif tag == 'body':
             self.body_count += 1
         elif tag == 'meta' and 'charset' in data:
             self.charsets.append(data.get('charset', '').strip())
+            if not self.in_head:
+                self.metadata_outside_head.append('meta charset')
         elif tag == 'meta' and data.get('name', '').strip().lower() == 'description':
             self.descriptions.append(data.get('content', '').strip())
+            if not self.in_head:
+                self.metadata_outside_head.append('meta description')
         elif tag == 'meta' and data.get('name', '').strip().lower() == 'robots':
             self.robots.append(data.get('content', '').strip())
+            if not self.in_head:
+                self.metadata_outside_head.append('meta robots')
         elif tag == 'link':
             rel_tokens = {token.casefold() for token in data.get('rel', '').split()}
             if 'canonical' in rel_tokens:
                 self.canonicals.append(data.get('href', '').strip())
+                if not self.in_head:
+                    self.metadata_outside_head.append('link canonical')
         elif tag == 'title':
             self.titles.append('')
             self.in_title = True
+            if not self.in_head:
+                self.metadata_outside_head.append('title')
 
     def handle_data(self, data):
         if self.in_title and self.titles:
             self.titles[-1] += data
 
     def handle_endtag(self, tag):
-        if tag.lower() == 'title':
+        tag = tag.lower()
+        if tag == 'title':
             self.in_title = False
+        elif tag == 'head':
+            self.in_head = False
 
 
 def fail(message: str) -> None:
@@ -99,6 +115,10 @@ for page in pages:
 
     if parser.body_count != 1:
         fail(f'{page.name}: deve conter exatamente um elemento <body>')
+
+    if parser.metadata_outside_head:
+        invalid = ', '.join(sorted(set(parser.metadata_outside_head)))
+        fail(f'{page.name}: metadados de documento devem permanecer dentro de <head> ({invalid})')
 
     normalized_charsets = [value.lower().replace('_', '-') for value in parser.charsets]
     if len(normalized_charsets) != 1 or normalized_charsets[0] != 'utf-8':
