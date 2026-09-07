@@ -29,16 +29,23 @@ class ViewportParser(HTMLParser):
 
 def parse_directives(content: str):
     directives = {}
+    duplicates = []
     for item in content.split(','):
         part = item.strip()
         if not part:
             continue
         if '=' in part:
             key, value = part.split('=', 1)
-            directives[key.strip().lower()] = value.strip().lower()
+            key = key.strip().lower()
+            value = value.strip().lower()
         else:
-            directives[part.lower()] = ''
-    return directives
+            key = part.lower()
+            value = ''
+        if key in directives:
+            duplicates.append(key)
+        else:
+            directives[key] = value
+    return directives, duplicates
 
 
 for page in sorted(ROOT.glob('*.html')):
@@ -57,7 +64,13 @@ for page in sorted(ROOT.glob('*.html')):
         continue
 
     content = parser.viewports[0]
-    directives = parse_directives(content)
+    directives, duplicate_directives = parse_directives(content)
+
+    if duplicate_directives:
+        duplicates = ', '.join(sorted(set(duplicate_directives)))
+        errors.append(
+            f'{page.name}: viewport não deve repetir diretivas ({duplicates}); encontrado {content!r}.'
+        )
 
     if directives.get('width') != 'device-width':
         errors.append(f'{page.name}: viewport deve usar width=device-width; encontrado {content!r}.')
