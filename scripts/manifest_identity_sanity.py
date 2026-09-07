@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import json
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,8 +79,8 @@ def validate_common(name: str, manifest: dict) -> None:
 
     for field in ('theme_color', 'background_color'):
         value = manifest.get(field)
-        if not isinstance(value, str) or not value.startswith('#') or len(value) not in (4, 7):
-            fail(f'{name}: {field} deve ser uma cor hexadecimal válida')
+        if not isinstance(value, str) or re.fullmatch(r'#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?', value) is None:
+            fail(f'{name}: {field} deve ser uma cor hexadecimal válida (#RGB ou #RRGGBB)')
 
     override = manifest.get('display_override')
     if override is not None:
