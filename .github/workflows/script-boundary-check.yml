@@ -38,15 +38,25 @@ jobs:
               def handle_starttag(self, tag, attrs):
                   if tag.lower() != 'script':
                       return
-                  data = {str(key).lower(): (value or '') for key, value in attrs if key}
-                  raw = data.get('src', '').strip()
-                  if not raw:
-                      return
-                  parsed = urlsplit(raw)
-                  path = unquote(parsed.path or '').lower()
-                  parts = [part for part in path.split('/') if part]
-                  if any('demo' in part or 'legacy' in part for part in parts):
-                      failures.append(f'{self.source}: script demo/legacy -> {raw}')
+
+                  src_values = [
+                      (value or '').strip()
+                      for key, value in attrs
+                      if key and str(key).lower() == 'src'
+                  ]
+                  if len(src_values) > 1:
+                      failures.append(
+                          f'{self.source}: script com atributo src duplicado -> {src_values}'
+                      )
+
+                  for raw in src_values:
+                      if not raw:
+                          continue
+                      parsed = urlsplit(raw)
+                      path = unquote(parsed.path or '').lower()
+                      parts = [part for part in path.split('/') if part]
+                      if any('demo' in part or 'legacy' in part for part in parts):
+                          failures.append(f'{self.source}: script demo/legacy -> {raw}')
 
           for page in sorted(ROOT.glob('*.html')):
               parser = ScriptParser(page)
@@ -61,5 +71,5 @@ jobs:
                   print(f'- {failure}', file=sys.stderr)
               raise SystemExit(1)
 
-          print(f'OK: {len(list(ROOT.glob("*.html")))} páginas sem scripts demo/legacy.')
+          print(f'OK: {len(list(ROOT.glob("*.html")))} páginas sem scripts demo/legacy ou src ambíguo.')
           PY
