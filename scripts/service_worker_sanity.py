@@ -52,6 +52,52 @@ def extract_array(source: str, name: str) -> list[str]:
     return values
 
 
+def extract_js_regex(source: str, name: str):
+    marker = f'const {name} = /'
+    start = source.find(marker)
+    if start < 0:
+        fail(f'sw.js: regex {name} não encontrada')
+        return None
+
+    cursor = start + len(marker)
+    pattern = []
+    escaped = False
+    while cursor < len(source):
+        char = source[cursor]
+        if char == '/' and not escaped:
+            break
+        pattern.append(char)
+        if char == '\\' and not escaped:
+            escaped = True
+        else:
+            escaped = False
+        cursor += 1
+    else:
+        fail(f'sw.js: regex {name} não foi encerrada corretamente')
+        return None
+
+    cursor += 1
+    flags = []
+    while cursor < len(source) and source[cursor].isalpha():
+        flags.append(source[cursor])
+        cursor += 1
+    if cursor >= len(source) or source[cursor] != ';':
+        fail(f'sw.js: regex {name} deve terminar com ponto e vírgula')
+        return None
+
+    unsupported_flags = set(flags) - {'i'}
+    if unsupported_flags:
+        fail(f"sw.js: regex {name} usa flags não suportadas pelo sanity check -> {''.join(sorted(unsupported_flags))}")
+        return None
+
+    python_pattern = ''.join(pattern).replace(r'\/', '/')
+    try:
+        return re.compile(python_pattern, re.IGNORECASE if 'i' in flags else 0)
+    except re.error as exc:
+        fail(f'sw.js: regex {name} não pôde ser validada -> {exc}')
+        return None
+
+
 def local_target(raw: str):
     parsed = urlsplit(raw)
     if parsed.scheme or parsed.netloc:
@@ -122,6 +168,7 @@ except Exception as exc:
 public_navigation = extract_set(source, 'PUBLIC_NAVIGATION_PATHS')
 notification_paths = extract_set(source, 'NOTIFICATION_PATHS')
 app_shell = extract_array(source, 'APP_SHELL')
+runtime_sensitive = extract_js_regex(source, 'SENSITIVE_PATH')
 
 if not public_navigation:
     fail('sw.js: PUBLIC_NAVIGATION_PATHS está vazio')
@@ -140,12 +187,36 @@ for route in sorted(public_navigation):
     target = local_target(route)
     if target is None or not target.exists():
         fail(f'sw.js: rota pública inexistente -> {route}')
+    if runtime_sensitive and runtime_sensitive.search(urlsplit(route).path):
+        fail(f'sw.js: SENSITIVE_PATH classifica rota pública como sensível -> {route}')
 
 for route in sorted(notification_paths):
     validate_allowlist_path(route, 'NOTIFICATION_PATHS')
     target = local_target(route)
     if target is None or not target.exists():
         fail(f'sw.js: destino de notificação inexistente ou externo -> {route}')
+
+sensitive_runtime_samples = (
+    '/admin-login.html',
+    '/admin-install.html',
+    '/admin/configuracao',
+    '/painel-admin.html',
+    '/painel-cliente.html',
+    '/cliente-admin.html',
+    '/clientes-admin.html',
+    '/solicitacoes-antigas.html',
+    '/login.html',
+    '/cadastro.html',
+    '/perfil.html',
+    '/nova-solicitacao.html',
+    '/detalhes-solicitacao.html',
+    '/recuperar-senha.html',
+    '/email-confirmado.html',
+)
+if runtime_sensitive:
+    for route in sensitive_runtime_samples:
+        if not runtime_sensitive.search(route):
+            fail(f'sw.js: SENSITIVE_PATH deixou de proteger rota sensível -> {route}')
 
 seen_shell = set()
 for resource in app_shell:
@@ -174,6 +245,12 @@ if '/offline.html' not in seen_shell:
     fail('sw.js: offline.html deve permanecer no APP_SHELL')
 if '/painel-cliente.html' not in notification_paths:
     fail('sw.js: painel-cliente.html deve permanecer como destino seguro de notificação')
+
+if 'SENSITIVE_PATH.test(url.pathname)' not in source:
+    fail('sw.js: isSensitive deve continuar aplicando SENSITIVE_PATH ao pathname')
+for boundary in ("url.hostname.endsWith('.supabase.co')", "url.pathname.startsWith('/rest/v1/')", "url.pathname.startsWith('/auth/v1/')", "url.pathname.startsWith('/storage/v1/')"):
+    if boundary not in source:
+        fail(f'sw.js: fronteira sensível ausente em isSensitive -> {boundary}')
 
 notification_click = re.search(
     r"self\.addEventListener\(['\"]notificationclick['\"],\s*event\s*=>\s*\{(.*?)\n\}\);",
