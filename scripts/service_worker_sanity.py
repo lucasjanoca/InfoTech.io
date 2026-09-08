@@ -175,6 +175,22 @@ notification_paths = extract_set(source, 'NOTIFICATION_PATHS')
 app_shell = extract_array(source, 'APP_SHELL')
 runtime_sensitive = extract_js_regex(source, 'SENSITIVE_PATH')
 
+expected_notification_paths = {
+    '/',
+    '/index.html',
+    '/painel-cliente.html',
+    '/perfil.html',
+    '/nova-solicitacao.html',
+    '/detalhes-solicitacao.html',
+}
+if notification_paths != expected_notification_paths:
+    added = sorted(notification_paths - expected_notification_paths)
+    removed = sorted(expected_notification_paths - notification_paths)
+    if added:
+        fail(f"sw.js: NOTIFICATION_PATHS ganhou destino não aprovado -> {', '.join(added)}")
+    if removed:
+        fail(f"sw.js: NOTIFICATION_PATHS perdeu destino esperado -> {', '.join(removed)}")
+
 if not public_navigation:
     fail('sw.js: PUBLIC_NAVIGATION_PATHS está vazio')
 if not notification_paths:
