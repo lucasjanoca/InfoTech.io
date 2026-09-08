@@ -64,6 +64,14 @@ def local_target(raw: str):
     return ROOT / path.lstrip('/')
 
 
+def validate_allowlist_path(route: str, list_name: str) -> None:
+    parsed = urlsplit(route)
+    if parsed.query or parsed.fragment:
+        fail(f'sw.js: {list_name} deve conter apenas caminhos sem query/fragmento -> {route}')
+    if unquote(parsed.path) != parsed.path:
+        fail(f'sw.js: {list_name} não deve usar caminho percent-encoded -> {route}')
+
+
 try:
     source = SW_PATH.read_text(encoding='utf-8')
 except Exception as exc:
@@ -97,6 +105,7 @@ sensitive_markers = (
 )
 
 for route in sorted(public_navigation):
+    validate_allowlist_path(route, 'PUBLIC_NAVIGATION_PATHS')
     if not route.startswith('/'):
         fail(f'sw.js: rota pública inválida -> {route}')
         continue
@@ -107,6 +116,7 @@ for route in sorted(public_navigation):
         fail(f'sw.js: rota pública inexistente -> {route}')
 
 for route in sorted(notification_paths):
+    validate_allowlist_path(route, 'NOTIFICATION_PATHS')
     target = local_target(route)
     if target is None or not target.exists():
         fail(f'sw.js: destino de notificação inexistente ou externo -> {route}')
