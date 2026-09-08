@@ -33,6 +33,9 @@ jobs:
               r'^permissions:\s*\n(?P<body>(?:^[ \t]+[^\n]*\n?)*)',
               re.MULTILINE,
           )
+          job_header = re.compile(r'^  (?P<name>[A-Za-z0-9_-]+):\s*$')
+          runs_on = re.compile(r'^    runs-on:\s*\S+')
+          timeout = re.compile(r'^    timeout-minutes:\s*(?P<minutes>\d+)\s*$')
 
           for path in sorted(Path('.github/workflows').glob('*.y*ml')):
               text = path.read_text(encoding='utf-8')
@@ -55,7 +58,50 @@ jobs:
                           f'{path}: permissions devem permanecer exatamente contents: read ({entries})'
                       )
 
-              for line_number, line in enumerate(text.splitlines(), 1):
+              lines = text.splitlines()
+              in_jobs = False
+              job_name = None
+              job_lines = []
+
+              def validate_job(name, body):
+                  if not name or not any(runs_on.match(line) for line in body):
+                      return
+                  timeouts = [timeout.match(line) for line in body]
+                  timeouts = [match for match in timeouts if match]
+                  if len(timeouts) != 1:
+                      failures.append(
+                          f'{path}: job {name} deve declarar exatamente um timeout-minutes'
+                      )
+                      return
+                  minutes = int(timeouts[0].group('minutes'))
+                  if not 1 <= minutes <= 30:
+                      failures.append(
+                          f'{path}: job {name} timeout-minutes deve ficar entre 1 e 30 ({minutes})'
+                      )
+
+              for line in lines:
+                  if line == 'jobs:':
+                      in_jobs = True
+                      continue
+                  if not in_jobs:
+                      continue
+                  if line and not line.startswith(' '):
+                      validate_job(job_name, job_lines)
+                      job_name = None
+                      job_lines = []
+                      in_jobs = False
+                      continue
+                  header = job_header.match(line)
+                  if header:
+                      validate_job(job_name, job_lines)
+                      job_name = header.group('name')
+                      job_lines = []
+                      continue
+                  if job_name:
+                      job_lines.append(line)
+              validate_job(job_name, job_lines)
+
+              for line_number, line in enumerate(lines, 1):
                   match = action_ref.match(line)
                   if not match:
                       continue
