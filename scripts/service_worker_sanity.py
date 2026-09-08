@@ -175,6 +175,26 @@ notification_paths = extract_set(source, 'NOTIFICATION_PATHS')
 app_shell = extract_array(source, 'APP_SHELL')
 runtime_sensitive = extract_js_regex(source, 'SENSITIVE_PATH')
 
+expected_public_navigation = {
+    '/',
+    '/index.html',
+    '/servicos.html',
+    '/solicitacoes.html',
+    '/projetos.html',
+    '/contato.html',
+    '/sobre.html',
+    '/privacidade.html',
+    '/seguranca.html',
+    '/offline.html',
+}
+if public_navigation != expected_public_navigation:
+    added = sorted(public_navigation - expected_public_navigation)
+    removed = sorted(expected_public_navigation - public_navigation)
+    if added:
+        fail(f"sw.js: PUBLIC_NAVIGATION_PATHS ganhou rota não aprovada -> {', '.join(added)}")
+    if removed:
+        fail(f"sw.js: PUBLIC_NAVIGATION_PATHS perdeu rota pública esperada -> {', '.join(removed)}")
+
 expected_notification_paths = {
     '/',
     '/index.html',
