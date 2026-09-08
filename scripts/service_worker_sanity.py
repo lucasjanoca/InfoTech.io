@@ -66,10 +66,22 @@ def local_target(raw: str):
 
 def validate_allowlist_path(route: str, list_name: str) -> None:
     parsed = urlsplit(route)
+    decoded_path = unquote(parsed.path)
+
+    if route != route.strip():
+        fail(f'sw.js: {list_name} não deve conter espaços externos -> {route!r}')
+    if parsed.scheme or parsed.netloc:
+        fail(f'sw.js: {list_name} deve conter apenas caminhos locais -> {route}')
     if parsed.query or parsed.fragment:
         fail(f'sw.js: {list_name} deve conter apenas caminhos sem query/fragmento -> {route}')
-    if unquote(parsed.path) != parsed.path:
+    if decoded_path != parsed.path:
         fail(f'sw.js: {list_name} não deve usar caminho percent-encoded -> {route}')
+    if '\\' in decoded_path:
+        fail(f'sw.js: {list_name} não deve usar barra invertida -> {route}')
+    if '//' in decoded_path:
+        fail(f'sw.js: {list_name} não deve usar barras duplicadas -> {route}')
+    if any(segment in {'.', '..'} for segment in decoded_path.split('/')):
+        fail(f'sw.js: {list_name} não deve conter segmentos . ou .. -> {route}')
 
 
 try:
