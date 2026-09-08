@@ -62,11 +62,16 @@ def extract_js_regex(source: str, name: str):
     cursor = start + len(marker)
     pattern = []
     escaped = False
+    in_character_class = False
     while cursor < len(source):
         char = source[cursor]
-        if char == '/' and not escaped:
+        if char == '/' and not escaped and not in_character_class:
             break
         pattern.append(char)
+        if char == '[' and not escaped:
+            in_character_class = True
+        elif char == ']' and not escaped:
+            in_character_class = False
         if char == '\\' and not escaped:
             escaped = True
         else:
