@@ -88,6 +88,31 @@ def validate_allowlist_path(route: str, list_name: str) -> None:
     validate_local_path(route, list_name)
 
 
+def is_sensitive_navigation_path(route: str) -> bool:
+    path = urlsplit(route).path.lower()
+    if path.startswith('/admin-') or path.startswith('/admin/'):
+        return True
+
+    sensitive_routes = (
+        '/painel-admin',
+        '/painel-cliente',
+        '/cliente-admin',
+        '/clientes-admin',
+        '/solicitacoes-antigas',
+        '/login',
+        '/cadastro',
+        '/perfil',
+        '/nova-solicitacao',
+        '/detalhes-solicitacao',
+        '/recuperar-senha',
+        '/email-confirmado',
+    )
+    return any(
+        path == marker or path == marker + '.html' or path.startswith(marker + '/')
+        for marker in sensitive_routes
+    )
+
+
 try:
     source = SW_PATH.read_text(encoding='utf-8')
 except Exception as exc:
@@ -105,27 +130,12 @@ if not notification_paths:
 if not app_shell:
     fail('sw.js: APP_SHELL está vazio')
 
-sensitive_markers = (
-    '/admin',
-    '/painel-admin',
-    '/painel-cliente',
-    '/cliente-admin',
-    '/clientes-admin',
-    '/login',
-    '/cadastro',
-    '/perfil',
-    '/nova-solicitacao',
-    '/detalhes-solicitacao',
-    '/recuperar-senha',
-    '/email-confirmado',
-)
-
 for route in sorted(public_navigation):
     validate_allowlist_path(route, 'PUBLIC_NAVIGATION_PATHS')
     if not route.startswith('/'):
         fail(f'sw.js: rota pública inválida -> {route}')
         continue
-    if any(route == marker or route.startswith(marker + '.') or route.startswith(marker + '/') for marker in sensitive_markers):
+    if is_sensitive_navigation_path(route):
         fail(f'sw.js: rota sensível presente na allowlist pública -> {route}')
     target = local_target(route)
     if target is None or not target.exists():
