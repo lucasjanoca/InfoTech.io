@@ -1,0 +1,65 @@
+name: Script boundary check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  script-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Reject demo and legacy script references
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlsplit, unquote
+          import sys
+
+          ROOT = Path('.')
+          failures = []
+
+          class ScriptParser(HTMLParser):
+              def __init__(self, source):
+                  super().__init__(convert_charrefs=True)
+                  self.source = source
+
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() != 'script':
+                      return
+                  data = {str(key).lower(): (value or '') for key, value in attrs if key}
+                  raw = data.get('src', '').strip()
+                  if not raw:
+                      return
+                  parsed = urlsplit(raw)
+                  path = unquote(parsed.path or '').lower()
+                  parts = [part for part in path.split('/') if part]
+                  if any('demo' in part or 'legacy' in part for part in parts):
+                      failures.append(f'{self.source}: script demo/legacy -> {raw}')
+
+          for page in sorted(ROOT.glob('*.html')):
+              parser = ScriptParser(page)
+              try:
+                  parser.feed(page.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  failures.append(f'{page}: HTML não pôde ser analisado: {exc}')
+
+          if failures:
+              print('Referência de script demo/legacy em página de produção:', file=sys.stderr)
+              for failure in failures:
+                  print(f'- {failure}', file=sys.stderr)
+              raise SystemExit(1)
+
+          print(f'OK: {len(list(ROOT.glob("*.html")))} páginas sem scripts demo/legacy.')
+          PY
