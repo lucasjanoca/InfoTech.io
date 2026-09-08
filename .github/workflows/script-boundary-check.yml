@@ -29,6 +29,9 @@ jobs:
 
           ROOT = Path('.')
           failures = []
+          APPROVED_EXTERNAL_SCRIPTS = {
+              'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3',
+          }
 
           class ScriptParser(HTMLParser):
               def __init__(self, source):
@@ -53,6 +56,13 @@ jobs:
                       if not raw:
                           continue
                       parsed = urlsplit(raw)
+                      if parsed.scheme or parsed.netloc:
+                          if raw not in APPROVED_EXTERNAL_SCRIPTS:
+                              failures.append(
+                                  f'{self.source}: script externo não aprovado ou sem versão fixada -> {raw}'
+                              )
+                          continue
+
                       path = unquote(parsed.path or '').lower()
                       parts = [part for part in path.split('/') if part]
                       if any('demo' in part or 'legacy' in part for part in parts):
@@ -66,10 +76,13 @@ jobs:
                   failures.append(f'{page}: HTML não pôde ser analisado: {exc}')
 
           if failures:
-              print('Referência de script demo/legacy em página de produção:', file=sys.stderr)
+              print('Fronteira de scripts inválida em página de produção:', file=sys.stderr)
               for failure in failures:
                   print(f'- {failure}', file=sys.stderr)
               raise SystemExit(1)
 
-          print(f'OK: {len(list(ROOT.glob("*.html")))} páginas sem scripts demo/legacy ou src ambíguo.')
+          print(
+              f'OK: {len(list(ROOT.glob("*.html")))} páginas sem scripts demo/legacy, '
+              'src ambíguo ou script externo não aprovado.'
+          )
           PY
