@@ -124,6 +124,43 @@ def validate_common(name: str, manifest: dict) -> None:
     validate_install_icons(name, manifest)
 
 
+def validate_main_shortcuts(manifest: dict) -> None:
+    expected_urls = {
+        '/servicos.html',
+        '/projetos.html',
+        '/login.html',
+        '/nova-solicitacao.html',
+    }
+    shortcuts = manifest.get('shortcuts')
+    if not isinstance(shortcuts, list):
+        fail('manifest.webmanifest: shortcuts deve permanecer uma lista')
+        return
+
+    seen_urls = set()
+    for index, shortcut in enumerate(shortcuts, 1):
+        if not isinstance(shortcut, dict):
+            fail(f'manifest.webmanifest: atalho #{index} inválido')
+            continue
+        for field in ('name', 'short_name', 'description', 'url'):
+            value = shortcut.get(field)
+            if not isinstance(value, str) or not value.strip():
+                fail(f'manifest.webmanifest: atalho #{index} deve manter {field} não vazio')
+        url = shortcut.get('url')
+        if isinstance(url, str) and url.strip():
+            normalized_url = url.strip()
+            if normalized_url in seen_urls:
+                fail(f'manifest.webmanifest: atalho duplicado para {normalized_url}')
+            else:
+                seen_urls.add(normalized_url)
+
+    missing = sorted(expected_urls - seen_urls)
+    unexpected = sorted(seen_urls - expected_urls)
+    if missing:
+        fail(f'manifest.webmanifest: atalhos essenciais ausentes: {", ".join(missing)}')
+    if unexpected:
+        fail(f'manifest.webmanifest: atalhos não previstos na identidade instalada: {", ".join(unexpected)}')
+
+
 main = load_manifest('manifest.webmanifest')
 if main is not None:
     validate_common('manifest.webmanifest', main)
@@ -137,6 +174,7 @@ if main is not None:
         fail('manifest.webmanifest: start_url deve permanecer / para abrir o app principal na Home')
     if main.get('scope') != '/':
         fail('manifest.webmanifest: scope deve permanecer / para preservar as rotas instaladas do app principal')
+    validate_main_shortcuts(main)
 
 admin = load_manifest('admin-manifest.webmanifest')
 if admin is not None:
@@ -158,4 +196,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: identidade, direção de texto, ícones, entrada e experiência instalada dos manifests PWA estão consistentes.')
+print('OK: identidade, direção de texto, ícones, atalhos, entrada e experiência instalada dos manifests PWA estão consistentes.')
