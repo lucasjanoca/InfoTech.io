@@ -29,6 +29,10 @@ jobs:
           failures = []
           action_ref = re.compile(r'^\s*uses:\s*([^#\s]+)')
           immutable_sha = re.compile(r'@[0-9a-fA-F]{40}$')
+          permissions_block = re.compile(
+              r'^permissions:\s*\n(?P<body>(?:^[ \t]+[^\n]*\n?)*)',
+              re.MULTILINE,
+          )
 
           for path in sorted(Path('.github/workflows').glob('*.y*ml')):
               text = path.read_text(encoding='utf-8')
@@ -36,8 +40,20 @@ jobs:
               if re.search(r'^\s*pull_request_target\s*:', text, re.MULTILINE):
                   failures.append(f'{path}: pull_request_target não é permitido')
 
-              if not re.search(r'^\s*permissions\s*:\s*$', text, re.MULTILINE):
+              permissions = permissions_block.search(text)
+              if not permissions:
                   failures.append(f'{path}: permissions explícitas são obrigatórias')
+              else:
+                  entries = []
+                  for raw_line in permissions.group('body').splitlines():
+                      line = raw_line.strip()
+                      if not line or line.startswith('#'):
+                          continue
+                      entries.append(line)
+                  if entries != ['contents: read']:
+                      failures.append(
+                          f'{path}: permissions devem permanecer exatamente contents: read ({entries})'
+                      )
 
               for line_number, line in enumerate(text.splitlines(), 1):
                   match = action_ref.match(line)
