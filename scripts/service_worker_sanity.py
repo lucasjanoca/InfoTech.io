@@ -64,7 +64,7 @@ def local_target(raw: str):
     return ROOT / path.lstrip('/')
 
 
-def validate_allowlist_path(route: str, list_name: str) -> None:
+def validate_local_path(route: str, list_name: str) -> None:
     parsed = urlsplit(route)
     decoded_path = unquote(parsed.path)
 
@@ -82,6 +82,10 @@ def validate_allowlist_path(route: str, list_name: str) -> None:
         fail(f'sw.js: {list_name} não deve usar barras duplicadas -> {route}')
     if any(segment in {'.', '..'} for segment in decoded_path.split('/')):
         fail(f'sw.js: {list_name} não deve conter segmentos . ou .. -> {route}')
+
+
+def validate_allowlist_path(route: str, list_name: str) -> None:
+    validate_local_path(route, list_name)
 
 
 try:
@@ -135,6 +139,8 @@ for route in sorted(notification_paths):
 
 seen_shell = set()
 for resource in app_shell:
+    validate_local_path(resource, 'APP_SHELL')
+
     if resource in seen_shell:
         fail(f'sw.js: recurso duplicado no APP_SHELL -> {resource}')
         continue
