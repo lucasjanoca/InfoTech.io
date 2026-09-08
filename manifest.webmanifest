@@ -32,7 +32,8 @@
         {
           "src": "assets/brand/logo-192.webp",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/webp",
+          "purpose": "any"
         }
       ],
       "description": "Abrir os serviços da InfoTech.io"
@@ -45,7 +46,8 @@
         {
           "src": "assets/brand/logo-192.webp",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/webp",
+          "purpose": "any"
         }
       ],
       "description": "Ver projetos publicados pela InfoTech.io"
@@ -58,7 +60,8 @@
         {
           "src": "assets/brand/logo-192.webp",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/webp",
+          "purpose": "any"
         }
       ],
       "description": "Abrir sua conta e acompanhar solicitações"
@@ -71,7 +74,8 @@
         {
           "src": "assets/brand/logo-192.webp",
           "sizes": "192x192",
-          "type": "image/webp"
+          "type": "image/webp",
+          "purpose": "any"
         }
       ],
       "description": "Criar uma nova solicitação"
