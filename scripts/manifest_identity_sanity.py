@@ -47,6 +47,8 @@ def validate_install_icons(name: str, manifest: dict) -> None:
 
         if not isinstance(src, str) or not src.strip():
             fail(f'{name}: ícone #{index} deve ter src não vazio')
+        elif src != src.strip():
+            fail(f'{name}: ícone #{index} não deve ter espaços externos em src')
         if not isinstance(sizes, str) or re.fullmatch(r'(?:[1-9]\d*x[1-9]\d*|any)(?:\s+(?:[1-9]\d*x[1-9]\d*|any))*', sizes.strip()) is None:
             fail(f'{name}: ícone #{index} deve ter sizes válido')
         sizes_tokens = sizes.strip().split() if isinstance(sizes, str) else []
