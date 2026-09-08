@@ -147,6 +147,8 @@ def validate_main_shortcuts(manifest: dict) -> None:
                 fail(f'manifest.webmanifest: atalho #{index} deve manter {field} não vazio')
         url = shortcut.get('url')
         if isinstance(url, str) and url.strip():
+            if url != url.strip():
+                fail(f'manifest.webmanifest: atalho #{index} não deve ter espaços externos em url')
             normalized_url = url.strip()
             if normalized_url in seen_urls:
                 fail(f'manifest.webmanifest: atalho duplicado para {normalized_url}')
