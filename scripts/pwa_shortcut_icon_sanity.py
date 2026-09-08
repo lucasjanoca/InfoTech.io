@@ -9,6 +9,7 @@ EXPECTED_ICON = {
     'src': 'assets/brand/logo-192.webp',
     'sizes': '192x192',
     'type': 'image/webp',
+    'purpose': 'any',
 }
 errors = []
 
