@@ -125,11 +125,27 @@ def validate_common(name: str, manifest: dict) -> None:
 
 
 def validate_main_shortcuts(manifest: dict) -> None:
-    expected_urls = {
-        '/servicos.html',
-        '/projetos.html',
-        '/login.html',
-        '/nova-solicitacao.html',
+    expected = {
+        '/servicos.html': {
+            'name': 'Serviços',
+            'short_name': 'Serviços',
+            'description': 'Abrir os serviços da InfoTech.io',
+        },
+        '/projetos.html': {
+            'name': 'Projetos',
+            'short_name': 'Projetos',
+            'description': 'Ver projetos publicados pela InfoTech.io',
+        },
+        '/login.html': {
+            'name': 'Área do Cliente',
+            'short_name': 'Cliente',
+            'description': 'Abrir sua conta e acompanhar solicitações',
+        },
+        '/nova-solicitacao.html': {
+            'name': 'Nova solicitação',
+            'short_name': 'Solicitar',
+            'description': 'Criar uma nova solicitação',
+        },
     }
     shortcuts = manifest.get('shortcuts')
     if not isinstance(shortcuts, list):
@@ -155,6 +171,13 @@ def validate_main_shortcuts(manifest: dict) -> None:
             else:
                 seen_urls.add(normalized_url)
 
+            expected_metadata = expected.get(normalized_url)
+            if expected_metadata:
+                for field, expected_value in expected_metadata.items():
+                    if shortcut.get(field) != expected_value:
+                        fail(f'manifest.webmanifest: atalho {normalized_url} deve manter {field} como {expected_value!r}')
+
+    expected_urls = set(expected)
     missing = sorted(expected_urls - seen_urls)
     unexpected = sorted(seen_urls - expected_urls)
     if missing:
