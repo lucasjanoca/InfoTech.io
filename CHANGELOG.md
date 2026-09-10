@@ -50,6 +50,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- Nova auditoria protege a fronteira local de `io/local.html`: o endpoint Ollama deve permanecer em loopback (`127.0.0.1`, `localhost` ou `::1`), sem credenciais embutidas, query ou fragmento, evitando envio silencioso de conversas a um servidor remoto.
 - A auditoria de baseline do documento agora rejeita atributos duplicados em elementos estruturais e metadados críticos (`html`, `head`, `body`, `meta`, `link`, `base` e `title`), evitando interpretações ambíguas entre parsers e navegadores.
 - A auditoria de baseline do documento agora rejeita qualquer elemento `<base>` nas páginas HTML de produção, impedindo que URLs relativas de navegação, formulários ou recursos sejam redirecionadas silenciosamente para outra base.
 - A página `404.html` agora usa `form-action 'none'` na CSP por não possuir formulários, reduzindo a superfície permitida pelo fallback de erro; também recebeu uma descrição própria sem alterar indexação, navegação ou autenticação.
