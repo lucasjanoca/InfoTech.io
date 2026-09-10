@@ -49,6 +49,19 @@ def validate_install_icons(name: str, manifest: dict) -> None:
             fail(f'{name}: ícone #{index} deve ter src não vazio')
         elif src != src.strip():
             fail(f'{name}: ícone #{index} não deve ter espaços externos em src')
+        else:
+            normalized_src = src.strip()
+            if normalized_src.startswith(('/', '//')) or '://' in normalized_src or '?' in normalized_src or '#' in normalized_src:
+                fail(f'{name}: ícone #{index} deve permanecer um asset local relativo')
+            else:
+                asset = (ROOT / normalized_src).resolve()
+                try:
+                    asset.relative_to(ROOT.resolve())
+                except ValueError:
+                    fail(f'{name}: ícone #{index} não pode escapar da raiz do projeto')
+                else:
+                    if not asset.is_file():
+                        fail(f'{name}: asset do ícone #{index} não existe: {normalized_src}')
         if not isinstance(sizes, str) or re.fullmatch(r'(?:[1-9]\d*x[1-9]\d*|any)(?:\s+(?:[1-9]\d*x[1-9]\d*|any))*', sizes.strip()) is None:
             fail(f'{name}: ícone #{index} deve ter sizes válido')
         sizes_tokens = sizes.strip().split() if isinstance(sizes, str) else []
