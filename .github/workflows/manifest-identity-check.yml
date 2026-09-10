@@ -24,3 +24,6 @@ jobs:
 
       - name: Verify PWA shortcut icons
         run: python3 scripts/pwa_shortcut_icon_sanity.py
+
+      - name: Verify PWA categories
+        run: python3 scripts/pwa_categories_sanity.py
