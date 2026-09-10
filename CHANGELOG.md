@@ -26,6 +26,8 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- A auditoria de identidade PWA agora rejeita `display_override` com valores vazios, duplicados ou fora dos modos suportados, preservando `standalone` como primeira prioridade da experiência instalada sem alterar os manifests publicados.
+- Nova auditoria dedicada das categorias PWA exige listas não vazias, normalizadas e sem duplicação e preserva `business`, `productivity` e `utilities` nos manifests principal e administrativo.
 - A auditoria de identidade PWA agora rejeita dimensões repetidas dentro de `sizes` em cada ícone de instalação, evitando metadados ambíguos nos manifests principal e administrativo sem alterar os ícones publicados.
 - A auditoria de identidade PWA agora rejeita ícones de instalação duplicados nos manifests principal e administrativo, evitando declarações redundantes ou ambíguas sem alterar os assets instalados atuais.
 - O clique em notificações push agora revalida mesma origem e a allowlist `NOTIFICATION_PATHS`, usando `painel-cliente.html` como fallback seguro; a auditoria do Service Worker fixa essa fronteira para impedir navegação para destinos externos ou não autorizados.
