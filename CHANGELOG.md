@@ -26,6 +26,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Espaços excessivos antes do rodapé reduzidos em páginas públicas e fluxos de autenticação.
 
 ### PWA
+- A auditoria de identidade PWA agora exige que cada `src` de ícone de instalação permaneça local e relativo, sem query/fragmento, sem escapar da raiz do projeto e apontando para um arquivo existente, evitando manifests instaláveis com assets externos ou quebrados.
 - A auditoria de identidade PWA agora rejeita `display_override` com valores vazios, duplicados ou fora dos modos suportados, preservando `standalone` como primeira prioridade da experiência instalada sem alterar os manifests publicados.
 - Nova auditoria dedicada das categorias PWA exige listas não vazias, normalizadas e sem duplicação e preserva `business`, `productivity` e `utilities` nos manifests principal e administrativo.
 - A auditoria de identidade PWA agora rejeita dimensões repetidas dentro de `sizes` em cada ícone de instalação, evitando metadados ambíguos nos manifests principal e administrativo sem alterar os ícones publicados.
