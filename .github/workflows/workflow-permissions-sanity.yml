@@ -1,0 +1,82 @@
+name: Workflow permissions sanity check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  workflow-permissions-sanity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Verify workflows keep least-privilege permissions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          failures = []
+          permission_entry_re = re.compile(r'^\s{2}([A-Za-z0-9_-]+):\s*(\S+)\s*(?:#.*)?$')
+
+          for path in sorted(Path('.github/workflows').glob('*.y*ml')):
+              lines = path.read_text(encoding='utf-8').splitlines()
+              top_level_permissions = []
+
+              for index, line in enumerate(lines):
+                  if line.strip() != 'permissions:' or line.startswith((' ', '\t')):
+                      continue
+
+                  entries = []
+                  for candidate in lines[index + 1:]:
+                      if not candidate.strip() or candidate.lstrip().startswith('#'):
+                          continue
+                      if not candidate.startswith((' ', '\t')):
+                          break
+
+                      match = permission_entry_re.match(candidate)
+                      if match:
+                          entries.append((match.group(1), match.group(2), index + 1))
+
+                  top_level_permissions.append(entries)
+
+              if len(top_level_permissions) != 1:
+                  failures.append(
+                      f'{path}: deve declarar exatamente um bloco permissions no nível do workflow'
+                  )
+                  continue
+
+              entries = top_level_permissions[0]
+              normalized = [(name, value.lower()) for name, value, _ in entries]
+              if normalized != [('contents', 'read')]:
+                  failures.append(
+                      f'{path}: permissions deve conter somente contents: read'
+                  )
+
+              for index, line in enumerate(lines, start=1):
+                  stripped = line.strip().lower()
+                  if stripped.startswith('permissions:') and line.startswith((' ', '\t')):
+                      failures.append(
+                          f'{path}:{index}: permissions em nível de job/step não são permitidas neste conjunto de workflows de leitura'
+                      )
+
+          if failures:
+              print('Falha no princípio de privilégio mínimo dos workflows:', file=sys.stderr)
+              for failure in failures:
+                  print(f'- {failure}', file=sys.stderr)
+              raise SystemExit(1)
+
+          print('Todos os workflows mantêm somente contents: read no nível global.')
+          PY
