@@ -30,3 +30,6 @@ jobs:
 
       - name: Verify PWA categories
         run: python3 scripts/pwa_categories_sanity.py
+
+      - name: Verify io local loopback boundary
+        run: python3 scripts/io_local_loopback_sanity.py
