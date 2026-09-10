@@ -26,6 +26,7 @@ SENSITIVE_PATHS = {
     '/cadastro.html',
     '/email-confirmado.html',
     '/solicitacao-enviada.html',
+    '/io/',
 }
 
 errors = []

@@ -12,5 +12,6 @@ Disallow: /cadastro.html
 Disallow: /recuperar-senha.html
 Disallow: /email-confirmado.html
 Disallow: /solicitacao-enviada.html
+Disallow: /io/
 
 Sitemap: https://infotech-io.com.br/sitemap.xml
