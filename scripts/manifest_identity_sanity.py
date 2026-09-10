@@ -118,8 +118,18 @@ def validate_common(name: str, manifest: dict) -> None:
 
     override = manifest.get('display_override')
     if override is not None:
+        allowed_display_modes = {'standalone', 'minimal-ui', 'browser', 'fullscreen'}
         if not isinstance(override, list) or not override or override[0] != 'standalone':
             fail(f'{name}: display_override deve priorizar standalone')
+        elif any(not isinstance(mode, str) or not mode.strip() for mode in override):
+            fail(f'{name}: display_override deve conter apenas modos não vazios')
+        else:
+            normalized_modes = [mode.strip() for mode in override]
+            if len(normalized_modes) != len(set(normalized_modes)):
+                fail(f'{name}: display_override não deve conter modos duplicados')
+            invalid_modes = [mode for mode in normalized_modes if mode not in allowed_display_modes]
+            if invalid_modes:
+                fail(f'{name}: display_override contém modo não suportado: {", ".join(invalid_modes)}')
 
     validate_install_icons(name, manifest)
 
