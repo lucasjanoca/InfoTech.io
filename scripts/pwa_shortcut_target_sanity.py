@@ -67,6 +67,13 @@ else:
             seen_targets[target_key] = label
 
         relative = parsed.path.lstrip('/')
+        if relative and PurePosixPath(relative).suffix.lower() != '.html':
+            fail(
+                f'manifest.webmanifest: destino do atalho {label!r} deve ser a raiz do app '
+                f'ou uma página .html: {parsed.path}'
+            )
+            continue
+
         target = ROOT / ('index.html' if not relative else relative)
         if not target.is_file():
             fail(f'manifest.webmanifest: destino do atalho {label!r} não existe: {parsed.path}')
@@ -77,4 +84,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: destinos dos atalhos PWA permanecem locais, únicos, dentro do escopo e apontam para arquivos existentes.')
+print('OK: destinos dos atalhos PWA permanecem locais, únicos, navegáveis, dentro do escopo e apontam para páginas HTML existentes.')
