@@ -21,6 +21,7 @@ except Exception as exc:
 
 scope = manifest.get('scope')
 shortcuts = manifest.get('shortcuts')
+seen_targets = {}
 
 if scope != '/':
     fail('manifest.webmanifest: scope deve permanecer / para validar os atalhos publicados')
@@ -55,6 +56,16 @@ else:
             fail(f'manifest.webmanifest: atalho {label!r} não pode escapar da raiz do app')
             continue
 
+        target_key = posix_path.as_posix()
+        previous_label = seen_targets.get(target_key)
+        if previous_label is not None:
+            fail(
+                f'manifest.webmanifest: atalhos {previous_label!r} e {label!r} '
+                f'não podem apontar para o mesmo destino {target_key!r}'
+            )
+        else:
+            seen_targets[target_key] = label
+
         relative = parsed.path.lstrip('/')
         target = ROOT / ('index.html' if not relative else relative)
         if not target.is_file():
@@ -66,4 +77,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: destinos dos atalhos PWA permanecem locais, dentro do escopo e apontam para arquivos existentes.')
+print('OK: destinos dos atalhos PWA permanecem locais, únicos, dentro do escopo e apontam para arquivos existentes.')
