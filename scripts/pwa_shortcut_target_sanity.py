@@ -50,6 +50,12 @@ else:
         if parsed.query or parsed.fragment:
             fail(f'manifest.webmanifest: atalho {label!r} não deve conter query ou fragmento')
             continue
+        if '%' in parsed.path or '\\' in parsed.path:
+            fail(
+                f'manifest.webmanifest: atalho {label!r} deve usar uma rota literal, '
+                'sem percent-encoding ou barras invertidas'
+            )
+            continue
 
         posix_path = PurePosixPath(parsed.path)
         if '..' in posix_path.parts:
@@ -57,6 +63,13 @@ else:
             continue
 
         target_key = posix_path.as_posix()
+        if target_key != parsed.path:
+            fail(
+                f'manifest.webmanifest: atalho {label!r} deve usar uma rota já normalizada: '
+                f'{parsed.path!r}'
+            )
+            continue
+
         previous_label = seen_targets.get(target_key)
         if previous_label is not None:
             fail(
@@ -84,4 +97,4 @@ if errors:
     print(f'FALHOU: {len(errors)} problema(s).')
     sys.exit(1)
 
-print('OK: destinos dos atalhos PWA permanecem locais, únicos, navegáveis, dentro do escopo e apontam para páginas HTML existentes.')
+print('OK: destinos dos atalhos PWA permanecem locais, únicos, normalizados, navegáveis, dentro do escopo e apontam para páginas HTML existentes.')
