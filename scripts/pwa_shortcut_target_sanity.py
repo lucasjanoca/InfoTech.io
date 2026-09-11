@@ -28,6 +28,8 @@ if scope != '/':
 
 if not isinstance(shortcuts, list):
     fail('manifest.webmanifest: shortcuts deve permanecer uma lista')
+elif not shortcuts:
+    fail('manifest.webmanifest: shortcuts deve manter ao menos um atalho publicado')
 else:
     for index, shortcut in enumerate(shortcuts, 1):
         if not isinstance(shortcut, dict):
