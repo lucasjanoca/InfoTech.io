@@ -27,6 +27,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 
 ### PWA
 - A auditoria dos atalhos PWA agora exige `name`, `short_name` e `description` preenchidos e normalizados, rejeita caracteres de controle e nomes duplicados, preservando metadados de instalação consistentes sem alterar o manifest publicado.
+- A auditoria dos atalhos PWA agora também rejeita destinos duplicados após normalização de rota, evitando que atalhos visualmente diferentes levem à mesma tela sem alterar o manifest publicado.
 - A auditoria de identidade PWA agora exige que cada `src` de ícone de instalação permaneça local e relativo, sem query/fragmento, sem escapar da raiz do projeto e apontando para um arquivo existente, evitando manifests instaláveis com assets externos ou quebrados.
 - A auditoria de identidade PWA agora rejeita `display_override` com valores vazios, duplicados ou fora dos modos suportados, preservando `standalone` como primeira prioridade da experiência instalada sem alterar os manifests publicados.
 - Nova auditoria dedicada das categorias PWA exige listas não vazias, normalizadas e sem duplicação e preserva `business`, `productivity` e `utilities` nos manifests principal e administrativo.
