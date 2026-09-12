@@ -58,6 +58,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 
 ### Segurança / CI
 - Nova auditoria dedicada rejeita espaços externos em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando normalização silenciosa por parsers e navegadores sem alterar as páginas publicadas.
+- Nova auditoria dedicada rejeita espaços ASCII literais dentro de URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando normalização silenciosa para `%20` e destinos efetivos diferentes do texto revisado sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita credenciais embutidas (`userinfo`) em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando vazamento acidental de usuário/senha em histórico, logs ou referências copiadas sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita caracteres de controle ASCII C0 e DEL em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando destinos que parsers possam normalizar antes da interpretação sem alterar as páginas publicadas.
 - Nova auditoria protege a fronteira local de `io/local.html`: o endpoint Ollama deve permanecer em loopback (`127.0.0.1`, `localhost` ou `::1`), sem credenciais embutidas, query ou fragmento, evitando envio silencioso de conversas a um servidor remoto.
