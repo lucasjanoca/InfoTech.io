@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import json
 import re
 import sys
@@ -55,6 +55,8 @@ def validate_install_icons(name: str, manifest: dict) -> None:
                 fail(f'{name}: ícone #{index} deve usar caminho literal, sem percent-encoding ou barras invertidas')
             elif normalized_src.startswith(('/', '//')) or '://' in normalized_src or '?' in normalized_src or '#' in normalized_src:
                 fail(f'{name}: ícone #{index} deve permanecer um asset local relativo')
+            elif PurePosixPath(normalized_src).as_posix() != normalized_src or '.' in PurePosixPath(normalized_src).parts or '..' in PurePosixPath(normalized_src).parts:
+                fail(f'{name}: ícone #{index} deve usar caminho relativo já normalizado, sem segmentos . ou ..')
             else:
                 asset = (ROOT / normalized_src).resolve()
                 try:
