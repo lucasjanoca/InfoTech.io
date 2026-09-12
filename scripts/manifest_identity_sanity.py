@@ -51,7 +51,9 @@ def validate_install_icons(name: str, manifest: dict) -> None:
             fail(f'{name}: ícone #{index} não deve ter espaços externos em src')
         else:
             normalized_src = src.strip()
-            if normalized_src.startswith(('/', '//')) or '://' in normalized_src or '?' in normalized_src or '#' in normalized_src:
+            if '%' in normalized_src or '\\' in normalized_src:
+                fail(f'{name}: ícone #{index} deve usar caminho literal, sem percent-encoding ou barras invertidas')
+            elif normalized_src.startswith(('/', '//')) or '://' in normalized_src or '?' in normalized_src or '#' in normalized_src:
                 fail(f'{name}: ícone #{index} deve permanecer um asset local relativo')
             else:
                 asset = (ROOT / normalized_src).resolve()
