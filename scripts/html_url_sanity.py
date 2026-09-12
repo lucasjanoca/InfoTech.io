@@ -13,6 +13,10 @@ URL_ATTRIBUTES = {
 }
 
 
+def has_ascii_control(value: str) -> bool:
+    return any(ord(char) < 0x20 or ord(char) == 0x7f for char in value)
+
+
 class UrlParser(HTMLParser):
     def __init__(self, page: Path):
         super().__init__(convert_charrefs=True)
@@ -23,8 +27,18 @@ class UrlParser(HTMLParser):
             name = (attr_name or '').lower()
             if name not in URL_ATTRIBUTES:
                 continue
-            value = (raw_value or '').strip()
+            raw = raw_value or ''
+            value = raw.strip()
             if not value:
+                continue
+
+            # Caracteres de controle C0/DEL podem ser descartados ou normalizados por
+            # parsers de URL, tornando o destino efetivo diferente do texto revisado.
+            if has_ascii_control(raw):
+                errors.append(
+                    f'{self.page.name}: caractere de controle não permitido em '
+                    f'{tag.lower()}[{name}]'
+                )
                 continue
 
             # Barras invertidas podem ser normalizadas como separadores de URL por
@@ -70,5 +84,6 @@ if errors:
 
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
-    'protocol-relative ou com barras invertidas em atributos navegáveis/carregáveis.'
+    'protocol-relative, com barras invertidas ou caracteres de controle em atributos '
+    'navegáveis/carregáveis.'
 )
