@@ -41,6 +41,16 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
+            # Espaços literais internos podem ser convertidos implicitamente para
+            # %20 pelo navegador, tornando o destino efetivo diferente do valor
+            # revisado no HTML. URLs publicadas devem declarar o destino canônico.
+            if ' ' in value:
+                errors.append(
+                    f'{self.page.name}: espaço literal não permitido em '
+                    f'{tag.lower()}[{name}] -> {value!r}'
+                )
+                continue
+
             # Caracteres de controle C0/DEL podem ser descartados ou normalizados por
             # parsers de URL, tornando o destino efetivo diferente do texto revisado.
             if has_ascii_control(raw):
@@ -104,6 +114,6 @@ if errors:
 
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
-    'protocol-relative, com espaços externos, barras invertidas, caracteres de '
-    'controle ou credenciais embutidas em atributos navegáveis/carregáveis.'
+    'protocol-relative, com espaços externos/internos, barras invertidas, caracteres '
+    'de controle ou credenciais embutidas em atributos navegáveis/carregáveis.'
 )
