@@ -71,6 +71,17 @@ class UrlParser(HTMLParser):
                 continue
 
             parsed = urlsplit(value)
+
+            # Credenciais embutidas em URLs podem vazar em histórico, logs, capturas e
+            # referências copiadas. Nenhum destino HTML de produção deve depender de
+            # userinfo; autenticação deve permanecer no fluxo próprio da aplicação.
+            if parsed.username is not None or parsed.password is not None:
+                errors.append(
+                    f'{self.page.name}: credenciais embutidas não permitidas em '
+                    f'{tag.lower()}[{name}]'
+                )
+                continue
+
             if parsed.scheme.lower() == 'http':
                 errors.append(
                     f'{self.page.name}: URL HTTP insegura em '
@@ -93,6 +104,6 @@ if errors:
 
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
-    'protocol-relative, com espaços externos, barras invertidas ou caracteres de '
-    'controle em atributos navegáveis/carregáveis.'
+    'protocol-relative, com espaços externos, barras invertidas, caracteres de '
+    'controle ou credenciais embutidas em atributos navegáveis/carregáveis.'
 )
