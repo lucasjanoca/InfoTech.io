@@ -32,6 +32,15 @@ class UrlParser(HTMLParser):
             if not value:
                 continue
 
+            # Espaços externos podem ser descartados durante o parsing da URL e
+            # tornam o destino efetivo diferente do valor literal revisado.
+            if raw != value:
+                errors.append(
+                    f'{self.page.name}: espaço externo não permitido em '
+                    f'{tag.lower()}[{name}] -> {raw!r}'
+                )
+                continue
+
             # Caracteres de controle C0/DEL podem ser descartados ou normalizados por
             # parsers de URL, tornando o destino efetivo diferente do texto revisado.
             if has_ascii_control(raw):
@@ -84,6 +93,6 @@ if errors:
 
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
-    'protocol-relative, com barras invertidas ou caracteres de controle em atributos '
-    'navegáveis/carregáveis.'
+    'protocol-relative, com espaços externos, barras invertidas ou caracteres de '
+    'controle em atributos navegáveis/carregáveis.'
 )
