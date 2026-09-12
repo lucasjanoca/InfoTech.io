@@ -27,6 +27,16 @@ class UrlParser(HTMLParser):
             if not value:
                 continue
 
+            # Barras invertidas podem ser normalizadas como separadores de URL por
+            # navegadores e tornam a interpretação do destino ambígua. Caminhos web
+            # publicados devem usar apenas barras POSIX.
+            if '\\' in value:
+                errors.append(
+                    f'{self.page.name}: barra invertida não permitida em '
+                    f'{tag.lower()}[{name}] -> {value}'
+                )
+                continue
+
             # URLs protocol-relative herdam o esquema da página e tornam a política
             # menos explícita. Em produção, recursos/navegações externas devem declarar
             # HTTPS diretamente.
@@ -59,6 +69,6 @@ if errors:
     sys.exit(1)
 
 print(
-    f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP ou '
-    'protocol-relative em atributos navegáveis/carregáveis.'
+    f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
+    'protocol-relative ou com barras invertidas em atributos navegáveis/carregáveis.'
 )
