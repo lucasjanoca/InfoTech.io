@@ -56,6 +56,19 @@ def has_percent_encoded_ascii_control(value: str) -> bool:
     return False
 
 
+def has_percent_encoded_backslash(value: str) -> bool:
+    index = 0
+    while index < len(value):
+        if value[index] != '%':
+            index += 1
+            continue
+        decoded_byte = int(value[index + 1:index + 3], 16)
+        if decoded_byte == 0x5C:
+            return True
+        index += 3
+    return False
+
+
 class UrlParser(HTMLParser):
     def __init__(self, page: Path):
         super().__init__(convert_charrefs=True)
@@ -130,6 +143,16 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
+            # A barra invertida já é proibida em forma literal e também não deve poder
+            # reaparecer somente depois do percent-decode. Isso fecha a mesma fronteira
+            # contra separadores ambíguos para valores como %5C e %5c.
+            if has_percent_encoded_backslash(value):
+                errors.append(
+                    f'{self.page.name}: barra invertida percent-encoded não permitida em '
+                    f'{tag.lower()}[{name}] -> {value}'
+                )
+                continue
+
             # Barras invertidas podem ser normalizadas como separadores de URL por
             # navegadores e tornam a interpretação do destino ambígua. Caminhos web
             # publicados devem usar apenas barras POSIX.
@@ -185,7 +208,7 @@ if errors:
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
-    'percent-encoding inválido, controles ASCII percent-encoded, barras invertidas, '
-    'caracteres Unicode de controle ou credenciais embutidas em atributos '
-    'navegáveis/carregáveis.'
+    'percent-encoding inválido, controles ASCII ou barras invertidas percent-encoded, '
+    'barras invertidas, caracteres Unicode de controle ou credenciais embutidas em '
+    'atributos navegáveis/carregáveis.'
 )
