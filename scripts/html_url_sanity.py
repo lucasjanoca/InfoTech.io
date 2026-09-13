@@ -3,6 +3,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlsplit
 import sys
+import unicodedata
 
 ROOT = Path(__file__).resolve().parents[1]
 errors = []
@@ -19,6 +20,10 @@ def has_ascii_control(value: str) -> bool:
 
 def has_unicode_whitespace(value: str) -> bool:
     return any(char.isspace() for char in value)
+
+
+def has_unicode_format_character(value: str) -> bool:
+    return any(unicodedata.category(char) == 'Cf' for char in value)
 
 
 class UrlParser(HTMLParser):
@@ -51,6 +56,16 @@ class UrlParser(HTMLParser):
             if has_unicode_whitespace(value):
                 errors.append(
                     f'{self.page.name}: whitespace Unicode não permitido em '
+                    f'{tag.lower()}[{name}] -> {value!r}'
+                )
+                continue
+
+            # Caracteres Unicode de formatação (categoria Cf), como zero-width e
+            # controles bidi, podem ser invisíveis ou alterar a apresentação do
+            # texto sem fazer parte de um destino web legível e revisável.
+            if has_unicode_format_character(value):
+                errors.append(
+                    f'{self.page.name}: caractere Unicode de formatação não permitido em '
                     f'{tag.lower()}[{name}] -> {value!r}'
                 )
                 continue
@@ -118,6 +133,7 @@ if errors:
 
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
-    'protocol-relative, com whitespace Unicode, barras invertidas, caracteres de '
-    'controle ou credenciais embutidas em atributos navegáveis/carregáveis.'
+    'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
+    'barras invertidas, caracteres de controle ou credenciais embutidas em atributos '
+    'navegáveis/carregáveis.'
 )
