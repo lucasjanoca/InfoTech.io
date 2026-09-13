@@ -43,6 +43,19 @@ def has_invalid_percent_encoding(value: str) -> bool:
     return False
 
 
+def has_percent_encoded_ascii_control(value: str) -> bool:
+    index = 0
+    while index < len(value):
+        if value[index] != '%':
+            index += 1
+            continue
+        decoded_byte = int(value[index + 1:index + 3], 16)
+        if decoded_byte < 0x20 or decoded_byte == 0x7F:
+            return True
+        index += 3
+    return False
+
+
 class UrlParser(HTMLParser):
     def __init__(self, page: Path):
         super().__init__(convert_charrefs=True)
@@ -107,6 +120,16 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
+            # Mesmo um escape sintaticamente válido não deve ocultar controles ASCII.
+            # Bytes C0 e DEL podem ganhar significado somente depois do decode da URL,
+            # criando divergência entre o valor revisado no HTML e o destino processado.
+            if has_percent_encoded_ascii_control(value):
+                errors.append(
+                    f'{self.page.name}: controle ASCII percent-encoded não permitido em '
+                    f'{tag.lower()}[{name}] -> {value}'
+                )
+                continue
+
             # Barras invertidas podem ser normalizadas como separadores de URL por
             # navegadores e tornam a interpretação do destino ambígua. Caminhos web
             # publicados devem usar apenas barras POSIX.
@@ -162,6 +185,7 @@ if errors:
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
-    'percent-encoding inválido, barras invertidas, caracteres Unicode de controle ou '
-    'credenciais embutidas em atributos navegáveis/carregáveis.'
+    'percent-encoding inválido, controles ASCII percent-encoded, barras invertidas, '
+    'caracteres Unicode de controle ou credenciais embutidas em atributos '
+    'navegáveis/carregáveis.'
 )
