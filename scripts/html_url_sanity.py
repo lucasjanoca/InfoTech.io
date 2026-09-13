@@ -13,6 +13,13 @@ URL_ATTRIBUTES = {
     'href', 'src', 'action', 'formaction', 'poster',
 }
 
+# Esquemas legados/locais não fazem parte da superfície web publicada da InfoTech.io.
+# Mantê-los explicitamente bloqueados evita navegação ou carregamento fora do modelo
+# HTTPS sem restringir esquemas intencionais como mailto: e tel:.
+UNSAFE_SCHEMES = {
+    'file', 'ftp', 'vbscript',
+}
+
 
 def has_unicode_control_character(value: str) -> bool:
     return any(unicodedata.category(char) == 'Cc' for char in value)
@@ -185,9 +192,17 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
-            if parsed.scheme.lower() == 'http':
+            scheme = parsed.scheme.lower()
+            if scheme == 'http':
                 errors.append(
                     f'{self.page.name}: URL HTTP insegura em '
+                    f'{tag.lower()}[{name}] -> {value}'
+                )
+                continue
+
+            if scheme in UNSAFE_SCHEMES:
+                errors.append(
+                    f'{self.page.name}: esquema de URL não permitido ({scheme}:) em '
                     f'{tag.lower()}[{name}] -> {value}'
                 )
 
@@ -209,6 +224,6 @@ print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
     'percent-encoding inválido, controles ASCII ou barras invertidas percent-encoded, '
-    'barras invertidas, caracteres Unicode de controle ou credenciais embutidas em '
-    'atributos navegáveis/carregáveis.'
+    'barras invertidas, caracteres Unicode de controle, credenciais embutidas ou '
+    'esquemas locais/legados proibidos em atributos navegáveis/carregáveis.'
 )
