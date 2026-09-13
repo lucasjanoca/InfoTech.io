@@ -57,6 +57,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- Nova auditoria dedicada rejeita qualquer whitespace Unicode dentro de URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), incluindo NBSP e espaço ASCII, evitando normalizações silenciosas e destinos ambíguos sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita espaços externos em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando normalização silenciosa por parsers e navegadores sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita espaços ASCII literais dentro de URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando normalização silenciosa para `%20` e destinos efetivos diferentes do texto revisado sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita credenciais embutidas (`userinfo`) em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando vazamento acidental de usuário/senha em histórico, logs ou referências copiadas sem alterar as páginas publicadas.
