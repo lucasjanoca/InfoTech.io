@@ -17,6 +17,10 @@ def has_ascii_control(value: str) -> bool:
     return any(ord(char) < 0x20 or ord(char) == 0x7f for char in value)
 
 
+def has_unicode_whitespace(value: str) -> bool:
+    return any(char.isspace() for char in value)
+
+
 class UrlParser(HTMLParser):
     def __init__(self, page: Path):
         super().__init__(convert_charrefs=True)
@@ -41,12 +45,12 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
-            # Espaços literais internos podem ser convertidos implicitamente para
-            # %20 pelo navegador, tornando o destino efetivo diferente do valor
-            # revisado no HTML. URLs publicadas devem declarar o destino canônico.
-            if ' ' in value:
+            # Qualquer whitespace Unicode interno (incluindo espaço ASCII e NBSP)
+            # pode ser normalizado ou percent-encoded pelo navegador, tornando o
+            # destino efetivo diferente do valor literal revisado no HTML.
+            if has_unicode_whitespace(value):
                 errors.append(
-                    f'{self.page.name}: espaço literal não permitido em '
+                    f'{self.page.name}: whitespace Unicode não permitido em '
                     f'{tag.lower()}[{name}] -> {value!r}'
                 )
                 continue
@@ -114,6 +118,6 @@ if errors:
 
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
-    'protocol-relative, com espaços externos/internos, barras invertidas, caracteres '
-    'de controle ou credenciais embutidas em atributos navegáveis/carregáveis.'
+    'protocol-relative, com whitespace Unicode, barras invertidas, caracteres de '
+    'controle ou credenciais embutidas em atributos navegáveis/carregáveis.'
 )
