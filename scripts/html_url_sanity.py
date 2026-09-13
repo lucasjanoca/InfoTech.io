@@ -13,11 +13,11 @@ URL_ATTRIBUTES = {
     'href', 'src', 'action', 'formaction', 'poster',
 }
 
-# Esquemas legados/locais não fazem parte da superfície web publicada da InfoTech.io.
-# Mantê-los explicitamente bloqueados evita navegação ou carregamento fora do modelo
-# HTTPS sem restringir esquemas intencionais como mailto: e tel:.
+# Esquemas locais, inline ou legados não fazem parte da superfície web publicada da
+# InfoTech.io. Mantê-los explicitamente bloqueados evita navegação/carregamento fora
+# do modelo HTTPS sem restringir esquemas intencionais como mailto: e tel:.
 UNSAFE_SCHEMES = {
-    'file', 'ftp', 'vbscript',
+    'blob', 'data', 'file', 'ftp', 'vbscript',
 }
 
 
@@ -225,5 +225,5 @@ print(
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
     'percent-encoding inválido, controles ASCII ou barras invertidas percent-encoded, '
     'barras invertidas, caracteres Unicode de controle, credenciais embutidas ou '
-    'esquemas locais/legados proibidos em atributos navegáveis/carregáveis.'
+    'esquemas locais/inline/legados proibidos em atributos navegáveis/carregáveis.'
 )
