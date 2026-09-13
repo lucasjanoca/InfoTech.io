@@ -57,6 +57,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- Nova auditoria dedicada rejeita barras invertidas percent-encoded (`%5C`/`%5c`) em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), evitando que separadores ambíguos reapareçam somente após percent-decode sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita controles ASCII C0 e DEL quando aparecem percent-encoded em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), bloqueando valores como `%00`, `%09`, `%0A`, `%0D` e `%7F` sem rejeitar escapes normais como `%20`.
 - Nova auditoria dedicada rejeita percent-encoding malformado em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), exigindo que cada `%` seja seguido por exatamente dois dígitos hexadecimais e preservando escapes válidos como `%20`.
 - Nova auditoria dedicada rejeita caracteres Unicode de controle (categoria `Cc`) em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), incluindo C0, DEL e C1, evitando normalizações silenciosas e destinos ambíguos sem alterar as páginas publicadas.
