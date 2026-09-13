@@ -26,6 +26,23 @@ def has_unicode_format_character(value: str) -> bool:
     return any(unicodedata.category(char) == 'Cf' for char in value)
 
 
+def has_invalid_percent_encoding(value: str) -> bool:
+    hex_digits = '0123456789abcdefABCDEF'
+    index = 0
+    while index < len(value):
+        if value[index] != '%':
+            index += 1
+            continue
+        if (
+            index + 2 >= len(value)
+            or value[index + 1] not in hex_digits
+            or value[index + 2] not in hex_digits
+        ):
+            return True
+        index += 3
+    return False
+
+
 class UrlParser(HTMLParser):
     def __init__(self, page: Path):
         super().__init__(convert_charrefs=True)
@@ -77,6 +94,16 @@ class UrlParser(HTMLParser):
                 errors.append(
                     f'{self.page.name}: caractere Unicode de controle não permitido em '
                     f'{tag.lower()}[{name}]'
+                )
+                continue
+
+            # Um escape percent-encoded precisa ser formado por '%' seguido de dois
+            # dígitos hexadecimais. Escapes incompletos ou inválidos podem ser tratados
+            # de forma diferente por navegadores, servidores e bibliotecas de URL.
+            if has_invalid_percent_encoding(value):
+                errors.append(
+                    f'{self.page.name}: percent-encoding inválido em '
+                    f'{tag.lower()}[{name}] -> {value}'
                 )
                 continue
 
@@ -135,6 +162,6 @@ if errors:
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
-    'barras invertidas, caracteres Unicode de controle ou credenciais embutidas em '
-    'atributos navegáveis/carregáveis.'
+    'percent-encoding inválido, barras invertidas, caracteres Unicode de controle ou '
+    'credenciais embutidas em atributos navegáveis/carregáveis.'
 )
