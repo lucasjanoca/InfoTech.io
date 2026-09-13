@@ -14,8 +14,8 @@ URL_ATTRIBUTES = {
 }
 
 
-def has_ascii_control(value: str) -> bool:
-    return any(ord(char) < 0x20 or ord(char) == 0x7f for char in value)
+def has_unicode_control_character(value: str) -> bool:
+    return any(unicodedata.category(char) == 'Cc' for char in value)
 
 
 def has_unicode_whitespace(value: str) -> bool:
@@ -70,11 +70,12 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
-            # Caracteres de controle C0/DEL podem ser descartados ou normalizados por
-            # parsers de URL, tornando o destino efetivo diferente do texto revisado.
-            if has_ascii_control(raw):
+            # Caracteres Unicode de controle (categoria Cc), incluindo C0, DEL e C1,
+            # podem ser descartados ou normalizados por parsers de URL, tornando o
+            # destino efetivo diferente do texto revisado.
+            if has_unicode_control_character(raw):
                 errors.append(
-                    f'{self.page.name}: caractere de controle não permitido em '
+                    f'{self.page.name}: caractere Unicode de controle não permitido em '
                     f'{tag.lower()}[{name}]'
                 )
                 continue
@@ -134,6 +135,6 @@ if errors:
 print(
     f'OK: {len(list(ROOT.glob("*.html")))} páginas sem URLs HTTP, '
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
-    'barras invertidas, caracteres de controle ou credenciais embutidas em atributos '
-    'navegáveis/carregáveis.'
+    'barras invertidas, caracteres Unicode de controle ou credenciais embutidas em '
+    'atributos navegáveis/carregáveis.'
 )
