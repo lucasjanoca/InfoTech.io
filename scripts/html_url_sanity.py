@@ -14,14 +14,14 @@ URL_ATTRIBUTES = {
 }
 
 # A superfície HTML publicada usa rotas relativas em todos os atributos auditados.
-# Para URLs absolutas, HTTPS é aceito em qualquer atributo; esquemas de contato são
-# intencionais apenas em links. A allowlist por atributo mantém a auditoria fail-closed
-# e evita usos sem sentido como src="mailto:..." ou action="tel:...".
+# Links e recursos podem usar HTTPS absoluto; esquemas de contato são intencionais
+# apenas em links. Submissões de formulário devem permanecer relativas e na própria
+# origem, evitando que action/formaction possam enviar dados a um domínio externo.
 ALLOWED_SCHEMES_BY_ATTRIBUTE = {
     'href': {'https', 'mailto', 'tel'},
     'src': {'https'},
-    'action': {'https'},
-    'formaction': {'https'},
+    'action': set(),
+    'formaction': set(),
     'poster': {'https'},
 }
 
