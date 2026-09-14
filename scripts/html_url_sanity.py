@@ -13,12 +13,16 @@ URL_ATTRIBUTES = {
     'href', 'src', 'action', 'formaction', 'poster',
 }
 
-# A superfície HTML publicada usa somente rotas relativas, HTTPS e os dois esquemas
-# de contato intencionais abaixo. Uma allowlist torna a auditoria fail-closed: novos
-# esquemas locais, inline, executáveis, legados ou customizados não passam pelo CI
-# apenas por ainda não terem sido adicionados a uma denylist.
-ALLOWED_SCHEMES = {
-    'https', 'mailto', 'tel',
+# A superfície HTML publicada usa rotas relativas em todos os atributos auditados.
+# Para URLs absolutas, HTTPS é aceito em qualquer atributo; esquemas de contato são
+# intencionais apenas em links. A allowlist por atributo mantém a auditoria fail-closed
+# e evita usos sem sentido como src="mailto:..." ou action="tel:...".
+ALLOWED_SCHEMES_BY_ATTRIBUTE = {
+    'href': {'https', 'mailto', 'tel'},
+    'src': {'https'},
+    'action': {'https'},
+    'formaction': {'https'},
+    'poster': {'https'},
 }
 
 
@@ -201,10 +205,11 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
-            if scheme and scheme not in ALLOWED_SCHEMES:
+            allowed_schemes = ALLOWED_SCHEMES_BY_ATTRIBUTE[name]
+            if scheme and scheme not in allowed_schemes:
                 errors.append(
-                    f'{self.page.name}: esquema de URL fora da allowlist ({scheme}:) em '
-                    f'{tag.lower()}[{name}] -> {value}'
+                    f'{self.page.name}: esquema de URL fora da allowlist de {name} '
+                    f'({scheme}:) em {tag.lower()}[{name}] -> {value}'
                 )
 
 
@@ -226,5 +231,5 @@ print(
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
     'percent-encoding inválido, controles ASCII ou barras invertidas percent-encoded, '
     'barras invertidas, caracteres Unicode de controle, credenciais embutidas ou '
-    'esquemas fora da allowlist em atributos navegáveis/carregáveis.'
+    'esquemas fora da allowlist por atributo em URLs navegáveis/carregáveis.'
 )
