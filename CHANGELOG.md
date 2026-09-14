@@ -57,6 +57,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- A auditoria dedicada de autoridade HTTPS agora rejeita `localhost`, subdomínios `.localhost` e endereços IP não públicos (loopback, privados, link-local, reservados ou unspecified), evitando que futuras URLs HTML absolutas alcancem silenciosamente serviços locais ou redes internas.
 - Nova auditoria dedicada valida a autoridade de URLs HTTPS absolutas usadas em atributos HTML navegáveis/carregáveis, exigindo host válido e rejeitando formas ambíguas como `https:foo` ou portas sintaticamente inválidas antes que cheguem ao `main`.
 - A auditoria dedicada de URLs HTML agora mantém `action` e `formaction` restritos a destinos relativos/same-origin, impedindo que futuras alterações enviem dados de formulário para domínios externos sem o CI bloquear; links, recursos e `poster` preservam HTTPS quando necessário.
 - A auditoria dedicada de URLs HTML agora restringe `mailto:` e `tel:` exclusivamente ao atributo `href`; demais atributos auditados aceitam apenas URLs relativas ou `https:`, preservando o modo fail-closed sem alterar páginas publicadas.
