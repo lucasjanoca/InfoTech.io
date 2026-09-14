@@ -3,12 +3,28 @@ from html.parser import HTMLParser
 from ipaddress import ip_address
 from pathlib import Path
 from urllib.parse import urlsplit
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 URL_ATTRIBUTES = {'href', 'src', 'action', 'formaction', 'poster'}
 LOCAL_HOSTNAMES = {'localhost'}
+DNS_LABEL_RE = re.compile(r'^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$')
 errors = []
+
+
+def is_valid_hostname(hostname: str) -> bool:
+    normalized = hostname.rstrip('.')
+    if not normalized or len(normalized) > 253:
+        return False
+
+    try:
+        ip_address(normalized)
+        return True
+    except ValueError:
+        pass
+
+    return all(DNS_LABEL_RE.fullmatch(label) for label in normalized.split('.'))
 
 
 def is_local_or_non_public_host(hostname: str) -> bool:
@@ -57,6 +73,13 @@ class HttpsAuthorityParser(HTMLParser):
                 )
                 continue
 
+            if not is_valid_hostname(hostname):
+                errors.append(
+                    f'{self.page.name}: URL HTTPS absoluta contém hostname inválido em '
+                    f'{tag.lower()}[{name}] -> {value!r}'
+                )
+                continue
+
             if is_local_or_non_public_host(hostname):
                 errors.append(
                     f'{self.page.name}: URL HTTPS absoluta aponta para host local/não público em '
@@ -75,10 +98,10 @@ for page in pages:
 if errors:
     for error in errors:
         print(f'ERRO: {error}')
-    print(f'FALHOU: {len(errors)} URL(s) HTTPS com autoridade inválida ou não pública.')
+    print(f'FALHOU: {len(errors)} URL(s) HTTPS com autoridade, hostname ou publicidade inválida.')
     sys.exit(1)
 
 print(
-    f'OK: {len(pages)} páginas sem URLs HTTPS absolutas com autoridade inválida '
+    f'OK: {len(pages)} páginas sem URLs HTTPS absolutas com autoridade/hostname inválido '
     'ou host local/não público.'
 )
