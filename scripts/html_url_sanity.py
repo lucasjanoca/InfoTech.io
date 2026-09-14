@@ -13,12 +13,12 @@ URL_ATTRIBUTES = {
     'href', 'src', 'action', 'formaction', 'poster',
 }
 
-# Esquemas locais, inline, executáveis ou legados não fazem parte da superfície web
-# publicada da InfoTech.io. Mantê-los explicitamente bloqueados evita navegação,
-# carregamento ou execução fora do modelo HTTPS sem restringir esquemas intencionais
-# como mailto: e tel:.
-UNSAFE_SCHEMES = {
-    'blob', 'data', 'file', 'ftp', 'javascript', 'vbscript',
+# A superfície HTML publicada usa somente rotas relativas, HTTPS e os dois esquemas
+# de contato intencionais abaixo. Uma allowlist torna a auditoria fail-closed: novos
+# esquemas locais, inline, executáveis, legados ou customizados não passam pelo CI
+# apenas por ainda não terem sido adicionados a uma denylist.
+ALLOWED_SCHEMES = {
+    'https', 'mailto', 'tel',
 }
 
 
@@ -201,9 +201,9 @@ class UrlParser(HTMLParser):
                 )
                 continue
 
-            if scheme in UNSAFE_SCHEMES:
+            if scheme and scheme not in ALLOWED_SCHEMES:
                 errors.append(
-                    f'{self.page.name}: esquema de URL não permitido ({scheme}:) em '
+                    f'{self.page.name}: esquema de URL fora da allowlist ({scheme}:) em '
                     f'{tag.lower()}[{name}] -> {value}'
                 )
 
@@ -226,5 +226,5 @@ print(
     'protocol-relative, com whitespace Unicode, caracteres Unicode de formatação, '
     'percent-encoding inválido, controles ASCII ou barras invertidas percent-encoded, '
     'barras invertidas, caracteres Unicode de controle, credenciais embutidas ou '
-    'esquemas locais/inline/executáveis/legados proibidos em atributos navegáveis/carregáveis.'
+    'esquemas fora da allowlist em atributos navegáveis/carregáveis.'
 )
