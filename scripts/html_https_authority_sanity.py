@@ -1,12 +1,27 @@
 #!/usr/bin/env python3
 from html.parser import HTMLParser
+from ipaddress import ip_address
 from pathlib import Path
 from urllib.parse import urlsplit
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 URL_ATTRIBUTES = {'href', 'src', 'action', 'formaction', 'poster'}
+LOCAL_HOSTNAMES = {'localhost'}
 errors = []
+
+
+def is_local_or_non_public_host(hostname: str) -> bool:
+    normalized = hostname.rstrip('.').lower()
+    if normalized in LOCAL_HOSTNAMES or normalized.endswith('.localhost'):
+        return True
+
+    try:
+        address = ip_address(normalized)
+    except ValueError:
+        return False
+
+    return not address.is_global
 
 
 class HttpsAuthorityParser(HTMLParser):
@@ -40,6 +55,13 @@ class HttpsAuthorityParser(HTMLParser):
                     f'{self.page.name}: URL HTTPS absoluta sem host válido em '
                     f'{tag.lower()}[{name}] -> {value!r}'
                 )
+                continue
+
+            if is_local_or_non_public_host(hostname):
+                errors.append(
+                    f'{self.page.name}: URL HTTPS absoluta aponta para host local/não público em '
+                    f'{tag.lower()}[{name}] -> {value!r}'
+                )
 
 
 pages = sorted(ROOT.glob('*.html'))
@@ -53,7 +75,10 @@ for page in pages:
 if errors:
     for error in errors:
         print(f'ERRO: {error}')
-    print(f'FALHOU: {len(errors)} URL(s) HTTPS com autoridade inválida.')
+    print(f'FALHOU: {len(errors)} URL(s) HTTPS com autoridade inválida ou não pública.')
     sys.exit(1)
 
-print(f'OK: {len(pages)} páginas sem URLs HTTPS absolutas com autoridade inválida.')
+print(
+    f'OK: {len(pages)} páginas sem URLs HTTPS absolutas com autoridade inválida '
+    'ou host local/não público.'
+)
