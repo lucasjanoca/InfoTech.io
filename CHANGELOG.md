@@ -57,6 +57,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - Nova auditoria dedicada do Service Worker valida que recursos do `APP_SHELL` existem, não se repetem e que páginas pré-cacheadas também pertencem à allowlist pública; rotas autenticadas e administrativas são rejeitadas automaticamente.
 
 ### Segurança / CI
+- A auditoria dedicada de URLs HTML agora restringe `mailto:` e `tel:` exclusivamente ao atributo `href`; demais atributos auditados aceitam apenas URLs relativas ou `https:`, preservando o modo fail-closed sem alterar páginas publicadas.
 - A auditoria dedicada de URLs HTML agora usa allowlist explícita de esquemas: permite apenas URLs relativas, `https:`, `mailto:` e `tel:`, rejeitando por padrão qualquer esquema novo ou não aprovado sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita o esquema executável `javascript:` em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), mantendo defesa em profundidade coerente com o Site security check sem alterar as páginas publicadas.
 - Nova auditoria dedicada rejeita esquemas inline `data:` e `blob:` em URLs de atributos HTML navegáveis/carregáveis (`href`, `src`, `action`, `formaction` e `poster`), preservando HTTPS, rotas relativas e esquemas intencionais como `mailto:` e `tel:` sem alterar as páginas publicadas.
