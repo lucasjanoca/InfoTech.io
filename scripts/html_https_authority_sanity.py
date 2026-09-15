@@ -24,7 +24,11 @@ def is_valid_hostname(hostname: str) -> bool:
     except ValueError:
         pass
 
-    return all(DNS_LABEL_RE.fullmatch(label) for label in normalized.split('.'))
+    labels = normalized.split('.')
+    if len(labels) < 2:
+        return False
+
+    return all(DNS_LABEL_RE.fullmatch(label) for label in labels)
 
 
 def is_local_or_non_public_host(hostname: str) -> bool:
