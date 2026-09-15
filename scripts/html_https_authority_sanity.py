@@ -62,7 +62,7 @@ class HttpsAuthorityParser(HTMLParser):
 
             try:
                 hostname = parsed.hostname
-                parsed.port
+                port = parsed.port
             except ValueError as exc:
                 errors.append(
                     f'{self.page.name}: autoridade HTTPS inválida em '
@@ -73,6 +73,13 @@ class HttpsAuthorityParser(HTMLParser):
             if not parsed.netloc or not hostname:
                 errors.append(
                     f'{self.page.name}: URL HTTPS absoluta sem host válido em '
+                    f'{tag.lower()}[{name}] -> {value!r}'
+                )
+                continue
+
+            if port == 0:
+                errors.append(
+                    f'{self.page.name}: URL HTTPS absoluta contém porta zero inválida em '
                     f'{tag.lower()}[{name}] -> {value!r}'
                 )
                 continue
