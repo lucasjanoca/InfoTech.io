@@ -77,6 +77,13 @@ class HttpsAuthorityParser(HTMLParser):
                 )
                 continue
 
+            if parsed.username is not None or parsed.password is not None:
+                errors.append(
+                    f'{self.page.name}: URL HTTPS absoluta contém userinfo em '
+                    f'{tag.lower()}[{name}] -> {value!r}'
+                )
+                continue
+
             if not is_valid_hostname(hostname):
                 errors.append(
                     f'{self.page.name}: URL HTTPS absoluta contém hostname inválido em '
