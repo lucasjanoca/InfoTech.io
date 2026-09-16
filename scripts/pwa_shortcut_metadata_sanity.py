@@ -2,6 +2,7 @@
 from pathlib import Path
 import json
 import sys
+import unicodedata
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'manifest.webmanifest'
@@ -19,8 +20,11 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
         return None
     if value != value.strip():
         fail(f'manifest.webmanifest: atalho {label} não deve ter espaços externos em {field}')
-    if any(ord(char) < 32 for char in value):
-        fail(f'manifest.webmanifest: atalho {label} não deve ter caracteres de controle em {field}')
+    if any(unicodedata.category(char) in {'Cc', 'Cf'} for char in value):
+        fail(
+            f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
+            f'de controle ou formatação em {field}'
+        )
     return value
 
 
