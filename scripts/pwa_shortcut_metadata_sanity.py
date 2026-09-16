@@ -28,6 +28,10 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
     return value
 
 
+def duplicate_key(value: str) -> str:
+    return unicodedata.normalize('NFC', value).casefold()
+
+
 try:
     manifest = json.loads(MANIFEST.read_text(encoding='utf-8'))
 except Exception as exc:
@@ -52,13 +56,13 @@ else:
         clean_text(shortcut, 'description', label)
 
         if name is not None:
-            key = name.casefold()
+            key = duplicate_key(name)
             if key in seen_names:
                 fail(f'manifest.webmanifest: name de atalho duplicado: {name!r}')
             seen_names.add(key)
 
         if short_name is not None:
-            key = short_name.casefold()
+            key = duplicate_key(short_name)
             if key in seen_short_names:
                 fail(f'manifest.webmanifest: short_name de atalho duplicado: {short_name!r}')
             seen_short_names.add(key)
