@@ -46,6 +46,7 @@ if not isinstance(shortcuts, list) or not shortcuts:
 else:
     seen_names = set()
     seen_short_names = set()
+    seen_descriptions = set()
 
     for index, shortcut in enumerate(shortcuts, 1):
         label = f'#{index}'
@@ -55,7 +56,7 @@ else:
 
         name = clean_text(shortcut, 'name', label)
         short_name = clean_text(shortcut, 'short_name', label)
-        clean_text(shortcut, 'description', label)
+        description = clean_text(shortcut, 'description', label)
 
         if name is not None:
             key = duplicate_key(name)
@@ -68,6 +69,12 @@ else:
             if key in seen_short_names:
                 fail(f'manifest.webmanifest: short_name de atalho duplicado: {short_name!r}')
             seen_short_names.add(key)
+
+        if description is not None:
+            key = duplicate_key(description)
+            if key in seen_descriptions:
+                fail(f'manifest.webmanifest: description de atalho duplicada: {description!r}')
+            seen_descriptions.add(key)
 
 if errors:
     for error in errors:
