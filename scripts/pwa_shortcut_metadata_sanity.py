@@ -20,6 +20,8 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
         return None
     if value != value.strip():
         fail(f'manifest.webmanifest: atalho {label} não deve ter espaços externos em {field}')
+    if value != unicodedata.normalize('NFC', value):
+        fail(f'manifest.webmanifest: atalho {label} deve manter {field} normalizado em Unicode NFC')
     if any(unicodedata.category(char) in {'Cc', 'Cf'} for char in value):
         fail(
             f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
