@@ -29,7 +29,7 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
 
 
 def duplicate_key(value: str) -> str:
-    return unicodedata.normalize('NFC', value).casefold()
+    return unicodedata.normalize('NFKC', value).casefold()
 
 
 try:
