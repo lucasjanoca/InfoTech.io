@@ -8,6 +8,10 @@
   const resendKey='infotech:last-confirmation-resend-v11';
   const allowedDestinations=new Set(['painel-cliente.html','nova-solicitacao.html','perfil.html']);
 
+  function safeLocalStorageGet(key){
+    try{return localStorage.getItem(key)}catch(_){return null}
+  }
+
   function safeDestination(raw){
     if(!raw)return 'painel-cliente.html';
     try{
@@ -57,7 +61,7 @@
       const value=normalizeEmail(form.elements.email?.value);
       if(!value)return;
       const params=new URLSearchParams(location.search);
-      const destination=safeDestination(params.get('destino')||localStorage.getItem('infotech:after-confirm'));
+      const destination=safeDestination(params.get('destino')||safeLocalStorageGet('infotech:after-confirm'));
       try{sessionStorage.setItem(pendingKey,JSON.stringify({email:value,destination,createdAt:Date.now()}))}catch(_){}
     });
   }
@@ -132,7 +136,7 @@
       setFeedback('Solicitando um novo link de confirmação...');
 
       try{
-        const destination=safeDestination(pending.destination||localStorage.getItem('infotech:after-confirm'));
+        const destination=safeDestination(pending.destination||safeLocalStorageGet('infotech:after-confirm'));
         const redirect=new URL(`email-confirmado.html?destino=${encodeURIComponent(destination)}`,location.href).href;
         const {error}=await db.auth.resend({type:'signup',email:pending.email,options:{emailRedirectTo:redirect}});
         if(error)throw error;
