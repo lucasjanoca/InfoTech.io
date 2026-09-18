@@ -27,6 +27,11 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
             f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
             f'de controle ou formatação em {field}'
         )
+    if any(unicodedata.category(char) in {'Co', 'Cs'} for char in value):
+        fail(
+            f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
+            f'de uso privado ou surrogate em {field}'
+        )
     if any(char.isspace() and char != ' ' for char in value):
         fail(
             f'manifest.webmanifest: atalho {label} deve usar apenas espaço ASCII '
