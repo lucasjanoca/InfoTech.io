@@ -37,6 +37,11 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
             f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
             f'de uso privado ou surrogate em {field}'
         )
+    if any(unicodedata.category(char) == 'Cn' for char in value):
+        fail(
+            f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
+            f'não atribuídos em {field}'
+        )
     if any(is_unicode_noncharacter(char) for char in value):
         fail(
             f'manifest.webmanifest: atalho {label} não deve ter noncharacters '
