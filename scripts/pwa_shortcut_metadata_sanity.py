@@ -13,6 +13,11 @@ def fail(message: str) -> None:
     errors.append(message)
 
 
+def is_unicode_noncharacter(char: str) -> bool:
+    codepoint = ord(char)
+    return 0xFDD0 <= codepoint <= 0xFDEF or codepoint & 0xFFFF in {0xFFFE, 0xFFFF}
+
+
 def clean_text(shortcut: dict, field: str, label: str) -> str | None:
     value = shortcut.get(field)
     if not isinstance(value, str) or not value.strip():
@@ -31,6 +36,11 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
         fail(
             f'manifest.webmanifest: atalho {label} não deve ter caracteres Unicode '
             f'de uso privado ou surrogate em {field}'
+        )
+    if any(is_unicode_noncharacter(char) for char in value):
+        fail(
+            f'manifest.webmanifest: atalho {label} não deve ter noncharacters '
+            f'Unicode em {field}'
         )
     if any(char.isspace() and char != ' ' for char in value):
         fail(
