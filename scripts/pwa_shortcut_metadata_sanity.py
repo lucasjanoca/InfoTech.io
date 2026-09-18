@@ -32,6 +32,11 @@ def clean_text(shortcut: dict, field: str, label: str) -> str | None:
             f'manifest.webmanifest: atalho {label} deve usar apenas espaço ASCII '
             f'como separador em {field}'
         )
+    if '  ' in value:
+        fail(
+            f'manifest.webmanifest: atalho {label} não deve ter espaços ASCII '
+            f'consecutivos em {field}'
+        )
     return value
 
 
