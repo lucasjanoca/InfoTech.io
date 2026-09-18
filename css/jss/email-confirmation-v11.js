@@ -12,6 +12,10 @@
     try{return localStorage.getItem(key)}catch(_){return null}
   }
 
+  function safeSessionStorageGet(key){
+    try{return sessionStorage.getItem(key)}catch(_){return null}
+  }
+
   function safeDestination(raw){
     if(!raw)return 'painel-cliente.html';
     try{
@@ -123,7 +127,7 @@
       const pending=readPending();
       if(!pending){setFeedback('Não encontrei o e-mail deste cadastro. Volte e faça o cadastro novamente.','error');return}
 
-      const last=Number(sessionStorage.getItem(resendKey)||0);
+      const last=Number(safeSessionStorageGet(resendKey)||0);
       const remaining=Math.ceil((60000-(Date.now()-last))/1000);
       if(remaining>0){setFeedback(`Aguarde ${remaining}s antes de pedir outro e-mail.`);return}
 
