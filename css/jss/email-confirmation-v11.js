@@ -54,7 +54,7 @@
 
   function readPending(){
     try{
-      const raw=sessionStorage.getItem(pendingKey);
+      const raw=safeSessionStorageGet(pendingKey);
       if(!raw)return null;
       const data=JSON.parse(raw);
       if(!data?.email||Date.now()-Number(data.createdAt||0)>24*60*60*1000)return null;
@@ -70,7 +70,7 @@
       if(!value)return;
       const params=new URLSearchParams(location.search);
       const destination=safeDestination(params.get('destino')||safeLocalStorageGet('infotech:after-confirm'));
-      try{sessionStorage.setItem(pendingKey,JSON.stringify({email:value,destination,createdAt:Date.now()}))}catch(_){}
+      safeSessionStorageSet(pendingKey,JSON.stringify({email:value,destination,createdAt:Date.now()}));
     });
   }
 
