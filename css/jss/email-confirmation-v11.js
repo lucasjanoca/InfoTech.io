@@ -16,6 +16,10 @@
     try{return sessionStorage.getItem(key)}catch(_){return null}
   }
 
+  function safeSessionStorageSet(key,value){
+    try{sessionStorage.setItem(key,value)}catch(_){}
+  }
+
   function safeDestination(raw){
     if(!raw)return 'painel-cliente.html';
     try{
@@ -144,7 +148,7 @@
         const redirect=new URL(`email-confirmado.html?destino=${encodeURIComponent(destination)}`,location.href).href;
         const {error}=await db.auth.resend({type:'signup',email:pending.email,options:{emailRedirectTo:redirect}});
         if(error)throw error;
-        sessionStorage.setItem(resendKey,String(Date.now()));
+        safeSessionStorageSet(resendKey,String(Date.now()));
         setFeedback('Novo e-mail enviado. Confira também a pasta de spam ou promoções.','success');
       }catch(error){
         const text=String(error?.message||'');
