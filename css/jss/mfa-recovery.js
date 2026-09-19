@@ -31,6 +31,16 @@
       : 'painel-admin.html';
   };
 
+  const safeSessionGet = key => {
+    try { return sessionStorage.getItem(key) || ''; } catch (_) { return ''; }
+  };
+  const safeSessionSet = (key, value) => {
+    try { sessionStorage.setItem(key, value); } catch (_) {}
+  };
+  const safeSessionRemove = key => {
+    try { sessionStorage.removeItem(key); } catch (_) {}
+  };
+
   const destination = safeDestination(new URLSearchParams(location.search).get('destino'));
 
   function factorPool(data) {
@@ -68,7 +78,7 @@
     try {
       const state = await readState();
       if (state.verified.length) {
-        sessionStorage.removeItem(pendingKey);
+        safeSessionRemove(pendingKey);
         if (setup) setup.hidden = true;
         if (state.currentLevel === 'aal2') {
           if (status) status.textContent = 'MFA ativo · sessão verificada';
@@ -125,7 +135,7 @@
       });
       if (error) throw error;
 
-      sessionStorage.setItem(pendingKey, data.id);
+      safeSessionSet(pendingKey, data.id);
       const qrSource = normalizeQrCode(data?.totp?.qr_code);
       if (qr) {
         if (qrSource) {
@@ -164,7 +174,7 @@
     verifyForm.querySelectorAll('input,button').forEach(el => { el.disabled = true; });
     showMessage('Confirmando segundo fator...', 'success');
     try {
-      let factorId = sessionStorage.getItem(pendingKey) || '';
+      let factorId = safeSessionGet(pendingKey);
       const state = await readState();
       if (!factorId || !state.all.some(f => f?.id === factorId)) {
         factorId = state.unverified[0]?.id || state.verified[0]?.id || '';
@@ -174,7 +184,7 @@
       const { error } = await db.auth.mfa.challengeAndVerify({ factorId, code });
       if (error) throw error;
 
-      sessionStorage.removeItem(pendingKey);
+      safeSessionRemove(pendingKey);
       if (status) status.textContent = 'MFA ativo · sessão verificada';
       showMessage('Segundo fator confirmado. Abrindo o painel...', 'success');
       setTimeout(() => location.replace(destination), 350);
