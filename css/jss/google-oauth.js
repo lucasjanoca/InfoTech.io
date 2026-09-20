@@ -9,11 +9,13 @@
   const cfg = window.INFOTECH_SUPABASE_CONFIG || {};
   const setStatus = text => { if (status) status.textContent = text; };
   const allowed = new Set(['painel-cliente.html', 'nova-solicitacao.html', 'perfil.html']);
+  const unavailable = 'O acesso com Google está temporariamente indisponível. Entre com e-mail e senha.';
 
   function safeDestination(raw) {
     if (!raw) return 'painel-cliente.html';
     try {
       const url = new URL(raw, location.href);
+      if (url.origin !== location.origin) return 'painel-cliente.html';
       const file = url.pathname.split('/').pop();
       if (!allowed.has(file)) return 'painel-cliente.html';
       if (file === 'nova-solicitacao.html') {
@@ -28,48 +30,70 @@
 
   function errorMessage(error) {
     const message = String(error?.message || '');
-    if (/provider.*not enabled|unsupported provider|provider is disabled/i.test(message)) {
-      return 'O Google ainda não está habilitado no projeto Supabase da InfoTech.io. O projeto da Padoka é separado.';
-    }
+    if (/provider.*not enabled|unsupported provider|provider is disabled/i.test(message)) return unavailable;
     if (/redirect.*(not allowed|invalid|mismatch)|redirect_uri_mismatch/i.test(message)) {
-      return 'O endereço de retorno da InfoTech.io não está autorizado na configuração de login do Supabase/Google.';
+      return 'O acesso pelo Google está com um endereço de retorno incorreto. Entre com e-mail e senha por enquanto.';
     }
-    return 'Não foi possível iniciar o acesso pelo Google. Confira sua conexão ou tente novamente.';
+    return 'Não foi possível iniciar o acesso pelo Google. Tente novamente ou entre com e-mail e senha.';
   }
 
-  function init() {
-    // Não esconda o botão caso /auth/v1/settings demore, falhe ou seja bloqueado.
-    // A autoridade real é o Supabase, que valida o provedor na tentativa de OAuth.
+  async function providerReady() {
+    if (!cfg.url || !cfg.publishableKey) return false;
+    try {
+      const response = await fetch(`${cfg.url}/auth/v1/settings`, {
+        method: 'GET',
+        headers: { apikey: cfg.publishableKey },
+        cache: 'no-store'
+      });
+      if (!response.ok) return false;
+      const settings = await response.json();
+      return settings?.external?.google === true;
+    } catch (error) {
+      console.warn('Não foi possível verificar o provedor Google:', error);
+      return false;
+    }
+  }
+
+  async function init() {
     if (container) container.hidden = false;
     button.hidden = false;
+    button.disabled = true;
+    setStatus('Verificando disponibilidade do Google...');
+
     if (!cfg.url || !cfg.publishableKey || !window.supabase?.createClient) {
-      button.disabled = true;
-      setStatus('O login está temporariamente indisponível. Atualize a página e tente novamente.');
+      setStatus(unavailable);
       return;
     }
 
     const db = window.infotechSupabase || window.supabase.createClient(cfg.url, cfg.publishableKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storageKey: 'infotech-auth-v8'
-      }
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true,
+        flowType: 'pkce', storageKey: 'infotech-auth-v8' }
     });
     window.infotechSupabase = db;
 
     const params = new URLSearchParams(location.search);
     if (params.has('error')) {
-      const description = params.get('error_description') || params.get('error') || '';
-      setStatus(errorMessage({ message: description }));
+      setStatus(errorMessage({ message: params.get('error_description') || params.get('error') }));
     }
+
+    const enabled = await providerReady();
+    button.disabled = !enabled;
+    if (!enabled) {
+      setStatus(unavailable);
+      return;
+    }
+    if (!params.has('error')) setStatus('');
 
     button.addEventListener('click', async () => {
       if (button.disabled) return;
       button.disabled = true;
       setStatus('Abrindo o acesso pelo Google...');
       try {
+        // Revalida antes do redirecionamento para evitar mostrar JSON do Supabase.
+        if (!(await providerReady())) {
+          setStatus(unavailable);
+          return;
+        }
         const destination = safeDestination(params.get('destino'));
         localStorage.setItem('infotech:after-confirm', destination);
         const redirectTo = new URL('login.html', location.href).href;
@@ -81,7 +105,8 @@
       } catch (error) {
         console.error('Falha ao iniciar acesso com Google:', error);
         setStatus(errorMessage(error));
-        button.disabled = false;
+      } finally {
+        button.disabled = !(await providerReady());
       }
     });
   }
