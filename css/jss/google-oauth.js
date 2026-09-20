@@ -11,6 +11,15 @@
   const allowed = new Set(['painel-cliente.html', 'nova-solicitacao.html', 'perfil.html']);
   const unavailable = 'O acesso com Google está temporariamente indisponível. Entre com e-mail e senha.';
 
+  function safeLocalSet(key, value) {
+    try {
+      localStorage.setItem(key, value);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   function safeDestination(raw) {
     if (!raw) return 'painel-cliente.html';
     try {
@@ -95,7 +104,8 @@
           return;
         }
         const destination = safeDestination(params.get('destino'));
-        localStorage.setItem('infotech:after-confirm', destination);
+        // Estado de navegação é apenas conveniência de UX; storage bloqueado não deve impedir o OAuth.
+        safeLocalSet('infotech:after-confirm', destination);
         const redirectTo = new URL('login.html', location.href).href;
         const { error } = await db.auth.signInWithOAuth({
           provider: 'google',
