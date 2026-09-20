@@ -1,0 +1,13 @@
+/* Só é exibido depois de confirmar que o provedor Google está habilitado. */
+.google-auth[hidden] { display: none !important; }
+.google-auth { margin-top: 1.2rem; }
+.google-auth-divider { display: flex; align-items: center; gap: .85rem; margin: 0 0 1rem; color: #b8c9da; font-size: .9rem; }
+.google-auth-divider::before, .google-auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(169, 199, 225, .25); }
+.google-auth-button { display: flex; align-items: center; justify-content: center; gap: .85rem; width: 100%; min-height: 52px; padding: .8rem 1rem; border: 1px solid rgba(169, 199, 225, .4); border-radius: 14px; background: #fff; color: #17202c; font: inherit; font-weight: 700; cursor: pointer; transition: background .2s, transform .2s; }
+.google-auth-button:hover { background: #eaf3fc; transform: translateY(-1px); }
+.google-auth-button:focus-visible { outline: 3px solid #6bdef5; outline-offset: 3px; }
+.google-auth-button:disabled { opacity: .7; cursor: wait; transform: none; }
+.google-auth-button svg { width: 21px; height: 21px; flex: 0 0 21px; }
+.google-auth-status { margin: .75rem 0 0; color: #d3e4ee; font-size: .87rem; line-height: 1.5; }
+.google-auth-status:empty { display: none; }
+@media (max-width: 480px) { .google-auth-button { min-height: 54px; } }
