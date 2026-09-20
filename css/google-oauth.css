@@ -7,7 +7,7 @@
 .google-auth-button:hover { background: #eaf3fc; transform: translateY(-1px); }
 .google-auth-button:focus-visible { outline: 3px solid #6bdef5; outline-offset: 3px; }
 .google-auth-button:disabled { opacity: .7; cursor: wait; transform: none; }
-.google-auth-button svg { width: 21px; height: 21px; flex: 0 0 21px; }
+.google-auth-mark { display: inline-flex; align-items: center; justify-content: center; width: 23px; height: 23px; flex: 0 0 23px; color: #4285f4; font: 800 23px/1 Arial, sans-serif; }
 .google-auth-status { margin: .75rem 0 0; color: #d3e4ee; font-size: .87rem; line-height: 1.5; }
 .google-auth-status:empty { display: none; }
 @media (max-width: 480px) { .google-auth-button { min-height: 54px; } }
