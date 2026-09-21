@@ -22,15 +22,19 @@ constants = {
     )
 }
 
-call_pattern = re.compile(
-    r"\b(localStorage|sessionStorage)\.(?:getItem|setItem|removeItem)\(\s*"
+# Production call sites must go through the fail-safe helpers. The resilience audit
+# separately verifies that each helper is a real try/catch wrapper around Web Storage
+# and that no direct getItem/setItem/removeItem calls remain outside those helpers.
+helper_pattern = re.compile(
+    r"\b(safeLocal|safeSession)(?:Get|Set|Remove)\(\s*"
     r"(?:(['\"])([^'\"]+)\2|([A-Za-z_$][\w$]*))"
 )
 
 seen = set()
 call_count = 0
-for storage, _quote, literal_key, alias in call_pattern.findall(text):
+for family, _quote, literal_key, alias in helper_pattern.findall(text):
     call_count += 1
+    storage = 'localStorage' if family == 'safeLocal' else 'sessionStorage'
     if literal_key:
         key = literal_key
     else:
@@ -53,4 +57,4 @@ for forbidden in ('service_role', 'supabase_service_role_key'):
     if forbidden in text.lower():
         raise SystemExit(f'Forbidden privileged credential marker in v6-app.js: {forbidden}')
 
-print(f'Web Storage boundary OK: {call_count} calls across {len(seen)} approved keys.')
+print(f'Web Storage boundary OK: {call_count} fail-safe calls across {len(seen)} approved keys.')
