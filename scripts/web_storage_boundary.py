@@ -25,8 +25,9 @@ constants = {
 # Production call sites must go through the fail-safe helpers. The resilience audit
 # separately verifies that each helper is a real try/catch wrapper around Web Storage
 # and that no direct getItem/setItem/removeItem calls remain outside those helpers.
+# Exclude the helper declarations themselves; only actual call sites carry approved keys.
 helper_pattern = re.compile(
-    r"\b(safeLocal|safeSession)(?:Get|Set|Remove)\(\s*"
+    r"(?<!function )\b(safeLocal|safeSession)(?:Get|Set|Remove)\(\s*"
     r"(?:(['\"])([^'\"]+)\2|([A-Za-z_$][\w$]*))"
 )
 
