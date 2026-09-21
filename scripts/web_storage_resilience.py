@@ -5,24 +5,20 @@ import re
 source = Path('css/jss/v6-app.js').read_text(encoding='utf-8')
 
 required_helpers = {
-    'safeLocalGet': r'function\s+safeLocalGet\s*\(',
-    'safeLocalSet': r'function\s+safeLocalSet\s*\(',
-    'safeLocalRemove': r'function\s+safeLocalRemove\s*\(',
-    'safeSessionGet': r'function\s+safeSessionGet\s*\(',
-    'safeSessionSet': r'function\s+safeSessionSet\s*\(',
-    'safeSessionRemove': r'function\s+safeSessionRemove\s*\(',
+    'safeLocalGet': ('localStorage', 'getItem'),
+    'safeLocalSet': ('localStorage', 'setItem'),
+    'safeLocalRemove': ('localStorage', 'removeItem'),
+    'safeSessionGet': ('sessionStorage', 'getItem'),
+    'safeSessionSet': ('sessionStorage', 'setItem'),
+    'safeSessionRemove': ('sessionStorage', 'removeItem'),
 }
 
-missing = [name for name, pattern in required_helpers.items() if not re.search(pattern, source)]
-if missing:
-    raise SystemExit('Missing fail-safe Web Storage helpers: ' + ', '.join(missing))
 
-
-def strip_function_body(text, name):
-    """Remove one named function, balancing braces so try/catch helpers are handled correctly."""
+def function_span(text, name):
+    """Return a named function span, balancing braces so nested try/catch is handled safely."""
     match = re.search(rf'function\s+{name}\s*\([^)]*\)\s*\{{', text)
     if not match:
-        return text
+        return None
     depth = 1
     index = match.end()
     quote = None
@@ -45,14 +41,30 @@ def strip_function_body(text, name):
         index += 1
     if depth:
         raise SystemExit(f'Unbalanced helper body: {name}')
-    return text[:match.start()] + text[index:]
+    return match.start(), index
 
+
+missing = [name for name in required_helpers if function_span(source, name) is None]
+if missing:
+    raise SystemExit('Missing fail-safe Web Storage helpers: ' + ', '.join(missing))
+
+# A helper name alone is not enough: each helper must actually perform its intended storage
+# operation inside a try/catch boundary so blocked/private Web Storage cannot abort UX flows.
+for name, (storage, method) in required_helpers.items():
+    start, end = function_span(source, name)
+    body = source[start:end]
+    operation = rf'\b{storage}\s*\.\s*{method}\s*\('
+    if not re.search(operation, body):
+        raise SystemExit(f'{name} does not call {storage}.{method}')
+    if not re.search(r'\btry\s*\{', body) or not re.search(r'\bcatch\s*\(', body):
+        raise SystemExit(f'{name} must contain a try/catch fail-safe boundary')
 
 # Web Storage is optional UX state. Reads/writes/removals outside the helper bodies must not
 # be able to abort authentication, registration, confirmation or a successful request.
 stripped = source
-for name in required_helpers:
-    stripped = strip_function_body(stripped, name)
+spans = sorted((function_span(source, name) for name in required_helpers), reverse=True)
+for start, end in spans:
+    stripped = stripped[:start] + stripped[end:]
 
 forbidden = re.findall(r'\b(?:localStorage|sessionStorage)\s*\.\s*(?:getItem|setItem|removeItem)\s*\(', stripped)
 if forbidden:
