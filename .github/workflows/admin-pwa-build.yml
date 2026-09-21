@@ -1,0 +1,34 @@
+name: Admin PWA isolated build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  admin-pwa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build isolated admin deployment
+        run: python3 scripts/build_admin_pwa.py
+      - name: Validate route isolation, manifest, icons, assets and cache
+        run: python3 scripts/admin_pwa_sanity.py
+      - name: Syntax-check deployed JavaScript
+        run: |
+          find dist-admin -name '*.js' -type f -print0 | xargs -0 -n 1 node --check
+      - name: Ensure customer deployment was not changed by build
+        run: |
+          test -f manifest.webmanifest
+          test -f sw.js
+          test -f index.html
+          test ! -e dist-admin/manifest.webmanifest
+          test ! -e dist-admin/sw.js

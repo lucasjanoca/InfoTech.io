@@ -1,0 +1,14 @@
+/* Applied exclusively to the standalone administrative deployment. */
+:root { --admin-ink: #07131d; --admin-accent: #16d6ba; }
+body { background-color: #08131c; }
+.site-header { border-bottom: 1px solid rgba(22,214,186,.3); }
+.site-header .navbar { gap: 1rem; }
+.site-header .brand-copy small { color: var(--admin-accent); font-weight: 800; letter-spacing: .12em; }
+#admin-pwa-install { padding: .6rem .85rem; border-radius: .7rem; border: 1px solid var(--admin-accent); background: #0e302f; color: #e9fff9; cursor: pointer; font: inherit; font-size: .84rem; font-weight: 700; }
+#admin-pwa-install[hidden] { display: none !important; }
+.admin-app-label { color: var(--admin-accent); font-weight: 800; letter-spacing: .08em; }
+.admin-app-footer { border-top: 1px solid rgba(22,214,186,.25); background: #08131c; color: #d4e8e6; padding: 1.5rem; text-align: center; }
+.admin-app-footer a { color: #73f6df; }
+.admin-app-footer p { margin: .45rem 0; }
+.admin-app-footer small { color: #aac9c3; }
+@media (max-width: 920px) { .site-header .menu { gap: .5rem; } #admin-pwa-install { width: 100%; min-height: 44px; } }
