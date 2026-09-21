@@ -17,12 +17,42 @@ missing = [name for name, pattern in required_helpers.items() if not re.search(p
 if missing:
     raise SystemExit('Missing fail-safe Web Storage helpers: ' + ', '.join(missing))
 
+
+def strip_function_body(text, name):
+    """Remove one named function, balancing braces so try/catch helpers are handled correctly."""
+    match = re.search(rf'function\s+{name}\s*\([^)]*\)\s*\{{', text)
+    if not match:
+        return text
+    depth = 1
+    index = match.end()
+    quote = None
+    escaped = False
+    while index < len(text) and depth:
+        char = text[index]
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == '\\':
+                escaped = True
+            elif char == quote:
+                quote = None
+        elif char in "'\"`":
+            quote = char
+        elif char == '{':
+            depth += 1
+        elif char == '}':
+            depth -= 1
+        index += 1
+    if depth:
+        raise SystemExit(f'Unbalanced helper body: {name}')
+    return text[:match.start()] + text[index:]
+
+
 # Web Storage is optional UX state. Reads/writes/removals outside the helper bodies must not
 # be able to abort authentication, registration, confirmation or a successful request.
 stripped = source
 for name in required_helpers:
-    pattern = re.compile(rf'function\s+{name}\s*\([^)]*\)\s*\{{.*?\}}', re.S)
-    stripped = pattern.sub('', stripped)
+    stripped = strip_function_body(stripped, name)
 
 forbidden = re.findall(r'\b(?:localStorage|sessionStorage)\s*\.\s*(?:getItem|setItem|removeItem)\s*\(', stripped)
 if forbidden:
