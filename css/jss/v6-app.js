@@ -29,7 +29,25 @@
       return file;
     }catch(_){return ''}
   }
-  const savedDestination=localStorage.getItem('infotech:after-confirm');
+  function safeLocalGet(key){
+    try{return localStorage.getItem(key)}catch(_){return null}
+  }
+  function safeLocalSet(key,value){
+    try{localStorage.setItem(key,value);return true}catch(_){return false}
+  }
+  function safeLocalRemove(key){
+    try{localStorage.removeItem(key);return true}catch(_){return false}
+  }
+  function safeSessionGet(key){
+    try{return sessionStorage.getItem(key)}catch(_){return null}
+  }
+  function safeSessionSet(key,value){
+    try{sessionStorage.setItem(key,value);return true}catch(_){return false}
+  }
+  function safeSessionRemove(key){
+    try{sessionStorage.removeItem(key);return true}catch(_){return false}
+  }
+  const savedDestination=safeLocalGet('infotech:after-confirm');
   const destination=safeDestination(params.get('destino'))||safeDestination(savedDestination)||'painel-cliente.html';
   const protectedPage=document.body.hasAttribute('data-client-protected');
   const page=location.pathname.split('/').pop()||'index.html';
@@ -114,12 +132,12 @@
   const signupDraftKey='infotech:signup-draft-v8';
   function saveSignupDraft(emailValue){
     // Nunca persiste senha no Web Storage. Apenas o e-mail é levado ao cadastro.
-    try{sessionStorage.setItem(signupDraftKey,JSON.stringify({email:email(emailValue),destination,createdAt:Date.now()}))}catch(_){}
+    safeSessionSet(signupDraftKey,JSON.stringify({email:email(emailValue),destination,createdAt:Date.now()}));
   }
   function takeSignupDraft(){
     try{
-      const raw=sessionStorage.getItem(signupDraftKey);
-      sessionStorage.removeItem(signupDraftKey);
+      const raw=safeSessionGet(signupDraftKey);
+      safeSessionRemove(signupDraftKey);
       if(!raw)return null;
       const draft=JSON.parse(raw);
       if(!draft?.email||Date.now()-Number(draft.createdAt||0)>10*60*1000)return null;
@@ -164,7 +182,7 @@
       }
       const p=await profileRole(data.user.id);
       if(p?.is_blocked){await db.auth.signOut();busy(form,false);msg(out,'Esta conta está bloqueada. Entre em contato com a Infotech.','error');return}
-      localStorage.removeItem('infotech:after-confirm');msg(out,'Acesso liberado. Abrindo sua área...','success');setTimeout(()=>location.replace(destination),300);
+      safeLocalRemove('infotech:after-confirm');msg(out,'Acesso liberado. Abrindo sua área...','success');setTimeout(()=>location.replace(destination),300);
     });
   }
   function initRegister(){
@@ -172,7 +190,7 @@
     const draft=takeSignupDraft();
     if(draft){
       form.elements.email.value=draft.email;
-      const draftDestination=safeDestination(draft.destination);if(draftDestination)localStorage.setItem('infotech:after-confirm',draftDestination);
+      const draftDestination=safeDestination(draft.destination);if(draftDestination)safeLocalSet('infotech:after-confirm',draftDestination);
       const note=document.createElement('div');
       note.className='signup-prefill-note';
       note.textContent='O e-mail foi preenchido a partir da tentativa de acesso. Por segurança, crie a senha somente aqui.';
@@ -187,7 +205,7 @@
       if(password!==confirm){msg(out,'As senhas não coincidem.','error');return}
       busy(form,true);msg(out,'Criando sua conta segura...','success');
       const dest=safeDestination(params.get('destino'))||safeDestination(draft?.destination)||'painel-cliente.html';
-      localStorage.setItem('infotech:after-confirm',dest);
+      safeLocalSet('infotech:after-confirm',dest);
       const redirect=new URL(`email-confirmado.html?destino=${encodeURIComponent(dest)}`,location.href).href;
       const {data,error}=await db.auth.signUp({email:email(form.elements.email.value),password,options:{data:{full_name:normalize(form.elements.name.value)},emailRedirectTo:redirect}});
       if(error){
@@ -205,7 +223,7 @@
   }
   async function initConfirmation(){
     const root=$('#confirmation-root');if(!root)return;
-    const saved=localStorage.getItem('infotech:after-confirm');
+    const saved=safeLocalGet('infotech:after-confirm');
     const dest=safeDestination(params.get('destino'))||safeDestination(saved)||'painel-cliente.html';
     const status=$('#confirmation-status'), action=$('#confirmation-action');
     msg(status,'Validando sua confirmação...','success');
@@ -219,7 +237,7 @@
       session=(await db.auth.getSession()).data.session;
     }
     if(session?.user){
-      localStorage.removeItem('infotech:after-confirm');
+      safeLocalRemove('infotech:after-confirm');
       msg(status,'E-mail confirmado. Sua conta está pronta!','success');
       action.textContent='Entrar na Área do Cliente';action.href=dest;
       let sec=2;const c=$('#confirmation-countdown');if(c)c.textContent=sec;
@@ -297,10 +315,10 @@
       busy(form,true);msg(out,'Registrando sua solicitação...','success');const fd=new FormData(form);
       const {data,error}=await db.from('requests').insert({protocol:'',user_id:user.id,owner_email:user.email,owner_name:displayName(user),title:normalize(fd.get('title')),service:fd.get('service'),description:normalize(fd.get('description')),deadline:fd.get('deadline'),budget:fd.get('budget'),contact:fd.get('contact'),reference_url:safeExternalUrl(fd.get('reference'))||null}).select('protocol').single();
       busy(form,false);if(error){console.error(error);msg(out,'Não foi possível enviar agora. Tente novamente.','error');return}
-      sessionStorage.setItem('infotechLastProtocol',data.protocol);location.href='solicitacao-enviada.html';
+      safeSessionSet('infotechLastProtocol',data.protocol);location.href='solicitacao-enviada.html';
     });
   }
-  async function initSuccess(){const el=$('[data-last-protocol]');if(el)el.textContent='#'+(sessionStorage.getItem('infotechLastProtocol')||'INF-0000')}
+  async function initSuccess(){const el=$('[data-last-protocol]');if(el)el.textContent='#'+(safeSessionGet('infotechLastProtocol')||'INF-0000')}
   async function initRequestList(){
     const list=$('#requests-list');if(!list)return;
     list.innerHTML='<div class="empty-state">Carregando suas solicitações...</div>';
