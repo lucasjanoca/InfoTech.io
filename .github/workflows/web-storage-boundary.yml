@@ -22,3 +22,5 @@ jobs:
           python-version: '3.12'
       - name: Audit v6 Web Storage boundary
         run: python scripts/web_storage_boundary.py
+      - name: Audit v6 Web Storage resilience
+        run: python scripts/web_storage_resilience.py
