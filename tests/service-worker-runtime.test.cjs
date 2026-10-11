@@ -199,7 +199,7 @@ test('respostas privadas e no-store nunca são persistidas', async () => {
   }
 });
 
-test('scripts públicos podem usar cache, mas scripts administrativos não dão acesso à conta', async () => {
+test('scripts públicos podem usar cache estático', async () => {
   const sw = makeWorker();
   const result = await sw.dispatch('/css/jss/v6-ui.js', { mode: 'cors', destination: 'script' });
   assert.equal(result.intercepted, true);
