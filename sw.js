@@ -73,8 +73,10 @@ const isSensitive = url =>
   url.pathname.startsWith('/auth/v1/') ||
   url.pathname.startsWith('/storage/v1/');
 
+// Public URLs with query parameters (notably OAuth ?code=...) must never be
+// intercepted or stored under a CacheStorage key containing sensitive values.
 const isPublicNavigation = url =>
-  url.origin === self.location.origin && PUBLIC_NAVIGATION_PATHS.has(url.pathname);
+  url.origin === self.location.origin && !url.search && PUBLIC_NAVIGATION_PATHS.has(url.pathname);
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
