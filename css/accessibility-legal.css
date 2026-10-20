@@ -1,0 +1,25 @@
+/* Keeps the black/blue identity; improves readable controls and legal content. */
+:root { --muted-2:#9fb3c9 }
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible {
+  outline:3px solid #67f3ff!important;
+  outline-offset:4px!important;
+  scroll-margin-block:100px;
+}
+input::placeholder,textarea::placeholder { color:#9fb3c9;opacity:1 }
+input:not([type=checkbox]):not([type=radio]),textarea,select { border-color:#7892ac }
+.form-message.error { color:#ffafbf }
+.form-message.success { color:#8ef5c4 }
+.footer-legal-links { display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center }
+.storage-notice { max-width:72rem;margin:1rem auto;padding:0 1.25rem;color:#adc0d4;font-size:.875rem }
+.storage-notice a,.legal-content a,.checkbox-row a { text-decoration:underline;text-underline-offset:.2em }
+.legal-content .detail-card { margin-block:1rem;line-height:1.75;overflow-wrap:anywhere }
+.legal-content .detail-card p { max-width:80ch;color:#c7d6e6 }
+.legal-content .page-hero h1 { overflow-wrap:anywhere }
+[role=tabpanel]:focus-visible { outline-offset:-3px!important }
+@media(prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto!important }
+  *,*::before,*::after { animation:none!important;transition:none!important;scroll-behavior:auto!important }
+}
+@media(forced-colors:active) {
+  :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible { outline-color:Highlight!important }
+}

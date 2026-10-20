@@ -81,6 +81,12 @@
     const wrap=$('.account-nav',slot), trigger=$('.account-trigger',slot), dd=$('.account-dropdown',slot);
     trigger?.addEventListener('click',e=>{e.stopPropagation();const open=dd.hidden;dd.hidden=!open;trigger.setAttribute('aria-expanded',String(open))});
     document.addEventListener('click',e=>{if(wrap&&!wrap.contains(e.target)){dd.hidden=true;trigger?.setAttribute('aria-expanded','false')}});
+    wrap?.addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&!dd.hidden){
+        event.preventDefault();dd.hidden=true;
+        trigger.setAttribute('aria-expanded','false');trigger.focus();
+      }
+    });
     $('.account-logout',slot)?.addEventListener('click',async()=>{await db.auth.signOut();location.href='index.html'});
     $$('a[href^="login.html?destino="]').forEach(a=>{const q=new URLSearchParams(a.href.split('?')[1]||'');const d=safeDestination(q.get('destino'));if(d)a.href=d});
   }

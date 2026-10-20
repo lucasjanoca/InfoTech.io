@@ -63,8 +63,7 @@
 
   const schedule = () => {
     clearTimeout(timer);
-    if (reduced || document.hidden) return;
-    timer = setTimeout(() => show(active + 1), 4200);
+    // Advance only after a user action, never while reading or tabbing.
   };
 
   function show(index, userInitiated = false) {

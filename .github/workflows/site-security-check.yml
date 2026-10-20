@@ -280,6 +280,7 @@ jobs:
         run: |
           python3 scripts/site_sanity.py
           python3 scripts/sitemap_sanity.py
+          python3 scripts/privacy_accessibility_sanity.py
 
       - name: Verify HTTPS-only production references
         shell: bash

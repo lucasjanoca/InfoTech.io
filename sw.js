@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.6.2';
+const VERSION = 'infotech-pwa-v9.6.3';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
@@ -59,6 +59,7 @@ const APP_SHELL = [
 ];
 
 const PUBLIC_ASSET_PATHS = new Set([
+  "/css/accessibility-legal.css",
   "/assets/brand/aplicativos.svg",
   "/assets/brand/automacao.svg",
   "/assets/brand/contatos.webp",
