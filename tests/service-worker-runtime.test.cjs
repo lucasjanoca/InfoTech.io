@@ -42,6 +42,7 @@ function makeWorker() {
       this.url = new URL(typeof input === 'string' ? input : input.url, ORIGIN).href;
       this.method = options.method || (typeof input === 'string' ? 'GET' : input.method);
       this.mode = options.mode || (typeof input === 'string' ? 'cors' : input.mode);
+      this.headers = options.headers || { has: () => false };
       this.destination = options.destination || (typeof input === 'string' ? '' : input.destination);
     }
   }
@@ -52,6 +53,7 @@ function makeWorker() {
       if (!buckets.has(name)) buckets.set(name, new Map());
       const entries = buckets.get(name);
       return {
+        async match(request) { return entries.get(cacheKey(request))?.clone(); },
         async put(request, response) {
           entries.set(cacheKey(request), response.clone());
         }
@@ -94,11 +96,11 @@ function makeWorker() {
     console, Promise, Set
   }, { filename: 'sw.js', timeout: 1000 });
 
-  async function dispatch(url, { method = 'GET', mode = 'navigate', destination = 'document' } = {}) {
+  async function dispatch(url, { method = 'GET', mode = 'navigate', destination = 'document', headers = {has:()=>false} } = {}) {
     let responsePromise = null;
     const waiters = [];
     handlers.get('fetch')({
-      request: new FakeRequest(url, { method, mode, destination }),
+      request: new FakeRequest(url, { method, mode, destination, headers }),
       preloadResponse: Promise.resolve(undefined),
       respondWith(promise) { responsePromise = Promise.resolve(promise); },
       waitUntil(promise) { waiters.push(promise); }
@@ -111,6 +113,8 @@ function makeWorker() {
 
   return {
     dispatch,
+    caches,
+    handlers,
     setNetwork(handler) { network = handler; },
     cachedUrls() {
       return [...buckets.values()].flatMap(entries => [...entries.keys()]);
@@ -214,4 +218,57 @@ test('response opaca ou HTTP com erro não entra no cache', async () => {
     assert.equal(intercepted, true);
     assert.deepEqual(sw.cachedUrls(), []);
   }
+});
+
+
+test('unknown resources, other apps and sensitive asset queries bypass cache', async () => {
+  const sw = makeWorker();
+  for (const route of ['/io/app.js', '/api/avatar.png', '/private/document.pdf', '/css/jss/v6-ui.js?token=secret']) {
+    assert.equal((await sw.dispatch(route, { mode:'cors', destination:'script' })).intercepted, false);
+  }
+  assert.deepEqual(sw.cachedUrls(), []);
+});
+
+test('versioned assets never fall back to a different cached version', async () => {
+  const sw = makeWorker();
+  const options = { mode:'cors', destination:'script' };
+  await sw.dispatch('/css/jss/v6-ui.js?v=1', options);
+  sw.setNetwork(async () => { throw new Error('offline'); });
+  assert.equal((await sw.dispatch('/css/jss/v6-ui.js?v=2', options)).response.type, 'error');
+  assert.equal((await sw.dispatch('/css/jss/v6-ui.js?v=1', options)).response.body, 'online');
+});
+
+test('latest public page wins over install-time shell and unrelated caches', async () => {
+  const sw = makeWorker();
+  await (await sw.caches.open('unrelated-app')).put('/index.html', new sw.FakeResponse('unrelated'));
+  let installing;
+  sw.handlers.get('install')({waitUntil(p) { installing=p; }});
+  await installing;
+  sw.setNetwork(async () => new sw.FakeResponse('updated'));
+  await sw.dispatch('/index.html');
+  sw.setNetwork(async () => { throw new Error('offline'); });
+  assert.equal((await sw.dispatch('/index.html')).response.body, 'updated');
+});
+
+test('redirected responses never enter public cache', async () => {
+  const sw = makeWorker();
+  sw.setNetwork(async () => Object.assign(new sw.FakeResponse('redirect'), {redirected:true}));
+  await sw.dispatch('/index.html');
+  assert.deepEqual(sw.cachedUrls(), []);
+});
+
+
+test('authenticated requests bypass interception even for public paths', async () => {
+  const sw=makeWorker();
+  const result=await sw.dispatch('/index.html', {headers:{has:name=>name==='authorization'}});
+  assert.equal(result.intercepted,false);
+  assert.deepEqual(sw.cachedUrls(),[]);
+});
+
+test('cache write failure does not discard a successful network response', async () => {
+  const sw=makeWorker();
+  const open=sw.caches.open.bind(sw.caches);
+  sw.caches.open=async name=>({...await open(name),put:async()=>{throw new Error('quota');}});
+  assert.equal((await sw.dispatch('/index.html')).response.body,'online');
+  assert.equal((await sw.dispatch('/css/jss/v6-ui.js',{mode:'cors',destination:'script'})).response.body,'online');
 });

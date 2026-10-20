@@ -188,3 +188,14 @@ body.auth-login-page .tech-lock .lock-shackle,
   body.auth-login-page .tech-lock .lock-shackle,
   .tech-lock .lock-shackle{animation:none!important}
 }
+
+/* Long customer content must wrap without changing the existing card design. */
+.request-main, .attachment > div, .detail-grid > *, .request-workspace > * {
+  min-width:0;
+}
+.request-main h3, .request-main p, .attachment strong,
+.chat-message p, .detail-list strong, .detail-list span,
+[data-request-description], [data-request-title] {
+  overflow-wrap:anywhere;
+}
+.attachment > button {flex-shrink:0}

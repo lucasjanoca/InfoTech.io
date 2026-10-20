@@ -27,5 +27,5 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Exercise real Service Worker cache and OAuth boundaries
-        run: node --test tests/service-worker-runtime.test.cjs
+      - name: Exercise Service Worker and client runtime regressions
+        run: node --test tests/*.test.cjs
