@@ -81,6 +81,12 @@
     const wrap=$('.account-nav',slot), trigger=$('.account-trigger',slot), dd=$('.account-dropdown',slot);
     trigger?.addEventListener('click',e=>{e.stopPropagation();const open=dd.hidden;dd.hidden=!open;trigger.setAttribute('aria-expanded',String(open))});
     document.addEventListener('click',e=>{if(wrap&&!wrap.contains(e.target)){dd.hidden=true;trigger?.setAttribute('aria-expanded','false')}});
+    wrap?.addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&!dd.hidden){
+        event.preventDefault();dd.hidden=true;
+        trigger.setAttribute('aria-expanded','false');trigger.focus();
+      }
+    });
     $('.account-logout',slot)?.addEventListener('click',async()=>{await db.auth.signOut();location.href='index.html'});
     $$('a[href^="login.html?destino="]').forEach(a=>{const q=new URLSearchParams(a.href.split('?')[1]||'');const d=safeDestination(q.get('destino'));if(d)a.href=d});
   }
@@ -301,7 +307,7 @@
     if(password){password.addEventListener('submit',async e=>{e.preventDefault();const out=$('#password-message'),p=String(password.elements.newPassword.value||''),c=String(password.elements.confirmPassword.value||'');if(!validateStrongPassword(p)){msg(out,passwordHelp,'error');return}if(p!==c){msg(out,'As senhas não coincidem.','error');return}busy(password,true);const {error}=await db.auth.updateUser({password:p});busy(password,false);if(error){msg(out,error.message,'error');return}password.reset();msg(out,'Senha alterada com sucesso.','success')})}
   }
   async function current(){return (await db.auth.getUser()).data.user}
-  function row(r){return {id:r.protocol,uuid:r.id,userId:r.user_id,title:r.title,service:r.service,description:r.description,deadline:r.deadline,budget:r.budget,contact:r.contact,reference:r.reference_url,status:r.status,adminResponse:r.admin_response,messages:Array.isArray(r.messages)?r.messages:[],project:r.project||{},createdAt:r.created_at,updatedAt:r.updated_at}}
+  function row(r){return {id:r.protocol,uuid:r.id,userId:r.user_id,title:r.title,service:r.service,description:String(r.description??''),deadline:r.deadline,budget:r.budget,contact:r.contact,reference:r.reference_url,status:r.status,adminResponse:r.admin_response,messages:Array.isArray(r.messages)?r.messages:[],project:r.project||{},createdAt:r.created_at,updatedAt:r.updated_at}}
   async function loadRequest(protocol){
     const user=await current(); if(!user)return null;
     const {data,error}=await db.from('requests').select('*').eq('protocol',protocol).eq('user_id',user.id).maybeSingle();if(error)throw error;return data?row(data):null;
@@ -309,21 +315,36 @@
   function initRequestCreate(){
     const form=$('#request-form');if(!form)return;
     const service=params.get('servico');if(service&&form.elements.service){[...form.elements.service.options].some(o=>o.value.toLowerCase()===service.toLowerCase()&&(form.elements.service.value=o.value,true))}
+    let submitting=false;
     form.addEventListener('submit',async e=>{
-      e.preventDefault();const out=$('#request-message');if(!form.checkValidity()){form.reportValidity();return}
-      const user=await current();if(!user){location.href='login.html?destino=nova-solicitacao.html';return}
-      busy(form,true);msg(out,'Registrando sua solicitação...','success');const fd=new FormData(form);
-      const {data,error}=await db.from('requests').insert({protocol:'',user_id:user.id,owner_email:user.email,owner_name:displayName(user),title:normalize(fd.get('title')),service:fd.get('service'),description:normalize(fd.get('description')),deadline:fd.get('deadline'),budget:fd.get('budget'),contact:fd.get('contact'),reference_url:safeExternalUrl(fd.get('reference'))||null}).select('protocol').single();
-      busy(form,false);if(error){console.error(error);msg(out,'Não foi possível enviar agora. Tente novamente.','error');return}
-      safeSessionSet('infotechLastProtocol',data.protocol);location.href='solicitacao-enviada.html';
+      e.preventDefault();
+      if(submitting)return;
+      const out=$('#request-message');
+      if(!form.checkValidity()){form.reportValidity();return}
+      // Disabled controls are excluded from FormData: collect before locking.
+      const fd=new FormData(form);
+      submitting=true;busy(form,true);msg(out,'Registrando sua solicitação...','success');
+      try{
+        const user=await current();
+        if(!user){location.href='login.html?destino=nova-solicitacao.html';return}
+        const {data,error}=await db.from('requests').insert({protocol:'',user_id:user.id,owner_email:user.email,owner_name:displayName(user),title:normalize(fd.get('title')),service:fd.get('service'),description:normalize(fd.get('description')),deadline:fd.get('deadline'),budget:fd.get('budget'),contact:fd.get('contact'),reference_url:safeExternalUrl(fd.get('reference'))||null}).select('protocol').single();
+        if(error)throw error;
+        if(!data?.protocol)throw new Error('Protocolo indisponível');
+        safeSessionSet('infotechLastProtocol',data.protocol);location.href='solicitacao-enviada.html';
+      }catch(error){
+        console.error(error);msg(out,'Não foi possível enviar agora. Tente novamente.','error');
+      }finally{
+        submitting=false;busy(form,false);
+      }
     });
   }
+
   async function initSuccess(){const el=$('[data-last-protocol]');if(el)el.textContent='#'+(safeSessionGet('infotechLastProtocol')||'INF-0000')}
   async function initRequestList(){
     const list=$('#requests-list');if(!list)return;
     list.innerHTML='<div class="empty-state">Carregando suas solicitações...</div>';
     const user=await current(); if(!user){list.innerHTML='<div class="empty-state">Faça login para visualizar suas solicitações.</div>';return}
-    const {data,error}=await db.from('requests').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
+    const {data,error}=await db.from('requests').select('id,protocol,user_id,title,service,description,status,admin_response,created_at').eq('user_id',user.id).order('created_at',{ascending:false});
     if(error){list.innerHTML='<div class="empty-state">Não foi possível carregar suas solicitações.</div>';return}
     const items=(data||[]).map(row);
     list.innerHTML=items.length?items.map(i=>`<article class="request-card"><div class="request-main"><span class="request-id">#${esc(i.id)}</span><h3>${esc(i.title)}</h3><p>${esc(i.service)} · ${esc(i.description.slice(0,125))}${i.description.length>125?'…':''}</p><div class="request-meta"><span>${fmt(i.createdAt)}</span><span class="status ${statusClass(i.status)}">${esc(i.status)}</span></div></div><a class="btn btn-outline" href="detalhes-solicitacao.html?id=${encodeURIComponent(i.id)}">Acompanhar</a></article>`).join(''):'<div class="empty-state"><h3>Nenhuma solicitação ainda</h3><p>Quando você enviar a primeira, ela aparecerá aqui.</p></div>';

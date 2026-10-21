@@ -23,14 +23,46 @@
   // Compatibilidade com um bug histórico do script antigo de mensagens.
   if(!globalThis.makeId) globalThis.makeId=()=>globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   // Tabs
-  $$('[data-tabs]').forEach(root=>{
+  $$('[data-tabs]').forEach((root,rootIndex)=>{
     const buttons=$$('[data-tab]',root), panels=$$('[data-panel]',root);
-    const activate=name=>{
-      buttons.forEach(b=>{const active=b.dataset.tab===name;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
-      panels.forEach(p=>p.hidden=p.dataset.panel!==name);
+    if(!buttons.length)return;
+    const tablist=buttons[0].parentElement;
+    tablist.setAttribute('role','tablist');
+    tablist.setAttribute('aria-label','Seções da solicitação');
+    buttons.forEach((button,index)=>{
+      const panel=panels.find(p=>p.dataset.panel===button.dataset.tab);
+      if(!panel)return;
+      button.id=button.id||`request-tab-${rootIndex}-${index}`;
+      panel.id=panel.id||`request-panel-${rootIndex}-${index}`;
+      button.setAttribute('role','tab');
+      button.setAttribute('aria-controls',panel.id);
+      panel.setAttribute('role','tabpanel');
+      panel.setAttribute('aria-labelledby',button.id);
+      panel.tabIndex=0;
+    });
+    const activate=(button,focus=false)=>{
+      buttons.forEach(b=>{
+        const active=b===button;
+        b.classList.toggle('active',active);
+        b.setAttribute('aria-selected',String(active));
+        b.tabIndex=active?0:-1;
+      });
+      panels.forEach(p=>p.hidden=p.dataset.panel!==button.dataset.tab);
+      if(focus)button.focus();
     };
-    buttons.forEach(b=>b.addEventListener('click',()=>activate(b.dataset.tab)));
-    if(buttons[0])activate(buttons[0].dataset.tab);
+    buttons.forEach((button,index)=>{
+      button.addEventListener('click',()=>activate(button));
+      button.addEventListener('keydown',event=>{
+        let next;
+        if(event.key==='ArrowRight')next=(index+1)%buttons.length;
+        else if(event.key==='ArrowLeft')next=(index+buttons.length-1)%buttons.length;
+        else if(event.key==='Home')next=0;
+        else if(event.key==='End')next=buttons.length-1;
+        else return;
+        event.preventDefault();activate(buttons[next],true);
+      });
+    });
+    activate(buttons[0]);
   });
   // Password strength
   $$('[data-password-meter]').forEach(input=>{
@@ -69,6 +101,7 @@
     c.dataset.loopIndex=String(index);
     c.removeAttribute('id');
     c.setAttribute('aria-hidden','true');
+    if(c.matches('a,button,input,select,textarea,[tabindex]'))c.setAttribute('tabindex','-1');
     c.querySelectorAll('[id]').forEach(x=>x.removeAttribute('id'));
     c.querySelectorAll('a,button,input,select,textarea,[tabindex]').forEach(x=>x.setAttribute('tabindex','-1'));
     c.querySelectorAll('img').forEach(img=>{img.loading='eager';img.decoding='async';img.fetchPriority='low'});
@@ -163,8 +196,9 @@
 
     const schedule=()=>{
       clearTimeout(autoTimer);
-      if(reduced||paused||dragging||document.hidden||autoplay<=0)return;
-      autoTimer=setTimeout(()=>step(1),autoplay);
+      // Manual navigation avoids moving content while someone reads or tabs.
+      return;
+
     };
 
     const settle=(forcedDir=0)=>{
