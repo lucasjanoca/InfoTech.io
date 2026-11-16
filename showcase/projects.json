@@ -1,0 +1,265 @@
+[
+  {
+    "id": "rass-studio",
+    "name": "RASS Studio",
+    "category": "Sites",
+    "kicker": "BELEZA & EXPERIÊNCIA",
+    "headline": "Estilo que ganha presença.",
+    "description": "Presença digital para estúdio de body piercing e joias, com serviços, catálogo e agendamento.",
+    "challenge": "Transformar a identidade do estúdio em uma experiência digital elegante e simples de usar no celular.",
+    "features": [
+      "Catálogo de serviços e joias",
+      "Fluxo de agendamento",
+      "Painel administrativo",
+      "Layout mobile-first"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto real",
+    "demo": "https://rass.infotech-io.com.br/",
+    "repo": "https://github.com/lucasjanoca/Rass-Studio",
+    "theme": "studio",
+    "featured": true
+  },
+  {
+    "id": "padoka-da-villa",
+    "name": "Padoka da Villa",
+    "category": "Sistemas",
+    "kicker": "FOODTECH & COMÉRCIO",
+    "headline": "Seu pedido, do seu jeito.",
+    "description": "Plataforma para catálogo, pedidos, conta do cliente e módulos operacionais de uma padaria.",
+    "challenge": "Organizar a jornada de compra e preparar uma base para operação integrada, mantendo permissões separadas.",
+    "features": [
+      "Cardápio e pesquisa",
+      "Carrinho e checkout",
+      "Acompanhamento de pedidos",
+      "Módulos operacionais em evolução"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Em evolução",
+    "stage": "Plataforma em validação",
+    "demo": "https://lucasjanoca.github.io/padoka-da-villa/",
+    "repo": "https://github.com/lucasjanoca/padoka-da-villa",
+    "theme": "bakery",
+    "featured": true
+  },
+  {
+    "id": "stoski-films",
+    "name": "Stoski Films",
+    "category": "Sites",
+    "kicker": "CRIATIVO & AUDIOVISUAL",
+    "headline": "Histórias em movimento.",
+    "description": "Portfólio cinematográfico de vídeo com showreel, serviços e conteúdo gerenciável.",
+    "challenge": "Destacar o trabalho audiovisual de forma envolvente sem prejudicar o carregamento da página.",
+    "features": [
+      "Portfólio editável",
+      "Player sob demanda",
+      "Contato para orçamento",
+      "Painel do profissional"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto real",
+    "demo": "https://lucasjanoca.github.io/stoski2026/",
+    "repo": "https://github.com/lucasjanoca/stoski2026",
+    "theme": "films",
+    "featured": true
+  },
+  {
+    "id": "mundo-kids",
+    "name": "Mundo Kids",
+    "category": "Catálogos",
+    "kicker": "VAREJO & BRINQUEDOS",
+    "headline": "Um mundo de descobertas.",
+    "description": "Vitrine lúdica com produtos, categorias por idade e contato comercial direto.",
+    "challenge": "Simplificar a descoberta de presentes e destacar as categorias de uma loja de brinquedos.",
+    "features": [
+      "Catálogo por categorias",
+      "Busca de presentes",
+      "Contato pelo WhatsApp",
+      "Layout responsivo"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "GitHub Pages"
+    ],
+    "status": "Demonstração",
+    "stage": "Produtos demonstrativos",
+    "demo": "https://lucasjanoca.github.io/Mundo-Kids/",
+    "repo": "https://github.com/lucasjanoca/Mundo-Kids",
+    "theme": "kids"
+  },
+  {
+    "id": "seu-momento",
+    "name": "Seu Momento",
+    "category": "Catálogos",
+    "kicker": "LIFESTYLE & CATÁLOGO",
+    "headline": "Cada detalhe importa.",
+    "description": "Experiência de catálogo enxuta e elegante para apresentação de produtos da Plexo Viva.",
+    "challenge": "Criar uma jornada leve e de manutenção simples, sem dependências desnecessárias.",
+    "features": [
+      "Catálogo responsivo",
+      "Navegação mobile",
+      "SEO técnico",
+      "Hospedagem estática"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "GitHub Pages"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto de catálogo",
+    "demo": "https://lucasjanoca.github.io/Seu-Momento/",
+    "repo": "https://github.com/lucasjanoca/Seu-Momento",
+    "theme": "moment"
+  },
+  {
+    "id": "halloween-run",
+    "name": "Halloween Run",
+    "category": "Experiências",
+    "kicker": "EVENTOS & INTERAÇÃO",
+    "headline": "Uma corrida de arrepiar.",
+    "description": "Experiência digital temática para a Halloween Run Cerquilho 2026, com contagem regressiva e recursos interativos.",
+    "challenge": "Conectar divulgação do evento e experiência do público numa identidade visual única.",
+    "features": [
+      "Portal temático",
+      "Contagem regressiva",
+      "Photo Booth",
+      "Compartilhamento"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React"
+    ],
+    "status": "Projeto de evento",
+    "stage": "Edição 2026",
+    "demo": "https://lucasjanoca.github.io/HALLOWEEN-RUN-CERQUILHO-2026/",
+    "repo": "https://github.com/lucasjanoca/HALLOWEEN-RUN-CERQUILHO-2026",
+    "theme": "halloween"
+  },
+  {
+    "id": "italo-efootball",
+    "name": "Ítalo eFootball",
+    "category": "Sites",
+    "kicker": "GAMES & COMUNIDADE",
+    "headline": "Comunidade em campo.",
+    "description": "Hub de conteúdo e comunidade para criador de eFootball, com vídeos, cursos e canais oficiais.",
+    "challenge": "Organizar diferentes formatos de conteúdo em uma experiência digital clara para fãs.",
+    "features": [
+      "Conteúdo em vídeo",
+      "Páginas de cursos",
+      "Links de comunidades",
+      "Navegação mobile"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "GitHub Pages"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto público",
+    "demo": "https://lucasjanoca.github.io/Italo-eFootball/",
+    "repo": "https://github.com/lucasjanoca/Italo-eFootball",
+    "theme": "football"
+  },
+  {
+    "id": "gestao-automotiva",
+    "name": "Gestão Automotiva",
+    "category": "Sistemas",
+    "kicker": "SAAS & OPERAÇÕES",
+    "headline": "Operação sob controle.",
+    "description": "Sistema de gestão para estéticas automotivas com organização por empresas, veículos e ordens.",
+    "challenge": "Separar a experiência de proprietários e administração da plataforma mantendo as empresas isoladas.",
+    "features": [
+      "Clientes e veículos",
+      "Orçamentos e ordens",
+      "Perfis e permissões",
+      "Arquitetura multitenant"
+    ],
+    "stack": [
+      "HTML",
+      "JavaScript",
+      "Supabase",
+      "GitHub Pages"
+    ],
+    "status": "Em evolução",
+    "stage": "Acesso controlado",
+    "demo": "",
+    "repo": "https://github.com/lucasjanoca/Sistema-De-Est-tica-",
+    "theme": "auto"
+  },
+  {
+    "id": "plexo-survey",
+    "name": "Plexo Pesquisa",
+    "category": "Experiências",
+    "kicker": "PESQUISA & PRODUTO",
+    "headline": "Ouvir antes de construir.",
+    "description": "Pesquisa pública pré-lançamento com coleta de respostas e análise administrativa reservada.",
+    "challenge": "Capturar percepções com simplicidade para participantes e proteger a leitura dos resultados.",
+    "features": [
+      "Questionário responsivo",
+      "Envio ao banco",
+      "Painel administrativo restrito",
+      "Validação e RLS"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto colaborativo",
+    "demo": "https://plexoplace.com.br/",
+    "repo": "https://github.com/lucasjanoca/plexo-pesquisa-pre-lancamento",
+    "theme": "survey"
+  },
+  {
+    "id": "infotech-io",
+    "name": "InfoTech.io",
+    "category": "Sistemas",
+    "kicker": "PLATAFORMA & MARCA",
+    "headline": "Tecnologia com propósito.",
+    "description": "Presença digital da InfoTech com área do cliente, solicitações e acompanhamento de serviços.",
+    "challenge": "Unir marca e fluxos de atendimento em uma plataforma digital com autenticação.",
+    "features": [
+      "Site institucional",
+      "Área do cliente",
+      "Solicitações de serviços",
+      "Experiência PWA"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Em evolução",
+    "stage": "Plataforma principal",
+    "demo": "https://infotech-io.com.br/",
+    "repo": "https://github.com/lucasjanoca/InfoTech.io",
+    "theme": "infotech"
+  }
+]
