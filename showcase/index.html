@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#080b12">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Explore os projetos da InfoTech.io: sites, sistemas, catálogos e experiências digitais feitos para pessoas e negócios reais.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="InfoTech.io — Projetos que falam por si">
+  <meta property="og:description" content="Uma coleção de ideias transformadas em experiências digitais.">
+  <link rel="icon" href="https://infotech-io.com.br/assets/brand/logo-192.webp" type="image/webp">
+  <link rel="preconnect" href="https://infotech-io.com.br" crossorigin>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+  <title>InfoTech.io — Nosso trabalho, em destaque</title>
+</head>
+<body>
+  <a class="skip-link" href="#trabalhos">Ir para os projetos</a>
+  <div class="announcement"><div class="container announcement-inner"><span><i class="spark" aria-hidden="true"></i> BEM-VINDO AO SHOWCASE</span><span class="announcement-right">Uma nova forma de explorar o que criamos <span aria-hidden="true">↗</span></span></div></div>
+  <header class="site-header" id="inicio">
+    <nav class="container navbar" aria-label="Navegação principal">
+      <a class="brand" href="#inicio" aria-label="InfoTech.io — Início"><span class="brand-icon"><img src="https://infotech-io.com.br/assets/brand/logo-192.webp" alt="" width="36" height="36" decoding="async"></span><span>InfoTech<span class="brand-suffix">.io</span></span></a>
+      <button class="nav-toggle" type="button" aria-controls="nav-items" aria-expanded="false"><span class="nav-toggle-label">Menu</span><span class="hamburger" aria-hidden="true"><b></b><b></b></span></button>
+      <div class="nav-items" id="nav-items">
+        <a href="#trabalhos" data-nav>Projetos</a><a href="#sobre" data-nav>Sobre nós</a><a href="#processo" data-nav>Como criamos</a>
+        <a class="nav-contact" href="https://infotech-io.com.br/contato.html" target="_blank" rel="noopener noreferrer">Vamos conversar <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> DESIGN, CÓDIGO E PROPÓSITO <span class="eyebrow-id">/ PORTFÓLIO 2026</span></p>
+        <h1 id="hero-title">Ideias viram <em>experiências.</em></h1>
+        <p class="hero-description">Muito além de sites. Criamos sistemas, plataformas e experiências digitais que fazem sentido para quem usa — e para quem empreende.</p>
+        <div class="hero-actions"><a href="#trabalhos" class="button button-primary">Explorar projetos <span aria-hidden="true">↗</span></a><a href="#sobre" class="button button-quiet">Conheça a InfoTech <span aria-hidden="true">↘</span></a></div>
+        <div class="hero-proof"><span class="proof-dot" aria-hidden="true"></span><span>Um portfólio real. Projetos em diferentes estágios.</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+        <div class="hero-window">
+          <div class="hero-window-top"><span class="window-dots"><i></i><i></i><i></i></span><span>infotech / selected work</span><span>↗</span></div>
+          <div class="hero-window-body">
+            <span class="art-topline">ESTÚDIO CRIATIVO DIGITAL</span>
+            <div class="art-headline">Built to<br><i>stand out.</i></div>
+            <div class="art-ui-line"></div><div class="art-ui-line short"></div>
+            <div class="art-blocks"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="art-float art-float-top"><span class="float-icon">✦</span><span>CONCEITO <strong>→ CRIAÇÃO</strong></span></div>
+        <div class="art-float art-float-bottom"><span class="float-accent"></span><span>EXPERIÊNCIAS <strong>QUE MARCAM.</strong></span></div>
+      </div>
+      <div class="hero-bottom"><span>SCROLL PARA EXPLORAR</span><span aria-hidden="true">↓</span><span>01 / SHOWCASE</span></div>
+    </section>
+    <section class="work-section" id="trabalhos" aria-labelledby="work-title">
+      <div class="container">
+        <div class="section-header">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> PORTFÓLIO SELECIONADO</p><h2 id="work-title">Nosso trabalho<span class="accent">.</span></h2><p class="section-lead">Cada projeto tem uma história, um desafio e uma solução.</p></div>
+          <div class="section-index"><span>PROJETOS EM DESTAQUE</span><strong id="project-total">—</strong></div>
+        </div>
+        <div class="toolbar" aria-label="Filtrar projetos">
+          <div class="filters" id="filters" role="group" aria-label="Categorias">
+            <button type="button" class="filter active" data-category="Todos" aria-pressed="true">Todos <span id="all-count"></span></button>
+            <button type="button" class="filter" data-category="Sites" aria-pressed="false">Sites</button>
+            <button type="button" class="filter" data-category="Sistemas" aria-pressed="false">Sistemas</button>
+            <button type="button" class="filter" data-category="Catálogos" aria-pressed="false">Catálogos</button>
+            <button type="button" class="filter" data-category="Experiências" aria-pressed="false">Experiências</button>
+          </div>
+          <label class="search-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span class="sr-only">Buscar projetos</span><input id="project-search" type="search" placeholder="Buscar projeto..." autocomplete="off" spellcheck="false" maxlength="90"><span class="search-key" aria-hidden="true">/</span></label>
+        </div>
+        <p class="result-label" id="result-label" role="status" aria-live="polite">Carregando projetos...</p>
+        <div class="projects-grid" id="projects-grid" aria-label="Galeria de projetos"></div>
+        <div class="empty-state" id="empty-state" hidden><span aria-hidden="true">⌕</span><h3>Nenhum projeto encontrado.</h3><p>Tente outro nome ou escolha uma categoria diferente.</p><button class="button button-secondary" id="clear-filters" type="button">Limpar filtros</button></div>
+        <div class="more-projects"><span>Quer explorar o código público?</span><a href="https://github.com/lucasjanoca?tab=repositories" target="_blank" rel="noopener noreferrer">Ver repositórios no GitHub <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+    <section class="about-section" id="sobre" aria-labelledby="about-title">
+      <div class="container about-grid"><div class="about-heading"><p class="eyebrow"><span class="eyebrow-line"></span> QUEM SOMOS</p><h2 id="about-title">Tecnologia é o meio.<br><em>O impacto é o objetivo.</em></h2></div><div class="about-content"><p>Somos a <strong>InfoTech.io</strong>, um estúdio independente de soluções digitais criado por Lucas Janoca. Desenvolvemos experiências web com atenção a design, funcionalidade e evolução contínua.</p><p>De um site que apresenta um negócio a um sistema que organiza processos: cada entrega começa entendendo o problema.</p><a href="https://infotech-io.com.br/contato.html" target="_blank" rel="noopener noreferrer" class="inline-link">Vamos criar algo juntos <span aria-hidden="true">↗</span></a></div></div>
+    </section>
+    <section class="process-section" id="processo" aria-labelledby="process-title"><div class="container"><div class="section-header process-heading"><div><p class="eyebrow"><span class="eyebrow-line"></span> NOSSO JEITO DE FAZER</p><h2 id="process-title">Do primeiro <em>e se...</em> ao lançamento.</h2></div></div><div class="process-grid"><article><span class="process-num">01 /</span><h3>Entender</h3><p>Ouvimos a necessidade e definimos o que realmente precisa ser resolvido.</p></article><article><span class="process-num">02 /</span><h3>Desenhar</h3><p>Organizamos a experiência, o visual e os fluxos mais importantes.</p></article><article><span class="process-num">03 /</span><h3>Construir</h3><p>Desenvolvemos, testamos e ajustamos em ciclos pequenos e claros.</p></article><article><span class="process-num">04 /</span><h3>Evoluir</h3><p>Melhorias contínuas para acompanhar o uso e as próximas necessidades.</p></article></div></div></section>
+    <section class="contact-section"><div class="container contact-panel"><div><p class="eyebrow">TEM UMA IDEIA EM MENTE?</p><h2>Seu próximo projeto<br>pode estar <em>aqui.</em></h2><p>Vamos conversar sobre o que você quer construir.</p></div><a href="https://infotech-io.com.br/contato.html" target="_blank" rel="noopener noreferrer" class="contact-circle" aria-label="Entrar em contato com a InfoTech">↗</a></div></section>
+  </main>
+  <footer class="site-footer"><div class="container footer-main"><a class="brand" href="#inicio"><span class="brand-icon"><img src="https://infotech-io.com.br/assets/brand/logo-192.webp" width="32" height="32" alt="" loading="lazy"></span><span>InfoTech<span class="brand-suffix">.io</span></span></a><span>Ideias. Código. Impacto.</span><a href="https://infotech-io.com.br/privacidade.html" target="_blank" rel="noopener noreferrer">Privacidade ↗</a></div><div class="container footer-bottom"><span>© <span id="year">2026</span> InfoTech.io • Criado por Lucas Janoca</span><span>Feito com intenção, não com excesso.</span></div></footer>
+  <dialog id="case-dialog" class="case-dialog" aria-labelledby="case-title"><div class="dialog-inner"><button type="button" class="dialog-close" id="dialog-close" aria-label="Fechar detalhes">✕</button><p class="eyebrow" id="case-kicker"></p><h2 id="case-title"></h2><p id="case-description" class="case-description"></p><div class="case-meta"><span id="case-status"></span><span id="case-category"></span></div><div class="case-columns"><section><h3>O desafio</h3><p id="case-challenge"></p></section><section><h3>O que foi criado</h3><ul id="case-features"></ul></section></div><div class="case-stack" id="case-stack"></div><div class="case-actions"><a id="case-demo" class="button button-primary" target="_blank" rel="noopener noreferrer">Visitar projeto ↗</a><a id="case-repo" class="button button-secondary" target="_blank" rel="noopener noreferrer">Código público ↗</a></div><p class="case-disclaimer">Os visuais dos cartões são ilustrações editoriais, não capturas de tela. Recursos e estágios são descritos conforme a documentação pública de cada projeto.</p></div></dialog>
+</body>
+</html>
