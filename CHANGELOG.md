@@ -5,6 +5,8 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 ## V9.6
 
 ### Mobile / UX
+- O portfólio passa de três para duas colunas abaixo de 480 px, ampliando cartões e rótulos que ficavam com apenas 91–109 px e texto inferior a 10 px em celulares estreitos.
+- Fechar o aviso de instalação PWA agora preserva a escolha durante a sessão de navegação; o link “Instalar app” do rodapé continua permitindo reabrir o aviso explicitamente.
 - A auditoria mobile-first agora rejeita segmentos vazios separados por vírgula no `meta viewport`, evitando que configurações malformadas sejam aceitas silenciosamente pelo CI.
 - A auditoria de baseline do documento agora reconhece `canonical` como token dentro de listas `rel`, evitando que uma declaração canônica combinada com outros tokens escape da contagem e das validações de origem, rota e unicidade.
 - A auditoria de baseline do documento agora exige exatamente um canonical HTTPS da origem oficial em cada página indexável, sem query/fragmento e sem duplicação entre páginas, evitando sinais de indexação divergentes sem afetar páginas `noindex`.
@@ -48,7 +50,7 @@ Histórico consolidado das principais versões do projeto. Este arquivo substitu
 - A auditoria de vínculos do manifest agora exige exatamente um `meta theme-color` em cada página que participa de um PWA e valida que a cor corresponde ao `theme_color` do manifest referenciado, evitando divergência visual entre a página, a instalação e a UI do navegador.
 - Nova auditoria dedicada dos vínculos de manifest garante que os pontos de entrada do app administrativo (`admin-install.html` e `admin-login.html`) usem o `admin-manifest.webmanifest`; demais páginas só podem referenciar manifests locais aprovados, e manifests externos, inexistentes ou múltiplos são bloqueados.
 - Nova auditoria dedicada da identidade instalada valida `id`, nome, nome curto, idioma, modo `standalone`, cores e prioridade de `display_override` dos manifests principal e administrativo, evitando colisão entre os dois apps e regressões na experiência instalada.
-- Cache do Service Worker atualizado para `infotech-pwa-v9.6.1`.
+- Cache do Service Worker atualizado para `infotech-pwa-v9.6.2`.
 - App shell atualizado com recursos usados pelos refinamentos mobile e pelo carrossel da página Sobre.
 - Navegações só entram no cache quando pertencem a uma allowlist explícita de páginas públicas; rotas novas, desconhecidas, autenticadas e administrativas ficam fora do cache por padrão.
 - Rotas sensíveis continuam fora do cache público do Service Worker.

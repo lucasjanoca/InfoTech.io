@@ -306,6 +306,22 @@
   let installEvent = null;
   let installLink = null;
   let banner = document.querySelector('[data-pwa-banner]') || null;
+  const dismissKey = 'infotech:pwa-banner-dismissed';
+
+  const wasDismissed = () => {
+    try {
+      return sessionStorage.getItem(dismissKey) === '1';
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const rememberDismissal = value => {
+    try {
+      if (value) sessionStorage.setItem(dismissKey, '1');
+      else sessionStorage.removeItem(dismissKey);
+    } catch (_) {}
+  };
 
   const isStandalone = () =>
     window.matchMedia?.('(display-mode: standalone)').matches ||
@@ -328,6 +344,11 @@
     banner = null;
   };
 
+  const dismissBanner = () => {
+    rememberDismissal(true);
+    removeBanner();
+  };
+
   const updateBanner = () => {
     if (!banner) return;
     const action = banner.querySelector('[data-pwa-action]');
@@ -348,7 +369,7 @@
     const action = banner.querySelector('[data-pwa-action]');
     const instructions = banner.querySelector('[data-pwa-instructions]');
 
-    close?.addEventListener('click', removeBanner);
+    close?.addEventListener('click', dismissBanner);
 
     action?.addEventListener('click', async () => {
       if (installEvent) {
@@ -372,12 +393,19 @@
     });
   };
 
-  const ensureBanner = () => {
+  const ensureBanner = ({ force = false } = {}) => {
     if (isStandalone()) {
       removeBanner();
       removeInstallLink();
       return;
     }
+
+    if (!force && wasDismissed()) {
+      removeBanner();
+      return;
+    }
+
+    if (force) rememberDismissal(false);
 
     if (!banner) {
       banner = document.createElement('aside');
@@ -412,7 +440,7 @@
     installLink.setAttribute('data-pwa-install', '');
     installLink.addEventListener('click', event => {
       event.preventDefault();
-      ensureBanner();
+      ensureBanner({ force: true });
       banner?.querySelector('[data-pwa-action]')?.click();
     });
     host.append(' · ', installLink);

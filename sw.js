@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const VERSION = 'infotech-pwa-v9.6.1';
+const VERSION = 'infotech-pwa-v9.6.2';
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 const OFFLINE_URL = '/offline.html';
