@@ -650,3 +650,11 @@ h1,h2,h3{letter-spacing:-.049em}
  .home-cards .work-card h3,.catalog-grid .work-card h3{font-size:14px;line-height:1.3;letter-spacing:-.025em;margin:0;overflow-wrap:anywhere}
  .home-cards .work-card h3 a,.catalog-grid .work-card h3 a{display:flex;align-items:center;min-height:44px}
 }
+
+/* Homepage project banners carry their own names. */
+.home-cards .work-card-info{display:none}
+.home-cards .work-art-link{height:100%}
+@media(max-width:760px){
+ .home-cards{gap:5px;margin-inline:-8px}
+ .home-cards .work-card{border-radius:7px}
+}
