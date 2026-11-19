@@ -1,0 +1,64 @@
+[
+  {
+    "id": "rass-studio",
+    "name": "RASS Studio",
+    "category": "Sites",
+    "kicker": "BELEZA & EXPERIÊNCIA",
+    "headline": "Estilo que ganha presença.",
+    "description": "Presença digital para estúdio de body piercing e joias, com serviços, catálogo e agendamento.",
+    "challenge": "Transformar a identidade do estúdio em uma experiência digital elegante e simples de usar no celular.",
+    "features": [
+      "Catálogo de serviços e joias",
+      "Fluxo de agendamento",
+      "Painel administrativo",
+      "Layout mobile-first"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto real",
+    "demo": "https://rass.infotech-io.com.br/",
+    "repo": "https://github.com/lucasjanoca/Rass-Studio",
+    "theme": "studio",
+    "featured": true,
+    "model": "Agendamento e catálogo de serviços"
+  },
+  {
+    "id": "padoka-da-villa",
+    "name": "Padoka da Villa",
+    "category": "Sistemas",
+    "kicker": "FOODTECH & COMÉRCIO",
+    "headline": "Seu pedido, do seu jeito.",
+    "description": "Plataforma para catálogo, pedidos, conta do cliente e módulos operacionais de uma padaria.",
+    "challenge": "Organizar a jornada de compra e preparar uma base para operação integrada, mantendo permissões separadas.",
+    "features": [
+      "Cardápio e pesquisa",
+      "Carrinho e checkout",
+      "Acompanhamento de pedidos",
+      "Módulos operacionais em evolução"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Em evolução",
+    "stage": "Plataforma em validação",
+    "demo": "https://lucasjanoca.github.io/padoka-da-villa/",
+    "repo": "https://github.com/lucasjanoca/padoka-da-villa",
+    "theme": "bakery",
+    "featured": true,
+    "model": "Cardápio digital e pedidos"
+  },
+  {
+    "id": "stoski-films",
+    "name": "Stoski Films",
+    "category": "Sites",
+    "kicker": "CRIATIVO & AUDIOVISUAL",
+    "headline": "Histórias em movimento.",
+    "description": "Portfólio cinematográfico de vídeo com sh --- TRUNCATED --- 7,080 chars

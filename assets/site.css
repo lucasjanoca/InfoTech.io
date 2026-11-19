@@ -1,0 +1,18 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{color-scheme:dark;--ink:#060b13;--panel:#0f1726;--panel2:#111d31;--line:#223348;--white:#f4f7fb;--muted:#a6b5c6;--blue:#3c77ff;--cyan:#69d9f7;--acid:#81ccff;--radius:15px;font-family:"DM Sans",Arial,system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;background:var(--ink);color:var(--white);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(#ffffff04 1px,transparent 1px),linear-gradient(90deg,#ffffff04 1px,transparent 1px);background-size:78px 78px;opacity:.6}
+a{text-decoration:none;color:inherit}button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--acid);outline-offset:4px}
+img{display:block;max-width:100%}.wrap{max-width:1320px;margin:0 auto;padding-left:34px;padding-right:34px}
+h1,h2,h3,p{margin-top:0}h1,h2,h3{font-family:"Space Grotesk",Arial,sans-serif;line-height:1.02;letter-spacing:-.055em}h2{font-size:clamp(34px,4.1vw,62px)}h3{font-size:25px}
+h1 em,h2 em{font-style:normal;color:var(--cyan)}
+.sr-only{position:absolute;height:1px;width:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.skip-link{position:absolute;left:-9999px;top:10px;background:#fff;color:#000;padding:10px;z-index:100}.skip-link:focus{left:15px}
+.top-signal{height:32px;background:#0d1b2d;border-bottom:1px solid #31425c;color:#9fb5d2;font-size:9px;font-weight:800;letter-spacing:.14em}
+.top-signal-inner{height:100%;display:flex;align-items:center;justify-content:space-between}
+.top-signal .signal-light,.kicker-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--acid);box-shadow:0 0 16px #81ccff7d;margin-right:7px}
+.signal-right b{color:var(--acid)}.header{position:sticky;top:0;z-index:30;border-bottom:1px solid #ffffff13;background:#060b14ec;backdrop-filter:blur(20px)}
+.header-inner{height:82px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{dis --- TRUNCATED --- 54,763 chars
