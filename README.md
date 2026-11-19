@@ -1,37 +1,14 @@
-# 🚀 InfoTech.io
+# InfoTech.io — Site oficial e portfólio
 
-> Presença digital e plataforma web da InfoTech.io.
+Este é o site principal da InfoTech.io, com projetos, portfólio, soluções e contato, no domínio https://infotech-io.com.br/.
 
-A **InfoTech.io** é um projeto em evolução voltado à criação de sites, sistemas e soluções de suporte em tecnologia. Este repositório reúne o site principal e a experiência da área do cliente.
+Os arquivos representam a vitrine V3 anteriormente publicada como prévia na Cloudflare. O sistema anterior de solicitações e área do cliente foi preservado em um repositório independente, atualmente denominado `lucasjanoca/plexo-pesquisa-pre-lancamento` (nome temporário).
 
-## 🌐 Projeto ao vivo
+- Página inicial: `index.html`
+- Projetos: `projetos/` e `projects.json`
+- Soluções: `solucoes/`
+- Estúdio: `estudio/`
+- Contato: `contato/`
+- Estilos e imagens: `assets/`
 
-**[Acessar a InfoTech.io](https://infotech-io.com.br/)**
-
-## ✨ Principais recursos
-
-- Site institucional responsivo
-- Apresentação de serviços e projetos
-- Área do cliente com autenticação
-- Solicitações e acompanhamento de serviços
-- Orçamentos e fluxo de aprovação
-- Upload e gerenciamento de arquivos
-- Comunicação e histórico do atendimento
-- Experiência adaptada para celular e desktop
-- Cuidados de segurança aplicados ao frontend e à integração com serviços externos
-
-## 🛠️ Tecnologias
-
-`HTML5` · `CSS3` · `JavaScript` · `PWA / Service Worker` · `Supabase` · `GitHub Pages`
-
-## 🔐 Segurança
-
-O projeto segue o princípio de não versionar credenciais privadas. Chaves secretas, senhas, service roles e demais segredos não devem ser adicionados ao frontend ou ao repositório.
-
-## 📈 Evolução
-
-A InfoTech.io também representa minha evolução de projetos escolares simples para aplicações com autenticação, persistência de dados, área administrativa, segurança e publicação em produção.
-
----
-
-**Projeto desenvolvido e mantido por Lucas Janoca / InfoTech.io.**
+Site estático sem acesso a pedidos, senhas ou banco de produção. Não reintroduzir configuração Supabase do sistema anterior nesta vitrine.
