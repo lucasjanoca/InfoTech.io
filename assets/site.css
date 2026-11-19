@@ -330,7 +330,7 @@ h1 em,h2 em{font-style:normal;color:var(--cyan)}
 .home6-visual{gap:11px}
 .s6-work-example{display:none}
 .studio-v6 .st5-hero>a{display:flex;flex-direction:column;gap:9px;padding:9px;background:linear-gradient(135deg,#10243d,#091323);border-radius:9px}
-.studio-v6 .st5-hero img.st6-full{display:none}
+.studio-v6 .st5-hero img.st6-full{display:block;width:100%;height:auto;aspect-ratio:1536/658;object-fit:contain}
 .st6-pair{display:grid;grid-template-columns:1fr;gap:9px;width:100%}
 .st6-photo{position:relative;display:block;width:100%;height:clamp(190px,54vw,260px);overflow:hidden;border:1px solid #365e89;border-radius:5px;background:#08111d}
 .st6-photo img{display:block;width:100%;height:100%!important;aspect-ratio:auto!important;object-fit:cover}
@@ -658,3 +658,6 @@ h1,h2,h3{letter-spacing:-.049em}
  .home-cards{gap:5px;margin-inline:-8px}
  .home-cards .work-card{border-radius:7px}
 }
+
+/* Space the contact section after the introductory service strip. */
+.home-v6 .stripe+.end-cta{margin-top:32px}
