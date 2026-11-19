@@ -61,4 +61,161 @@
     "category": "Sites",
     "kicker": "CRIATIVO & AUDIOVISUAL",
     "headline": "Histórias em movimento.",
-    "description": "Portfólio cinematográfico de vídeo com sh --- TRUNCATED --- 7,080 chars
+    "description": "Portfólio cinematográfico de vídeo com showreel, serviços e conteúdo gerenciável.",
+    "challenge": "Destacar o trabalho audiovisual de forma envolvente sem prejudicar o carregamento da página.",
+    "features": [
+      "Portfólio editável",
+      "Player sob demanda",
+      "Contato para orçamento",
+      "Painel do profissional"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto real",
+    "demo": "https://lucasjanoca.github.io/stoski2026/",
+    "repo": "https://github.com/lucasjanoca/stoski2026",
+    "theme": "films",
+    "featured": true,
+    "model": "Portfólio com vídeos e orçamento"
+  },
+  {
+    "id": "mundo-kids",
+    "name": "Mundo Kids",
+    "category": "Catálogos",
+    "kicker": "VAREJO & BRINQUEDOS",
+    "headline": "Um mundo de descobertas.",
+    "description": "Vitrine lúdica com produtos, categorias por idade e contato comercial direto.",
+    "challenge": "Simplificar a descoberta de presentes e destacar as categorias de uma loja de brinquedos.",
+    "features": [
+      "Catálogo por categorias",
+      "Busca de presentes",
+      "Contato pelo WhatsApp",
+      "Layout responsivo"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "GitHub Pages"
+    ],
+    "status": "Demonstração",
+    "stage": "Produtos demonstrativos",
+    "demo": "https://lucasjanoca.github.io/Mundo-Kids/",
+    "repo": "https://github.com/lucasjanoca/Mundo-Kids",
+    "theme": "kids",
+    "model": "Catálogo de produtos e WhatsApp"
+  },
+  {
+    "id": "halloween-run",
+    "name": "Halloween Run",
+    "category": "Experiências",
+    "kicker": "EVENTOS & INTERAÇÃO",
+    "headline": "Uma corrida de arrepiar.",
+    "description": "Experiência digital temática para a Halloween Run Cerquilho 2026, com contagem regressiva e recursos interativos.",
+    "challenge": "Conectar divulgação do evento e experiência do público numa identidade visual única.",
+    "features": [
+      "Portal temático",
+      "Contagem regressiva",
+      "Photo Booth",
+      "Compartilhamento"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React"
+    ],
+    "status": "Demonstração",
+    "stage": "Edição 2026",
+    "demo": "https://lucasjanoca.github.io/HALLOWEEN-RUN-CERQUILHO-2026/",
+    "repo": "https://github.com/lucasjanoca/HALLOWEEN-RUN-CERQUILHO-2026",
+    "theme": "halloween",
+    "model": "Página interativa para eventos"
+  },
+  {
+    "id": "italo-efootball",
+    "name": "Ítalo eFootball",
+    "category": "Sites",
+    "kicker": "GAMES & COMUNIDADE",
+    "headline": "Comunidade em campo.",
+    "description": "Hub de conteúdo e comunidade para criador de eFootball, com vídeos, cursos e canais oficiais.",
+    "challenge": "Organizar diferentes formatos de conteúdo em uma experiência digital clara para fãs.",
+    "features": [
+      "Conteúdo em vídeo",
+      "Páginas de cursos",
+      "Links de comunidades",
+      "Navegação mobile"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "GitHub Pages"
+    ],
+    "status": "Publicado",
+    "stage": "Projeto público",
+    "demo": "https://lucasjanoca.github.io/Italo-eFootball/",
+    "repo": "https://github.com/lucasjanoca/Italo-eFootball",
+    "theme": "football",
+    "model": "Conteúdo, cursos e comunidade"
+  },
+  {
+    "id": "gestao-automotiva",
+    "name": "Gestão Automotiva",
+    "category": "Sistemas",
+    "kicker": "SAAS & OPERAÇÕES",
+    "headline": "Operação sob controle.",
+    "description": "Sistema de gestão para estéticas automotivas com organização por empresas, veículos e ordens.",
+    "challenge": "Separar a experiência de proprietários e administração da plataforma mantendo as empresas isoladas.",
+    "features": [
+      "Clientes e veículos",
+      "Orçamentos e ordens",
+      "Perfis e permissões",
+      "Arquitetura multitenant"
+    ],
+    "stack": [
+      "HTML",
+      "JavaScript",
+      "Supabase",
+      "GitHub Pages"
+    ],
+    "status": "Em evolução",
+    "stage": "Acesso controlado",
+    "demo": "",
+    "repo": "https://github.com/lucasjanoca/Sistema-De-Est-tica-",
+    "theme": "auto",
+    "model": "Sistema de gestão sob medida"
+  },
+  {
+    "id": "infotech-io",
+    "name": "InfoTech.io",
+    "category": "Sistemas",
+    "kicker": "PLATAFORMA & MARCA",
+    "headline": "Tecnologia com propósito.",
+    "description": "Presença digital da InfoTech com área do cliente, solicitações e acompanhamento de serviços.",
+    "challenge": "Unir marca e fluxos de atendimento em uma plataforma digital com autenticação.",
+    "features": [
+      "Site institucional",
+      "Área do cliente",
+      "Solicitações de serviços",
+      "Experiência PWA"
+    ],
+    "stack": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Supabase"
+    ],
+    "status": "Em evolução",
+    "stage": "Plataforma principal",
+    "demo": "https://infotech-io.com.br/",
+    "repo": "https://github.com/lucasjanoca/InfoTech.io",
+    "theme": "infotech",
+    "model": "Site empresarial com área do cliente"
+  }
+]

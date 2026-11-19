@@ -17,4 +17,30 @@ const model=$('#model-select'),goal=$('#goal-select'),brief=$('#brief-descriptio
 if(model&&goal&&brief&&send){
  const params=new URLSearchParams(location.search);
  const pre=params.get('modelo');
- if(pre&&Array.fr --- TRUNCATED --- 4,336 chars
+ if(pre&&Array.from(model.options).some(o=>o.value===pre))model.value=pre;
+ const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
+ const safeValue=(v)=>clean(v)||'Não informado';
+ const buildMessage=()=>{
+   const lines=['Olá, InfoTech.io! Gostaria de solicitar uma proposta para meu projeto.','','*PEDIDO PELO SITE INFOTECH.IO*'];
+   if(clean(customer?.value))lines.push('*Nome:* '+clean(customer.value));
+   if(clean(business?.value))lines.push('*Negócio/marca:* '+clean(business.value));
+   lines.push('*Projeto de referência:* '+(model.value?clean(model.selectedOptions[0]?.textContent):'Ideia própria, sem modelo definido'));
+   lines.push('*Tipo de solução:* '+safeValue(goal.selectedOptions[0]?.textContent));
+   lines.push('*Detalhes da ideia:* '+(brief.value.trim()||'Gostaria de conversar para definir os detalhes.'));
+   lines.push('');
+   lines.push('Gostaria de saber as possibilidades, o prazo e receber um orçamento. Obrigado!');
+   return lines.join('\n');
+ };
+ send.addEventListener('click',()=>{
+   const url='https://wa.me/5515997696477?text='+encodeURIComponent(buildMessage());
+   send.href=url;
+   if(feedback)feedback.textContent='O WhatsApp abrirá com seu pedido preenchido. Confira e toque em Enviar para falar com a InfoTech.io.';
+ });
+}
+})();
+
+
+/* Infotech Solutions V4, mobile switcher */
+(()=>{const root=document.querySelector('.solutions-v4');if(!root)return;const bs=[...document.querySelectorAll('[data-service-tab]')],ps=[...document.querySelectorAll('[data-service-panel]')];if(!bs.length)return;
+const show=id=>{for(const b of bs){const a=b.dataset.serviceTab===id;b.classList.toggle('s4-current',a);b.setAttribute('aria-pressed',String(a))}for(const p of ps)p.classList.toggle('s4-current',p.dataset.servicePanel===id);const s=document.querySelector('#s4-selected'),active=bs.find(b=>b.dataset.serviceTab===id);if(s&&active)s.textContent=active.textContent.replace(/\d+/g,'').trim()};
+bs.forEach(b=>b.addEventListener('click',()=>show(b.dataset.serviceTab)));show('sites');root.classList.add('s4-ready')})();
