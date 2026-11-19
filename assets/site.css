@@ -176,7 +176,7 @@ h1 em,h2 em{font-style:normal;color:var(--cyan)}
 [hidden]{display:none!important}
 @media(max-width:1100px){.wrap{padding-inline:25px}.main-nav{gap:18px}.hero-heading h1{font-size:clamp(60px,7.7vw,94px)}.hero-stage{min-height:450px}.stage-big{font-size:130px}.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.home-cards .art{height:220px}.home-cards .work-card-info{min-height:205px}}
 @media(max-width:760px){.wrap{padding-inline:20px}.signal-right{display:none}.header-inner{height:68px}.brand-type{font-size:24px}.menu-button{display:block}.main-nav{display:none;position:absolute;top:68px;left:0;right:0;background:#0a1525;border-bottom:1px solid #3a5b81;padding:18px 20px 24px;flex-direction:column;align-items:stretch;gap:0}.main-nav.open{display:flex}.main-nav>a{padding:15px 0;border-bottom:1px solid #29425d}.main-nav .nav-special{text-align:center;margin:15px 0 0;padding:16px}.menu-button[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}.menu-button[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
-.hero-home{padding-top:36px}.hero-layout{grid-template-columns:1fr;gap:30px}.hero-heading h1{font-size:clamp(58px,13vw,100px)}.hero-stage{min-height:330px}.stage-big{font-size:138px}.hero-standfirst{font-size:16px}.hero-bottom span:nth-child(2){display:none}.stripe-inner{justify-content:center;gap:14px;flex-wrap:wrap;padding-block:15px}.stripe-inner span{font-size:11px}.stripe-inner i{font-size:14px}
+.hero-home{padding-top:36px}.hero-layout{grid-template-columns:1fr;gap:30px}.hero-heading h1{font-size:clamp(58px,13vw,100px)}.hero-stage{min-height:330px}.stage-big{font-size:138px}.hero-standfirst{font-size:16px}.hero-bottom span:nth-child(2){display:none}.stripe-inner{justify-content:center;gap:14px;flex-wrap:nowrap;padding-block:15px}.stripe-inner span{font-size:11px}.stripe-inner i{font-size:14px}
 .section-identity{display:block}.section-identity .text-link{margin-top:18px}
 .home-work{padding-top:74px;padding-bottom:75px}.home-cards{grid-template-columns:1fr 1fr}.home-cards .work-card:last-child{display:none}.home-cards .art{height:220px}
 .end-cta{display:block;padding-top:28px;margin-bottom:45px}.end-cta-index{display:none}.end-cta .button{margin-top:25px}
@@ -622,4 +622,18 @@ h1,h2,h3{letter-spacing:-.049em}
  .main-nav>a:not(.nav-special)::after,.button,.nav-special,
  .work-card,.project-card,.s4-card{transition:none!important}
  .button:hover,.work-card:hover,.s4-card:hover{transform:none!important}
+}
+/* Keep the service strip on one readable line at every viewport width. */
+.stripe{overflow-x:auto;overscroll-behavior-x:contain}
+.stripe-inner{flex-wrap:nowrap;white-space:nowrap;min-width:max-content}
+.stripe-inner>*{flex-shrink:0}
+.projects-intro h1{margin-top:0}
+.catalog{padding-bottom:40px}
+.portfolio-help{margin-top:40px;padding-top:28px}
+@media(max-width:760px){
+ .stripe-inner{justify-content:space-between;gap:18px}
+ .stripe-inner span{font-size:14px}
+ .stripe-inner i{font-size:16px}
+ .catalog{padding-bottom:32px}
+ .portfolio-help{margin-top:32px;padding-top:24px}
 }
