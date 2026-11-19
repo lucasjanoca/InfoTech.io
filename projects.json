@@ -194,28 +194,28 @@
   {
     "id": "infotech-io",
     "name": "InfoTech.io",
-    "category": "Sistemas",
-    "kicker": "PLATAFORMA & MARCA",
-    "headline": "Tecnologia com propósito.",
-    "description": "Presença digital da InfoTech com área do cliente, solicitações e acompanhamento de serviços.",
-    "challenge": "Unir marca e fluxos de atendimento em uma plataforma digital com autenticação.",
+    "category": "Sites",
+    "kicker": "PORTFÓLIO & MARCA",
+    "headline": "Tecnologia que deixa sua marca.",
+    "description": "Vitrine oficial da InfoTech.io com projetos, soluções digitais e contato direto pelo WhatsApp.",
+    "challenge": "Apresentar a empresa e seus projetos com clareza, mantendo a vitrine independente do sistema de solicitações.",
     "features": [
       "Site institucional",
-      "Área do cliente",
-      "Solicitações de serviços",
-      "Experiência PWA"
+      "Portfólio de projetos",
+      "Contato direto pelo WhatsApp",
+      "Layout responsivo"
     ],
     "stack": [
       "HTML",
       "CSS",
       "JavaScript",
-      "Supabase"
+      "Cloudflare Pages"
     ],
-    "status": "Em evolução",
-    "stage": "Plataforma principal",
+    "status": "Publicado",
+    "stage": "Vitrine oficial",
     "demo": "https://infotech-io.com.br/",
     "repo": "https://github.com/lucasjanoca/InfoTech.io",
     "theme": "infotech",
-    "model": "Site empresarial com área do cliente"
+    "model": "Site institucional e portfólio"
   }
 ]
