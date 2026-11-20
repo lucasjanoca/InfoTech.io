@@ -18,6 +18,8 @@ if(model&&goal&&brief&&send){
  const params=new URLSearchParams(location.search);
  const pre=params.get('modelo');
  if(pre&&Array.from(model.options).some(o=>o.value===pre))model.value=pre;
+ const preGoal=params.get('objetivo');
+ if(preGoal&&Array.from(goal.options).some(o=>o.value===preGoal))goal.value=preGoal;
  const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
  const safeValue=(v)=>clean(v)||'Não informado';
  const buildMessage=()=>{
