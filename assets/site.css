@@ -698,7 +698,7 @@ h1,h2,h3{letter-spacing:-.049em}
 .case-proof-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .case-proof{border:1px solid #304f70;border-radius:14px;overflow:hidden;background:#0d1a2b;transition:transform .22s,border-color .22s}
 .case-proof:hover{transform:translateY(-4px);border-color:#6da9e2}
-.case-proof img{width:100%;aspect-ratio:1916/821;object-fit:cover;background:#0c1827}
+.case-proof img{width:100%;height:auto;aspect-ratio:1916/821;object-fit:cover;background:#0c1827}
 .case-proof>div{padding:22px}
 .case-proof span{color:#8fbee8;font-size:9px;font-weight:900;letter-spacing:.13em}
 .case-proof h3{font-size:26px;margin:19px 0 10px}
